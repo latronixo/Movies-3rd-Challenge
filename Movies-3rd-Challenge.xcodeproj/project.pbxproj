@@ -11,10 +11,10 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		6BB614C32D96D8B7001A86B8 /* Exceptions for "Movies-3rd-Challenge" folder in "Movies-3rd-Challenge" target */ = {
+		6B80379A2D9AB8C3004CD575 /* Exceptions for "Movies-3rd-Challenge" folder in "Movies-3rd-Challenge" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Support/Info.plist,
+				Info.plist,
 			);
 			target = 6BB614AD2D96D8B4001A86B8 /* Movies-3rd-Challenge */;
 		};
@@ -24,7 +24,7 @@
 		6BB614B02D96D8B4001A86B8 /* Movies-3rd-Challenge */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				6BB614C32D96D8B7001A86B8 /* Exceptions for "Movies-3rd-Challenge" folder in "Movies-3rd-Challenge" target */,
+				6B80379A2D9AB8C3004CD575 /* Exceptions for "Movies-3rd-Challenge" folder in "Movies-3rd-Challenge" target */,
 			);
 			path = "Movies-3rd-Challenge";
 			sourceTree = "<group>";
