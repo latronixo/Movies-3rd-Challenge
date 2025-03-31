@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let auth = true
         
         window?.rootViewController = UINavigationController(rootViewController: auth ? TabBarController() : TempLoginViewController())
-        window?.rootViewController = ViewController()
+        
         window?.makeKeyAndVisible()
     }
 
