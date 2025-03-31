@@ -14,7 +14,7 @@
 		6BB614C32D96D8B7001A86B8 /* Exceptions for "Movies-3rd-Challenge" folder in "Movies-3rd-Challenge" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Support/Info.plist,
 			);
 			target = 6BB614AD2D96D8B4001A86B8 /* Movies-3rd-Challenge */;
 		};
