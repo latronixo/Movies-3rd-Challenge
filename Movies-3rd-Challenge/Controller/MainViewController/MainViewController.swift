@@ -122,8 +122,8 @@ final class MainViewController: UIViewController {
         return button
     }()
     
-    let banners = ["thor", "encanto", "encanto", "encanto", "seabeast"]
-    let movies = ["Drifting Home", "Jurassic World"]
+    let banners = ["thor", "thor", "thor"]
+    let movies = ["Drifting Home", "Jurassic World","Drifting Home","Drifting Home","Drifting Home"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
