@@ -15,7 +15,10 @@ final class MainViewController: UIViewController {
     private let contentView = UIView()
 
     private lazy var topCollectionView: UICollectionView = {
-        let topLayout = ArcLayout()
+        let topLayout = UICollectionViewFlowLayout()
+               topLayout.scrollDirection = .horizontal
+               topLayout.minimumLineSpacing = 16
+               topLayout.sectionInset = .init(top: 0, left: 16, bottom: 0, right: 16)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: topLayout)
         collectionView.backgroundColor = .clear
         collectionView.delegate = self
@@ -207,7 +210,7 @@ final class MainViewController: UIViewController {
 
 // MARK: CollectionView
 
-extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
+extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == topCollectionView {
             return banners.count
@@ -240,34 +243,30 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView == topCollectionView {
-            return CGSize(width: collectionView.bounds.width - 32, height: 220)
+            return CGSize(width: 200, height: 280)
         } else {
             let title = categories[indexPath.item]
             let width = (title as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: 14)]).width + 32
             return CGSize(width: width, height: 32)
         }
     }
-    
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView,
-                                    withVelocity velocity: CGPoint,
-                                    targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        guard scrollView == topCollectionView else { return }
-        guard let layout = topCollectionView.collectionViewLayout as? ArcLayout else { return }
-        guard let cv = layout.collectionView else { return }
-
-        let maxOffsetX = layout.collectionViewContentSize.width - cv.bounds.width
-        let proposedOffset = targetContentOffset.pointee.x
-
-        let currentAngle = layout.angleAtExtreme * proposedOffset / maxOffsetX
-        let index = round(-currentAngle / layout.anglePerItem)
-
-        let newAngle = -layout.anglePerItem * index
-        let newOffset = (newAngle / layout.angleAtExtreme) * maxOffsetX
-
-        targetContentOffset.pointee = CGPoint(x: newOffset, y: 0)
-    }
-
 }
+
+// MARK: CollectionView Delegate
+
+extension MainViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == topCollectionView {
+            //
+        } else {
+            // Для CategoryCell
+            if let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell {
+                cell.isCellSelected.toggle()
+            }
+        }
+    }
+}
+
 
 // MARK: TableView
 

@@ -13,6 +13,12 @@ final class CategoryCell: UICollectionViewCell {
     private let titleLabel = UILabel()
     private let bgView = UIView()
 
+    var isCellSelected: Bool = false {
+        didSet {
+            updateCellState()
+        }
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         bgView.backgroundColor = UIColor.systemGray6
@@ -40,5 +46,15 @@ final class CategoryCell: UICollectionViewCell {
 
     func configure(title: String) {
         titleLabel.text = title
+    }
+    
+    private func updateCellState() {
+        if isCellSelected {
+            bgView.backgroundColor = UIColor(named: "mainViolet")
+            titleLabel.textColor = UIColor.white
+        } else {
+            bgView.backgroundColor = UIColor.systemGray6
+            titleLabel.textColor = .black
+        }
     }
 }
