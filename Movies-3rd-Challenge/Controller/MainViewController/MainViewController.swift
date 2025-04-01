@@ -122,7 +122,7 @@ final class MainViewController: UIViewController {
         return button
     }()
     
-    let banners = ["thor", "thor", "thor"]
+    let banners = ["rectPoster", "rectPoster", "rectPoster"]
     let movies = ["Drifting Home", "Jurassic World","Drifting Home","Drifting Home","Drifting Home"]
 
     override func viewDidLoad() {
@@ -219,8 +219,10 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == topCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TopCell", for: indexPath) as! TopCell
-            cell.configure(with: banners[indexPath.item])
-            return cell
+            cell.configure(imageName: banners[indexPath.item],
+                           category: categories[indexPath.item],
+                           title: "ThorThorThor")
+                return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
             cell.configure(title: categories[indexPath.item])
