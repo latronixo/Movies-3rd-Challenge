@@ -277,8 +277,18 @@ extension MainViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell", for: indexPath) as! MovieTableViewCell
-        cell.configure(title: movies[indexPath.row], rating: "111", imageName: "miniPoster")
+        cell.configure(title: movies[indexPath.row],
+                       rating: "111",
+                       imageName: "miniPoster",
+                       duration: "124 min",
+                       category: categories[indexPath.row])
         return cell
+    }
+}
+
+extension MainViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
     }
 }
 
