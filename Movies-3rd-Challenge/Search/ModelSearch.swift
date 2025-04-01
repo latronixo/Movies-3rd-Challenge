@@ -5,7 +5,7 @@
 //  Created by Валентин Картошкин on 01.04.2025.
 //
 
-import UIKit
+import Foundation
 import Kingfisher // Для загрузки изображений
 
 // Структура для хранения данных фильма
@@ -44,27 +44,45 @@ struct Movie: Decodable {
 
 // Структура ответа API
 struct MovieResponse: Decodable {
-    let results: [Movie]
-    let page: Int
-    let total_results: Int
-    let total_pages: Int
+    let id: Int
+    let name: String
+    let year: Int
+    let movieLength: Int
+    let poster: Poster
+    let genres: [Genre]
     
-    private enum CodingKeys: String, CodingKey {
-        case results
-        case page
-        case total_results
-        case total_pages
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        results = try container.decode([Movie].self, forKey: .results)
-        page = try container.decode(Int.self, forKey: .page)
-        total_results = try container.decode(Int.self, forKey: .total_results)
-        total_pages = try container.decode(Int.self, forKey: .total_pages)
-    }
 }
+
+struct Poster: Decodable {
+    let previewUrl: URL
+}
+
+struct Genre: Decodable {
+    let name: String
+}
+
+//struct MovieResponse: Decodable {
+//    let results: [Movie]
+//    let page: Int
+//    let total_results: Int
+//    let total_pages: Int
+//    
+//    private enum CodingKeys: String, CodingKey {
+//        case results
+//        case page
+//        case total_results
+//        case total_pages
+//    }
+//    
+//    init(from decoder: Decoder) throws {
+//        let container = try decoder.container(keyedBy: CodingKeys.self)
+//        
+//        results = try container.decode([Movie].self, forKey: .results)
+//        page = try container.decode(Int.self, forKey: .page)
+//        total_results = try container.decode(Int.self, forKey: .total_results)
+//        total_pages = try container.decode(Int.self, forKey: .total_pages)
+//    }
+//}
 
 // Расширения для форматирования данных
 extension Movie {

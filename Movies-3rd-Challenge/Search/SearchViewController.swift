@@ -126,12 +126,13 @@ final class SearchViewController: UIViewController {
         isLoadingMore = true
         
         let parameters: [String: Any] = [
-            "query": searchText,
-            "genre": selectedGenre ?? "",
-            "page": page,
+            "query": "Павел", // searchText,
+            //"genre": selectedGenre ?? "",
+            "page": 1, //page,
+            "limit": 10,
             "api_key": apiKey
         ]
-        AF.request("https://api.kinopoisk.dev/v1.4/movie", method: .get, parameters: parameters).responseJSON { response in debugPrint(response) }  
+        //AF.request("https://api.kinopoisk.dev/v1.4/movie/search", method: .get, parameters: parameters).responseDecodable { response in debugPrint(response) }
         
         AF.request("https://api.kinopoisk.dev/v1.4/movie", parameters: parameters)
             .responseDecodable(of: MovieResponse.self) { [weak self] response in
