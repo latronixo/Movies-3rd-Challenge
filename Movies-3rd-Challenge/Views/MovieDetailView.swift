@@ -12,17 +12,21 @@ class TempMovieDetailView: UIView {
     private let starCount: Int = 5
     private var stars: [UIImageView] = []
     
-//    lazy var titleLabel: UILabel = {
-//        let label = UILabel()
-//        label.attributedText = NSAttributedString(
-//            string: "Мой стильный заголовок",
-//            attributes: [
-//                .font: UIFont.boldSystemFont(ofSize: 18),
-//                .foregroundColor: UIColor.red
-//            ]
-//        )
-//        return label
-//    }()
+    lazy var imageOfMovie: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "Movie")
+        imageView.layer.cornerRadius = 16
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
+    lazy var titleOfMovie: UILabel = {
+        let label = UILabel()
+        label.text = "Movie"
+        label.font = .systemFont(ofSize: 24)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
     //MARK: calendarStack
     lazy var calendarImage: UIImageView = {
@@ -78,7 +82,7 @@ class TempMovieDetailView: UIView {
         stackView.axis = .horizontal
         return stackView
     }()
-    
+    //MARK: StackForMiniElemets
     lazy var stackInfoMovie: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [stackOfDate, stackOfDuration, stackOfCategory])
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -88,7 +92,15 @@ class TempMovieDetailView: UIView {
     //MARK: Stars
     lazy var starStack: UIStackView = {
         let stackView = UIStackView()
+        stackView.axis = .horizontal
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+
+    lazy var movieStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [titleOfMovie, stackInfoMovie, starStack])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
         return stackView
     }()
     
@@ -105,7 +117,7 @@ class TempMovieDetailView: UIView {
         return label
     }()
     
-    lazy var stackOfInfo: UIStackView = {
+    lazy var descriptionStack: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [storyLine, descriptionOfMovie])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
@@ -122,6 +134,14 @@ class TempMovieDetailView: UIView {
         return collectionView
     }()
     
+    lazy var actorsStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [labelOfCollection, actorsCollectionView])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        return stackView
+    }()
+    
+    
     init() {
         super.init(frame: .zero)
         makeStars()
@@ -130,6 +150,11 @@ class TempMovieDetailView: UIView {
     }
     
     private func setView(){
+        addSubview(imageOfMovie)
+        addSubview(movieStack)
+        addSubview(descriptionStack)
+        addSubview(actorsStack)
+        
         
         
     }
