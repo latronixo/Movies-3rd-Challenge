@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6BDA64242D9C1B03003B6709 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 6BDA64232D9C1B03003B6709 /* Kingfisher */; };
+		6BDA64272D9C2081003B6709 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6BDA64262D9C2081003B6709 /* Alamofire */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		6BB614AE2D96D8B4001A86B8 /* Movies-3rd-Challenge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Movies-3rd-Challenge.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +41,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6BDA64242D9C1B03003B6709 /* Kingfisher in Frameworks */,
+				6BDA64272D9C2081003B6709 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +85,8 @@
 			);
 			name = "Movies-3rd-Challenge";
 			packageProductDependencies = (
+				6BDA64232D9C1B03003B6709 /* Kingfisher */,
+				6BDA64262D9C2081003B6709 /* Alamofire */,
 			);
 			productName = "Movies-3rd-Challenge";
 			productReference = 6BB614AE2D96D8B4001A86B8 /* Movies-3rd-Challenge.app */;
@@ -107,6 +116,10 @@
 			);
 			mainGroup = 6BB614A52D96D8B4001A86B8;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				6BDA64252D9C2081003B6709 /* XCRemoteSwiftPackageReference "alamofire" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6BB614AF2D96D8B4001A86B8 /* Products */;
 			projectDirPath = "";
@@ -347,6 +360,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.3.1;
+			};
+		};
+		6BDA64252D9C2081003B6709 /* XCRemoteSwiftPackageReference "alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/alamofire/alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6BDA64232D9C1B03003B6709 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		6BDA64262D9C2081003B6709 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6BDA64252D9C2081003B6709 /* XCRemoteSwiftPackageReference "alamofire" */;
+			productName = Alamofire;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6BB614A62D96D8B4001A86B8 /* Project object */;
 }

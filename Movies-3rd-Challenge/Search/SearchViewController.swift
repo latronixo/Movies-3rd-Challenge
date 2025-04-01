@@ -6,17 +6,10 @@
 //
 
 import UIKit
-//import Kingfisher // Для загрузки изображений
+import Kingfisher // Для загрузки изображений
+import Alamofire
 
 final class SearchViewController: UIViewController {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        <#code#>
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        <#code#>
-    }
-    
     
     // MARK: - Properties
     private var searchText: String = ""
@@ -49,6 +42,7 @@ final class SearchViewController: UIViewController {
         allButton.isSelected = true
         
         let genres = ["Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Horror", "Mystery", "Romance", "Sci-Fi", "Thriller"]
+        
         return [allButton] + genres.map { genre in
             let button = UIButton(type: .system)
             button.setTitle(genre, for: .normal)
@@ -71,6 +65,9 @@ final class SearchViewController: UIViewController {
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        title = "Search"
+        
         view.backgroundColor = .white
         setupUI()
         setupConstraints()
@@ -134,85 +131,142 @@ final class SearchViewController: UIViewController {
             "page": page,
             "api_key": apiKey
         ]
+        AF.request("https://api.kinopoisk.dev/v1.4/movie", method: .get, parameters: parameters).responseJSON { response in debugPrint(response) }  
         
-        AF.request("https://api.kinopoisk.dev/v1/movies", parameters: parameters)
+        AF.request("https://api.kinopoisk.dev/v1.4/movie", parameters: parameters)
             .responseDecodable(of: MovieResponse.self) { [weak self] response in
                 guard let self = self else { return }
                 
                 switch response.result {
-                case .success(let result):
-                    if self.page == 1 {
-                        self.movies = result.results
-                    } else {
-                        self.movies.append(contentsOf: result.results)
-                    }
-                    self.tableView.reloadData()
-                    self.isLoadingMore = false
-                    self.page += 1
-                    
-                case .failure(let error):
-                    print("Error fetching movies: \(error)")
-                    self.isLoadingMore = false
+                    case .success(let result):
+                        if self.page == 1 {
+                            self.movies = result.results
+                        } else {
+                            self.movies.append(contentsOf: result.results)
+                        }
+                        self.tableView.reloadData()
+                        self.isLoadingMore = false
+                        self.page += 1
+                        
+                    case .failure(let error):
+                        print("Error fetching movies: \(error)")
+                        self.isLoadingMore = false
                 }
             }
     }
+    
+    // MARK: - Genre Button Actions
+    @objc private func genreButtonTapped(_ sender: UIButton) {
+        genreButtons.forEach { $0.isSelected = ($0 == sender) }
+        
+        if let title = sender.currentTitle {
+            selectedGenre = (title == "All") ? nil : title
+        }
+        
+        page = 1
+        movies.removeAll()
+        tableView.reloadData()
+        fetchMovies()
+    }
+
 }
 
-        // MARK: - UITableViewDataSource
-        extension SearchViewController: UITableViewDataSource {
-            func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-                return movies.count
-            }
-            
-            func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-                let cell = tableView.dequeueReusableCell(withIdentifier: MovieCell.identifier, for: indexPath) as! MovieCell
-                
-                let movie = movies[indexPath.row]
-                cell.configure(with: movie)
-                
-                return cell
-            }
-        }
+// MARK: - UITableViewDataSource
+extension SearchViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return movies.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MovieCell.identifier, for: indexPath) as! MovieCell
+        
+        let movie = movies[indexPath.row]
+        cell.configure(with: movie)
+        
+        return cell
+    }
+}
 
-        // MARK: - UITableViewDelegate
-        extension SearchViewController: UITableViewDelegate {
-            func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-                if indexPath.row == movies.count - 1 && !isLoadingMore {
-                    fetchMovies()
-                }
-            }
-        }
-
-        // MARK: - UISearchBarDelegate
-        extension SearchViewController: UISearchBarDelegate {
-            func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-                self.searchText = searchText
-                page = 1
-                movies.removeAll()
-                tableView.reloadData()
-                fetchMovies()
-            }
-            
-            func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-                searchBar.text = ""
-                searchBar.resignFirstResponder()
-            }
-        }
-
-        // MARK: - Genre Button Actions
-        @objc private func genreButtonTapped(_ sender: UIButton) {
-            genreButtons.forEach { $0.isSelected = ($0 == sender) }
-            
-            if let title = sender.currentTitle {
-                selectedGenre = (title == "All") ? nil : title
-            }
-            
-            page = 1
-            movies.removeAll()
-            tableView.reloadData()
+// MARK: - UITableViewDelegate
+extension SearchViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == movies.count - 1 && !isLoadingMore {
             fetchMovies()
         }
+    }
+}
 
+// MARK: - UISearchBarDelegate
+extension SearchViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        self.searchText = searchText
+        page = 1
+        movies.removeAll()
+        tableView.reloadData()
+        fetchMovies()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+    }
+}
 
+// MARK: - Networking Helper
+extension SearchViewController {
+    // Метод для очистки поиска
+    private func clearSearch() {
+        searchText = ""
+        page = 1
+        movies.removeAll()
+        tableView.reloadData()
+        fetchMovies()
+    }
 
+    // Метод для формирования параметров запроса
+    private func requestParameters() -> Parameters {
+    var params: Parameters = [
+        "api_key": apiKey,
+        "page": String(page)
+    ]
+
+    if !searchText.isEmpty {
+        params["query"] = searchText
+    }
+
+    if let genre = selectedGenre, genre != "All" {
+        params["with_genres"] = genre
+    }
+
+    return params
+    }
+}
+
+// MARK: - UI Improvements
+extension SearchViewController {
+     // Добавление тени под tableView
+     override func viewDidLayoutSubviews() {
+         super.viewDidLayoutSubviews()
+         tableView.layer.shadowPath = UIBezierPath(rect: tableView.bounds).cgPath
+         tableView.layer.shadowColor = UIColor.lightGray.cgColor
+         tableView.layer.shadowOpacity = 0.3
+         tableView.layer.shadowRadius = 5
+         tableView.layer.shadowOffset = CGSize(width: 0, height: 5)
+     }
+}
+
+// MARK: - Error Handling
+extension SearchViewController {
+ // Обработка ошибок API
+ private func handleError(_ error: Error) {
+ let alert = UIAlertController(title: "Ошибка",
+ message: "Не удалось загрузить данные. Проверьте подключение к интернету.",
+ preferredStyle: .alert)
+ 
+ alert.addAction(UIAlertAction(title: "Повторить", style: .default) { _ in
+ self.fetchMovies()
+ })
+ 
+ present(alert, animated: true)
+ }
 }

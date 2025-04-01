@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher // Для загрузки изображений
 
 class MovieCell: UITableViewCell {
 
@@ -127,5 +128,26 @@ class MovieCell: UITableViewCell {
 
     @objc func favoriteButtonTapped() {
         // Логика добавления в избранное
+    }
+}
+
+// MARK: - MovieCell Improvements
+    
+extension MovieCell {
+     // Добавление закругленных углов
+    override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
+        let size = super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalPriority, verticalFittingPriority: verticalFittingPriority)
+        return CGSize(width: size.width + 32, height: size.height + 16)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        // Устанавливаем отступы для contentView
+        contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16))
+        
+        // Закругленные углы
+        contentView.layer.cornerRadius = 12
+        contentView.layer.masksToBounds = true
     }
 }
