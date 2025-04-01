@@ -25,6 +25,15 @@ final class TopCell: UICollectionViewCell {
             imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
         ])
     }
+    
+    override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
+        super.apply(layoutAttributes)
+
+        guard let attrs = layoutAttributes as? CircularCollectionViewLayoutAttributes else { return }
+
+        self.layer.anchorPoint = attrs.anchorPoint
+        self.center.y += (attrs.anchorPoint.y - 0.5) * bounds.height
+    }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 

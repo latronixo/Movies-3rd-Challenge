@@ -15,10 +15,7 @@ final class MainViewController: UIViewController {
     private let contentView = UIView()
 
     private lazy var topCollectionView: UICollectionView = {
-        let topLayout = UICollectionViewFlowLayout()
-        topLayout.scrollDirection = .horizontal
-        topLayout.minimumLineSpacing = 16
-        topLayout.sectionInset = .init(top: 0, left: 16, bottom: 0, right: 16)
+        let topLayout = ArcLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: topLayout)
         collectionView.backgroundColor = .clear
         collectionView.delegate = self
@@ -33,7 +30,7 @@ final class MainViewController: UIViewController {
     private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.numberOfPages = banners.count
-        pageControl.currentPage = 0
+        pageControl.currentPage = 1
         pageControl.pageIndicatorTintColor = .gray
         pageControl.currentPageIndicatorTintColor = UIColor(named: "mainViolet")
         pageControl.isUserInteractionEnabled = false
@@ -63,7 +60,7 @@ final class MainViewController: UIViewController {
         tableView.rowHeight = 80
         tableView.separatorStyle = .none
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.isScrollEnabled = true
+        tableView.isScrollEnabled = false
         return tableView
     }()
 
@@ -118,14 +115,14 @@ final class MainViewController: UIViewController {
     private lazy var seeAllButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("See All", for: .normal)
-        button.setTitleColor(.systemPurple, for: .normal)
+        button.tintColor = UIColor(named: "mainViolet")
         button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(seeAllTapped), for: .touchUpInside)
         return button
     }()
     
-    let banners = ["thor", "encanto", "seabeast"]
+    let banners = ["thor", "encanto", "encanto", "encanto", "seabeast"]
     let movies = ["Drifting Home", "Jurassic World"]
 
     override func viewDidLoad() {
@@ -173,8 +170,8 @@ final class MainViewController: UIViewController {
             headerStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             headerStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             
-            topCollectionView.topAnchor.constraint(equalTo: headerStack.bottomAnchor, constant: 25),
-            topCollectionView.heightAnchor.constraint(equalToConstant: 250),
+            topCollectionView.topAnchor.constraint(equalTo: headerStack.bottomAnchor, constant: 0),
+            topCollectionView.heightAnchor.constraint(equalToConstant: 300),
             topCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             topCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
 
@@ -208,9 +205,9 @@ final class MainViewController: UIViewController {
     }
 }
 
-// MARK: CollectionView DataSource
+// MARK: CollectionView
 
-extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == topCollectionView {
             return banners.count
@@ -248,6 +245,26 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
             return CGSize(width: width, height: 32)
         }
     }
+    
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView,
+                                    withVelocity velocity: CGPoint,
+                                    targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        guard scrollView == topCollectionView else { return }
+        guard let layout = topCollectionView.collectionViewLayout as? ArcLayout else { return }
+        guard let cv = layout.collectionView else { return }
+
+        let maxOffsetX = layout.collectionViewContentSize.width - cv.bounds.width
+        let proposedOffset = targetContentOffset.pointee.x
+
+        let currentAngle = layout.angleAtExtreme * proposedOffset / maxOffsetX
+        let index = round(-currentAngle / layout.anglePerItem)
+
+        let newAngle = -layout.anglePerItem * index
+        let newOffset = (newAngle / layout.angleAtExtreme) * maxOffsetX
+
+        targetContentOffset.pointee = CGPoint(x: newOffset, y: 0)
+    }
+
 }
 
 // MARK: TableView
@@ -263,5 +280,7 @@ extension MainViewController: UITableViewDataSource {
         return cell
     }
 }
+
+
 
 #Preview { MainViewController()}
