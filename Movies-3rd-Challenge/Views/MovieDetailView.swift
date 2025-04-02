@@ -140,6 +140,14 @@ class TempMovieDetailView: UIView {
         stackView.axis = .vertical
         return stackView
     }()
+    //MARK: Button
+    
+    lazy var wathchButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Watch Now", for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
     
     
     init() {
@@ -154,11 +162,29 @@ class TempMovieDetailView: UIView {
         addSubview(movieStack)
         addSubview(descriptionStack)
         addSubview(actorsStack)
-        
-        
-        
+        addSubview(wathchButton)
     }
     private func setConstraint(){
+        NSLayoutConstraint.activate([
+            imageOfMovie.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 30),
+            imageOfMovie.heightAnchor.constraint(equalToConstant: 300),
+            imageOfMovie.widthAnchor.constraint(equalToConstant: 224),
+            
+            movieStack.topAnchor.constraint(equalTo: imageOfMovie.bottomAnchor, constant: 24),
+            movieStack.leftAnchor.constraint(equalTo: leftAnchor, constant: 40),
+            movieStack.rightAnchor.constraint(equalTo: rightAnchor, constant: -40),
+            
+            descriptionStack.topAnchor.constraint(equalTo: movieStack.bottomAnchor, constant: 32),
+            descriptionStack.leftAnchor.constraint(equalTo: leftAnchor, constant: 24),
+            descriptionStack.rightAnchor.constraint(equalTo: rightAnchor, constant: -24),
+            
+            actorsStack.topAnchor.constraint(equalTo: descriptionStack.bottomAnchor, constant: 24),
+            actorsStack.leftAnchor.constraint(equalTo: leftAnchor, constant: 24),
+            actorsStack.rightAnchor.constraint(equalTo: rightAnchor),
+            
+            wathchButton.topAnchor.constraint(equalTo: actorsStack.bottomAnchor, constant: 27),
+            wathchButton.heightAnchor.constraint(equalToConstant: 56),
+            wathchButton.widthAnchor.constraint(equalToConstant: 181)])
         
     }
     required init?(coder: NSCoder) {
