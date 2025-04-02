@@ -72,7 +72,7 @@ class SettingsViewController: UIViewController {
         let label = UILabel()
         label.text = "Security"
         label.font = UIFont.systemFont(ofSize: 13)
-        label.textColor = .black
+        label.textColor = UIColor.label
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -93,7 +93,7 @@ class SettingsViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle("  Forgot Password", for: .normal)
         button.setTitleColor(.black, for: .normal)
-        button.setImage(UIImage(systemName: "lock"), for: .normal)
+        button.setImage(UIImage(systemName: "exclamationmark.lock"), for: .normal)
         button.tintColor = .black
         button.contentHorizontalAlignment = .leading
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -103,16 +103,19 @@ class SettingsViewController: UIViewController {
 
     private lazy var darkModeLabel: UILabel = {
         let label = UILabel()
-        label.text = "Dark Mode"
-        label.font = UIFont.systemFont(ofSize: 16)
-        label.textColor = .black
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+            label.attributedText = makeLabelWithIcon(
+                text: "Dark Mode",
+                iconName: "square.and.pencil"
+            )
+            label.font = UIFont.systemFont(ofSize: 16)
+            label.textColor = UIColor.label
+            label.translatesAutoresizingMaskIntoConstraints = false
+            return label
     }()
 
     private lazy var darkModeSwitch: UISwitch = {
         let toggle = UISwitch()
-        toggle.isOn = false
+        toggle.isOn = UserDefaults.standard.bool(forKey: "isDarkMode")
         toggle.onTintColor = UIColor(named: "mainViolet")
         toggle.translatesAutoresizingMaskIntoConstraints = false
         toggle.addTarget(self, action: #selector(darkModeSwitchChanged), for: .valueChanged)
@@ -142,7 +145,7 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        title = "Setting"
+//        title = "Settings"
         setupUI()
     }
 
@@ -214,28 +217,61 @@ class SettingsViewController: UIViewController {
             logoutButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
+    
+    private func makeLabelWithIcon(text: String, iconName: String) -> NSAttributedString {
+        let attachment = NSTextAttachment()
+        attachment.image = UIImage(systemName: iconName)
+        attachment.bounds = CGRect(x: 0, y: -2, width: 22, height: 22)
+
+        let attachmentString = NSAttributedString(attachment: attachment)
+        let textString = NSAttributedString(string: "  \(text)", attributes: [
+            .font: UIFont.systemFont(ofSize: 16),
+            .foregroundColor: UIColor.black
+        ])
+
+        let result = NSMutableAttributedString()
+        result.append(attachmentString)
+        result.append(textString)
+
+        return result
+    }
+    
+    private func setAppTheme(to style: UIUserInterfaceStyle) {
+        UserDefaults.standard.set(style == .dark, forKey: "isDarkMode")
+
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+               if let window = windowScene.windows.first {
+                   window.overrideUserInterfaceStyle = style
+               }
+           }
+      }
 
     // MARK: - Actions
 
     @objc private func profileButtonTapped() {
-        print("Profile button tapped")
+        let profileVC = ProfileViewController()
+        navigationController?.pushViewController(profileVC, animated: true)
     }
 
     @objc private func changePasswordButtonTapped() {
-        print("Change password tapped")
+
     }
 
     @objc private func forgotPasswordButtonTapped() {
-        print("Forgot password tapped")
+ 
     }
 
     @objc private func darkModeSwitchChanged() {
-        //
-     }
+        if darkModeSwitch.isOn {
+            setAppTheme(to: .dark)
+        } else {
+            setAppTheme(to: .light)
+        }
+    }
 
     @objc private func logoutButtonTapped() {
-        print("Logout tapped")
-     }
+     
+    }
 }
 
 
