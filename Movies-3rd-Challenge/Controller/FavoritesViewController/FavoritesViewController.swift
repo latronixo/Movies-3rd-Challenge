@@ -16,11 +16,63 @@ class FavoritesViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        setViews()
+        setDelegates()
+        setupConstraints()
     }
     
+    // MARK: - Private Properties
+    
+    private var favorites: [Movie] = [movie1, movie2, movie3]
+    
+    // MARK: - Set Views
+    
     private func setViews() {
+        view.backgroundColor = .white
+        
+        tableView.register(MovieCell.self, forCellReuseIdentifier: K.MovieCellIndetifier)
+        tableView.separatorStyle = .none
+        tableView.showsVerticalScrollIndicator = false
+        
         view.addSubview(tableView)
     }
+    
+    // MARK: - Set Delegates
+    
+    private func setDelegates() {
+        tableView.dataSource = self
+        tableView.delegate = self
+    }
+}
 
+// MARK: - UITableViewDataSource, UITableViewDelegate
+
+extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return favorites.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: K.MovieCellIndetifier, for: indexPath) as? MovieCell else { fatalError() }
+        
+        let favoriteMovie = favorites[indexPath.row]
+        cell.selectionStyle = .none
+        cell.configure(with: favoriteMovie)
+        return cell
+    }
+}
+
+// MARK: - Setup Constraints
+
+extension FavoritesViewController {
+    private func setupConstraints() {
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        ])
+    }
 }

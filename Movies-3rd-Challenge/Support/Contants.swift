@@ -6,5 +6,5 @@
 //
 
 struct K {
-    static let cellIndetifier = "ReusableCell"
+    static let MovieCellIndetifier = "ReusableCell"
 }

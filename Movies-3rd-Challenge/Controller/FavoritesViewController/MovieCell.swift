@@ -32,7 +32,7 @@ class MovieCell: UITableViewCell {
     
     private lazy var infoStackView: UIStackView = {
         let element = UIStackView()
-        
+        element.axis = .vertical
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -44,9 +44,23 @@ class MovieCell: UITableViewCell {
         return element
     }()
     
-    private lazy var movieLengthLabel: UILabel = {
+    private lazy var timeStackView: UIStackView = {
+        let element = UIStackView()
+        element.distribution = .equalSpacing
+        element.contentMode = .scaleToFill
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    private lazy var timeIcon: UIImageView = {
+        let element = UIImageView()
+        element.image = UIImage(systemName: "clock.fill")
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
+    private lazy var timeLabel: UILabel = {
         let element = UILabel()
-        
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -55,7 +69,6 @@ class MovieCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
         setViews()
         setupConstraints()
     }
@@ -69,7 +82,7 @@ class MovieCell: UITableViewCell {
     public func configure(with model: Movie) {
         nameLabel.text = model.name
         movieImage.image = UIImage(named: model.image)
-        
+        timeLabel.text = String(model.movieLength) + " Minutes"
     }
     
     // MARK: - Set Views
@@ -80,7 +93,11 @@ class MovieCell: UITableViewCell {
         mainStackView.addArrangedSubview(movieImage)
         mainStackView.addArrangedSubview(infoStackView)
         
-        infoStackView.addSubview(nameLabel)
+        infoStackView.addArrangedSubview(nameLabel)
+        infoStackView.addArrangedSubview(timeStackView)
+        
+        timeStackView.addArrangedSubview(timeIcon)
+        timeStackView.addArrangedSubview(timeLabel)
     }
 }
 
