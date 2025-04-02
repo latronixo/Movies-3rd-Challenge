@@ -17,7 +17,7 @@ final class SearchViewController: UIViewController {
     private var movies: [Movie] = []
     private var isLoadingMore = false
     private var page = 1
-    private let apiKey = "T1SJKZS-D5J4ZM1-NAJX5GY-B2R5K5S"
+    private let apiKey = Constants.apiKey
     
     // MARK: - UI Components
     private lazy var searchBar: UISearchBar = {
