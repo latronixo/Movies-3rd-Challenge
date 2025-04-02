@@ -6,16 +6,15 @@
 //
 import UIKit
 
-
 final class OnboardingViewController: UIViewController {
     
     // MARK: - Properties
     private let onboardingView = OnboardingView()
     
     private let slides: [(image: String, title: String, description: String)] = [
-        ("FirstSlide", "Watch your favorite movie easily", "Semper in cursus magna et eu varius nunc adipiscing. Elementum justo, laoreet id sem ."),
-        ("SecondSlide", "Watch your favorite movie easily", "Semper in cursus magna et eu varius nunc adipiscing. Elementum justo, laoreet id sem ."),
-        ("TomCruse", "Watch your favorite movie easily", "Semper in cursus magna et eu varius nunc adipiscing. Elementum justo, laoreet id sem ."),
+        ("FirstSlide", "Watch your favorite movie easily", "Discover the world of high-quality video content and enjoy it with us. Find your movie."),
+        ("SecondSlide", "Watch on any Device", "Stream on your phone, tablet, laptop, and TV without paying more."),
+        ("TomCruse", "Download and Go", "Save your data, watch offline on a plane,train, or rocket."),
     ]
     
     private lazy var collectionView: UICollectionView = {
@@ -23,7 +22,6 @@ final class OnboardingViewController: UIViewController {
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
-        layout.itemSize = CGSize(width: 332, height: 614) // Устанавливаем фиксированный размер ячейки
         
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.backgroundColor = .clear
@@ -33,24 +31,19 @@ final class OnboardingViewController: UIViewController {
         cv.dataSource = self
         cv.register(OnboardingCell.self, forCellWithReuseIdentifier: "OnboardingCell")
         cv.translatesAutoresizingMaskIntoConstraints = false
-        cv.clipsToBounds = false // Важно! Отключаем обрезку содержимого
+        cv.clipsToBounds = false
         return cv
     }()
     
     private let pageControl: UIPageControl = {
         let pc = UIPageControl()
         pc.currentPageIndicatorTintColor = .onboardingBG
-        pc.pageIndicatorTintColor = .systemGray5
+        pc.pageIndicatorTintColor = .systemGray2
         pc.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Настраиваем размер точек
-        pc.preferredIndicatorImage = UIImage.circle(diameter: 6)
-        pc.preferredCurrentPageIndicatorImage = UIImage.circle(diameter: 6)
-        
         return pc
     }()
     
-    // MARK: - Methods
+    // MARK: - Lifecycle Methods
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
@@ -67,40 +60,53 @@ final class OnboardingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupUI()
-        setupConstraints()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        collectionView.collectionViewLayout.invalidateLayout()
+    }
+    
+    // MARK: - UI Setup
     private func setupUI() {
         view.addSubview(collectionView)
         view.addSubview(pageControl)
         
         pageControl.numberOfPages = slides.count
         pageControl.transform = CGAffineTransform(scaleX: 1.5, y: 1.5) // Увеличиваем размер точек
-    }
-    
-    private func setupConstraints() {
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -46),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            pageControl.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -335),
-            pageControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 160),
-            pageControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -160)
+            pageControl.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -397)
         ])
     }
     
-    @objc private func slideButtonTapped() {
-        print("I'mtapped")
+    // MARK: - Button Actions
+    @objc private func startButtonTapped() {
+        let homeVC = TabBarController()
+        homeVC.modalPresentationStyle = .fullScreen
+        present(homeVC, animated: true)
+    }
+    
+    private func scrollToNextSlide() {
+        let currentPage = pageControl.currentPage
+        if currentPage < slides.count - 1 {
+            let indexPath = IndexPath(item: currentPage + 1, section: 0)
+            collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+            pageControl.currentPage = currentPage + 1
+        }
     }
 }
 
 // MARK: - UICollectionViewDelegate & DataSource
-extension OnboardingViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension OnboardingViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, OnboardingCellDelegate {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return slides.count
@@ -114,28 +120,22 @@ extension OnboardingViewController: UICollectionViewDelegate, UICollectionViewDa
         
         let slide = slides[indexPath.item]
         let isLastCell = indexPath.item == slides.count - 1
+        
+        cell.delegate = self
+        cell.indexPath = indexPath
         cell.configure(
             image: slide.image,
+            additionalImages: isLastCell ? ["LeftMovie", "RightMovie"] : nil,
             title: slide.title,
             description: slide.description,
             isLastCell: isLastCell
         )
         
-        // Добавляем обработчик нажатия на кнопку
-        if isLastCell {
-            cell.imageView.clipsToBounds = true
-            cell.slideButton.setTitle("Start", for: .normal)
-            
-            cell.slideButton.addTarget(
-                    self,
-                    action: #selector(slideButtonTapped),
-                    for: .touchUpInside
-                )
-        } else {
-            cell.slideButton.setTitle("Continue", for: .normal)
-        }
-        
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return collectionView.bounds.size
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -143,15 +143,12 @@ extension OnboardingViewController: UICollectionViewDelegate, UICollectionViewDa
         pageControl.currentPage = Int(page)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 75 // Добавляем отступ между карточками
+    // MARK: - OnboardingCellDelegate
+    func didTapContinueButton(at index: Int) {
+        scrollToNextSlide()
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        let screenWidth = UIScreen.main.bounds.width
-        let cellWidth: CGFloat = 326
-        let inset = (screenWidth - cellWidth) / 2
-        return UIEdgeInsets(top: 0, left: inset, bottom: 0, right: inset)
+    func didTapStartButton() {
+        startButtonTapped()
     }
 }
-
