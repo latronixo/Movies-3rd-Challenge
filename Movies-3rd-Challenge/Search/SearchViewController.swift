@@ -6,13 +6,12 @@
 //
 
 import UIKit
-import Kingfisher // Для загрузки изображений
 import Alamofire
 
 final class SearchViewController: UIViewController {
     
     // MARK: - Properties
-    private var searchText: String = ""
+    private var searchText: String = "Павел"
     private var selectedGenre: String?
     private var movies: [Movie] = []
     private var isLoading = false
@@ -42,7 +41,7 @@ final class SearchViewController: UIViewController {
         allButton.addTarget(self, action: #selector(genreButtonTapped(_:)), for: .touchUpInside)
         allButton.isSelected = true
         
-        let genres = ["Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Horror", "Mystery", "Romance", "Sci-Fi", "Thriller"]
+        let genres = ["боевик", "приключения", "комедия", "мелодрама", "криминал", "биография", "драма", "история", "документальный", "короткометражка", "музыка", "мультфильм", "фэнтези", "семейный", "фантастика", "триллер"]
         
         return [allButton] + genres.map { genre in
             let button = UIButton(type: .system)
@@ -106,7 +105,7 @@ final class SearchViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: genreScroll.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
     

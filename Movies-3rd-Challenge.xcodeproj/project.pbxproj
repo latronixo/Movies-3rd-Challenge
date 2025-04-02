@@ -54,6 +54,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		18E97A2AAE7F33398E41A786 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E4F8E888B92ADD0A7AE44B26 /* Pods-Movies-3rd-Challenge.debug.xcconfig */,
+				0DEF8119CD52440FA7542852 /* Pods-Movies-3rd-Challenge.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		6BB614A52D96D8B4001A86B8 = {
 			isa = PBXGroup;
 			children = (
@@ -166,6 +175,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z4PKJ57KTJ;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Movies-3rd-Challenge/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Movies;
@@ -200,6 +210,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z4PKJ57KTJ;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Movies-3rd-Challenge/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Movies;
