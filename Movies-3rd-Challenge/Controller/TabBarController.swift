@@ -54,7 +54,7 @@ final class TabBarController: UITabBarController {
             case .recentWatch: return self.wrappedInNavigationController(with: TempRecentWatchViewController(), title: $0.title)
             case .home: return self.wrappedInNavigationController(with: MainViewController(), title: $0.title)
             case .wishlist: return self.wrappedInNavigationController(with: TempWishlistViewController(), title: $0.title)
-            case .settings: return self.wrappedInNavigationController(with: TempProfileViewController(), title: $0.title)
+            case .settings: return self.wrappedInNavigationController(with: SettingsViewController(), title: $0.title)
             }
         }
         
