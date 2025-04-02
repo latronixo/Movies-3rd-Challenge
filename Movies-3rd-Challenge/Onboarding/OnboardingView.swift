@@ -42,7 +42,7 @@ final class OnboardingView: UIView {
             onboardingBGImageView.heightAnchor.constraint(equalToConstant: 255),
             onboardingBGImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 34),
             onboardingBGImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
-            onboardingBGImageView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 40),
+            onboardingBGImageView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 10),
         ])
     }
 }
