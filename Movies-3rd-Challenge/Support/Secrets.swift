@@ -8,5 +8,5 @@
 import Foundation
 
 enum Constants {
-    static let apiKey = "T1SJKZS-D5J4ZM1-NAJX5GY-B2R5K5S"
+    static let apiKey = "enter your apiKey from https://t.me/kinopoiskdev_bot"
 }
