@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24D81" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="Movie" representedClassName="Movie" syncable="YES" codeGenerationType="class">
+    <entity name="CoreDataMovie" representedClassName="CoreDataMovie" syncable="YES" codeGenerationType="class">
         <attribute name="genres" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="movieLength" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>

@@ -32,7 +32,7 @@ class CoreDataManager {
         
         let context = appDelegate.persistentContainer.viewContext
         
-        let fetchRequest: NSFetchRequest<Movie> = Movie.fetchRequest()
+        let fetchRequest: NSFetchRequest<CoreDataMovie> = CoreDataMovie.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %d", id)
         
         do {
@@ -42,7 +42,7 @@ class CoreDataManager {
                 return
             }
             
-            let movie = Movie(context: context)
+            let movie = CoreDataMovie(context: context)
             movie.genres = genres
             movie.id = Int32(id)
             movie.movieLength = Int32(movieLength)
@@ -59,14 +59,14 @@ class CoreDataManager {
     }
     
     //MARK: Получение избранных фильмов
-    func fetchFavoritesMovies() -> [Movie] {
+    func fetchFavoritesMovies() -> [CoreDataMovie] {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             print("Ошмбка в app Delegate")
             return []
         }
         
         let context = appDelegate.persistentContainer.viewContext
-        let fetchRequest: NSFetchRequest<Movie> = Movie.fetchRequest()
+        let fetchRequest: NSFetchRequest<CoreDataMovie> = CoreDataMovie.fetchRequest()
         do {
             let movies = try context.fetch(fetchRequest)
             return movies
@@ -84,7 +84,7 @@ class CoreDataManager {
         }
         let context = appDelegate.persistentContainer.viewContext
 
-        let fetchRequest: NSFetchRequest<Movie> = Movie.fetchRequest()
+        let fetchRequest: NSFetchRequest<CoreDataMovie> = CoreDataMovie.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %d", id)
         
         do {
