@@ -23,7 +23,7 @@ class MovieCell: UITableViewCell {
 
     static let identifier = "MovieCell"
     
-    private lazy var movieImageView: UIImageView = {
+    private lazy var posterImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 8
@@ -44,7 +44,7 @@ class MovieCell: UITableViewCell {
         return label
     }()
 
-    private lazy var releaseDateLabel: UILabel = {
+    private lazy var yearLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
         label.textColor = .gray
@@ -62,7 +62,7 @@ class MovieCell: UITableViewCell {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "heart"), for: .normal)
         button.setImage(UIImage(systemName: "heart.fill"), for: .selected)
-        button.tintColor = .systemRed
+        button.tintColor = #colorLiteral(red: 0.7796905637, green: 0.8036449552, blue: 0.824585855, alpha: 1)
         button.addTarget(self, action: #selector(favoriteButtonTapped), for: .touchUpInside)
         return button
     }()
@@ -70,10 +70,10 @@ class MovieCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        contentView.addSubview(movieImageView)
+        contentView.addSubview(posterImageView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(durationLabel)
-        contentView.addSubview(releaseDateLabel)
+        contentView.addSubview(yearLabel)
         contentView.addSubview(genreLabel)
         contentView.addSubview(favoriteButton)
         
@@ -85,45 +85,51 @@ class MovieCell: UITableViewCell {
     }
 
     private func setupConstraints() {
-        movieImageView.translatesAutoresizingMaskIntoConstraints = false
+        posterImageView.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         durationLabel.translatesAutoresizingMaskIntoConstraints = false
-        releaseDateLabel.translatesAutoresizingMaskIntoConstraints = false
+        yearLabel.translatesAutoresizingMaskIntoConstraints = false
         genreLabel.translatesAutoresizingMaskIntoConstraints = false
         favoriteButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            movieImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            movieImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            movieImageView.widthAnchor.constraint(equalToConstant: 100),
-            movieImageView.heightAnchor.constraint(equalToConstant: 150),
+            posterImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            posterImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            posterImageView.widthAnchor.constraint(equalToConstant: 100),
+            posterImageView.heightAnchor.constraint(equalToConstant: 130),
             
-            titleLabel.leadingAnchor.constraint(equalTo: movieImageView.trailingAnchor, constant: 16),
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            titleLabel.leadingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: 16),
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
             
             durationLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             durationLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
             
-            releaseDateLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            releaseDateLabel.topAnchor.constraint(equalTo: durationLabel.bottomAnchor, constant: 4),
+            yearLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            yearLabel.topAnchor.constraint(equalTo: durationLabel.bottomAnchor, constant: 4),
             
             genreLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            genreLabel.topAnchor.constraint(equalTo: releaseDateLabel.bottomAnchor, constant: 4),
+            genreLabel.topAnchor.constraint(equalTo: yearLabel.bottomAnchor, constant: 4),
             
-            favoriteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            favoriteButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            favoriteButton.widthAnchor.constraint(equalToConstant: 32),
-            favoriteButton.heightAnchor.constraint(equalToConstant: 32)
+            favoriteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            favoriteButton.topAnchor.constraint(equalTo: contentView.topAnchor),
+            favoriteButton.widthAnchor.constraint(equalToConstant: 27),
+            favoriteButton.heightAnchor.constraint(equalToConstant: 27)
         ])
     }
 
     func configure(with movie: Movie) {
-        movieImageView.kf.setImage(with: movie.imageURL)
-        titleLabel.text = movie.title
-        durationLabel.text = movie.duration
-        releaseDateLabel.text = movie.releaseDate
-        genreLabel.text = movie.genre
-        favoriteButton.isSelected = movie.isFavorite
+        // Загружаем постер
+        if let previewURL = movie.poster.previewUrl, let url = URL(string: previewURL) {
+                posterImageView.kf.setImage(with: url)
+        } else {
+            posterImageView.image = UIImage(named: "posterNotFound")
+        }
+        
+        titleLabel.text = movie.name
+        yearLabel.text = String(movie.year)
+        durationLabel.text = "\(movie.movieLength) мин"
+        genreLabel.text = movie.genres.map { $0.name }.joined(separator: ", ")
+        //favoriteButton.isSelected = movie.isFavorite
     }
 
     @objc func favoriteButtonTapped() {
@@ -136,6 +142,7 @@ class MovieCell: UITableViewCell {
 extension MovieCell {
      // Добавление закругленных углов
     override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
+        
         let size = super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalPriority, verticalFittingPriority: verticalFittingPriority)
         return CGSize(width: size.width + 32, height: size.height + 16)
     }
@@ -147,7 +154,7 @@ extension MovieCell {
         contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16))
         
         // Закругленные углы
-        contentView.layer.cornerRadius = 12
-        contentView.layer.masksToBounds = true
+        posterImageView.layer.cornerRadius = 12
+        posterImageView.layer.masksToBounds = true
     }
 }

@@ -15,8 +15,9 @@ final class SearchViewController: UIViewController {
     private var searchText: String = ""
     private var selectedGenre: String?
     private var movies: [Movie] = []
-    private var isLoadingMore = false
-    private var page = 1
+    private var isLoading = false
+    private var currentPage = 1
+    private let limit = 10
     private let apiKey = Constants.apiKey
     
     // MARK: - UI Components
@@ -122,38 +123,39 @@ final class SearchViewController: UIViewController {
     
     // MARK: - Networking
     private func fetchMovies() {
-        guard !isLoadingMore else { return }
-        isLoadingMore = true
+        guard !isLoading else { return }
+        isLoading = true
         
         let parameters: [String: Any] = [
-            "query": "Павел", // searchText,
-            //"genre": selectedGenre ?? "",
-            "page": 1, //page,
-            "limit": 10,
-            "api_key": apiKey
+            "currentPage": currentPage,
+            "limit": limit,
+            "query": searchText == "" ? "Павел" : searchText,
+            "genres": selectedGenre ?? ""
         ]
         //AF.request("https://api.kinopoisk.dev/v1.4/movie/search", method: .get, parameters: parameters).responseDecodable { response in debugPrint(response) }
         
-        AF.request("https://api.kinopoisk.dev/v1.4/movie", parameters: parameters)
-            .responseDecodable(of: MovieResponse.self) { [weak self] response in
-                guard let self = self else { return }
-                
-                switch response.result {
-                    case .success(let result):
-                        if self.page == 1 {
-                            self.movies = result.results
+        AF.request("https://api.kinopoisk.dev/v1.4/movie/search",
+                       method: .get,
+                       parameters: parameters,
+                       headers: ["X-API-KEY": apiKey])
+                .responseDecodable(of: MovieResponse.self) { [weak self] response in
+                    guard let self = self else { return }
+                    
+                    self.isLoading = false
+                    
+                    switch response.result {
+                    case .success(let value):
+                        if self.currentPage == 1 {
+                            self.movies = value.docs
                         } else {
-                            self.movies.append(contentsOf: result.results)
+                            self.movies.append(contentsOf: value.docs)
                         }
                         self.tableView.reloadData()
-                        self.isLoadingMore = false
-                        self.page += 1
                         
                     case .failure(let error):
                         print("Error fetching movies: \(error)")
-                        self.isLoadingMore = false
+                    }
                 }
-            }
     }
     
     // MARK: - Genre Button Actions
@@ -164,7 +166,7 @@ final class SearchViewController: UIViewController {
             selectedGenre = (title == "All") ? nil : title
         }
         
-        page = 1
+        currentPage = 1
         movies.removeAll()
         tableView.reloadData()
         fetchMovies()
@@ -190,18 +192,27 @@ extension SearchViewController: UITableViewDataSource {
 
 // MARK: - UITableViewDelegate
 extension SearchViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == movies.count - 1 && !isLoadingMore {
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        // Загружаем следующую страницу, если достигли конца списка
+        if indexPath.row == movies.count - 1 && !isLoading {
+            currentPage += 1
             fetchMovies()
         }
     }
+
+//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//        if indexPath.row == movies.count - 1 && !isLoading {
+//            fetchMovies()
+//        }
+//    }
 }
 
 // MARK: - UISearchBarDelegate
 extension SearchViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         self.searchText = searchText
-        page = 1
+        currentPage = 1
         movies.removeAll()
         tableView.reloadData()
         fetchMovies()
@@ -218,7 +229,7 @@ extension SearchViewController {
     // Метод для очистки поиска
     private func clearSearch() {
         searchText = ""
-        page = 1
+        currentPage = 1
         movies.removeAll()
         tableView.reloadData()
         fetchMovies()
@@ -228,7 +239,7 @@ extension SearchViewController {
     private func requestParameters() -> Parameters {
     var params: Parameters = [
         "api_key": apiKey,
-        "page": String(page)
+        "currentPage": String(currentPage)
     ]
 
     if !searchText.isEmpty {
@@ -258,16 +269,15 @@ extension SearchViewController {
 
 // MARK: - Error Handling
 extension SearchViewController {
- // Обработка ошибок API
- private func handleError(_ error: Error) {
- let alert = UIAlertController(title: "Ошибка",
- message: "Не удалось загрузить данные. Проверьте подключение к интернету.",
- preferredStyle: .alert)
- 
- alert.addAction(UIAlertAction(title: "Повторить", style: .default) { _ in
- self.fetchMovies()
- })
- 
- present(alert, animated: true)
- }
+     // Обработка ошибок API
+     private func handleError(_ error: Error) {
+         let alert = UIAlertController(title: "Ошибка",
+         message: "Не удалось загрузить данные. Проверьте подключение к интернету.", preferredStyle: .alert)
+         
+         alert.addAction(UIAlertAction(title: "Повторить", style: .default) { _ in
+             self.fetchMovies()
+         } )
+     
+     present(alert, animated: true)
+     }
 }
