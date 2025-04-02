@@ -144,7 +144,7 @@ class SettingsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
 //        title = "Settings"
         setupUI()
     }
@@ -238,13 +238,17 @@ class SettingsViewController: UIViewController {
     
     private func setAppTheme(to style: UIUserInterfaceStyle) {
         UserDefaults.standard.set(style == .dark, forKey: "isDarkMode")
-
+        
+        if #available(iOS 13.0, *) {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                windowScene.windows.first?.overrideUserInterfaceStyle = style
+            }            }
+        
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-               if let window = windowScene.windows.first {
-                   window.overrideUserInterfaceStyle = style
-               }
-           }
-      }
+            windowScene.windows.first?.setNeedsLayout()
+            windowScene.windows.first?.layoutIfNeeded()
+        }
+    }
 
     // MARK: - Actions
 
