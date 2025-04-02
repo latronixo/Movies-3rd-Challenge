@@ -77,7 +77,7 @@ class TempMovieDetailView: UIView {
         return label
     }()
     lazy var stackOfCategory: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [stackOfDate, categoryLabel])
+        let stackView = UIStackView(arrangedSubviews: [movieImage, categoryLabel])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
         return stackView
