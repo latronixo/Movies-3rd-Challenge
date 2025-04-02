@@ -41,6 +41,7 @@ final class TabBarController: UITabBarController {
         super.viewDidLoad()
         //self.setValue(TabBar(), forKey: "tabBar")   //заменяем стандартный UITabBar на наш кастомный (ради индикатора)
         self.setupTabBar()
+        self.selectedIndex = 2
     }
     
     private func setupTabBar() {
@@ -51,9 +52,9 @@ final class TabBarController: UITabBarController {
             switch $0 {
             case .search: return self.wrappedInNavigationController(with: TempSearchViewController(), title: $0.title)
             case .recentWatch: return self.wrappedInNavigationController(with: TempRecentWatchViewController(), title: $0.title)
-            case .home: return self.wrappedInNavigationController(with: TempHomeViewController(), title: $0.title)
+            case .home: return self.wrappedInNavigationController(with: MainViewController(), title: $0.title)
             case .wishlist: return self.wrappedInNavigationController(with: TempWishlistViewController(), title: $0.title)
-            case .settings: return self.wrappedInNavigationController(with: TempProfileViewController(), title: $0.title)
+            case .settings: return self.wrappedInNavigationController(with: SettingsViewController(), title: $0.title)
             }
         }
         
