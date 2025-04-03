@@ -37,6 +37,15 @@ class MovieCell: UITableViewCell {
         return label
     }()
     
+    private lazy var timeIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "clock.fill")
+        imageView.tintColor = UIColor(named: "")
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(imageView)
+        return imageView
+    }()
+    
     private lazy var durationLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
