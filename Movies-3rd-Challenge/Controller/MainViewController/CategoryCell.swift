@@ -28,6 +28,7 @@ final class CategoryCell: UICollectionViewCell {
 
         titleLabel.font = .systemFont(ofSize: 14)
         titleLabel.textAlignment = .center
+        titleLabel.textColor = .label
         bgView.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 

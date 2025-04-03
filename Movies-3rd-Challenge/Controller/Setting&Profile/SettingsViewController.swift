@@ -25,7 +25,7 @@ class SettingsViewController: UIViewController {
         let label = UILabel()
         label.text = userName + " " + lastName
         label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-        label.textColor = .black
+        label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -43,7 +43,7 @@ class SettingsViewController: UIViewController {
         let label = UILabel()
         label.text = "Personal Info"
         label.font = UIFont.systemFont(ofSize: 13)
-        label.textColor = .black
+        label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -51,9 +51,9 @@ class SettingsViewController: UIViewController {
     private lazy var profileButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("  Profile", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.label, for: .normal)
         button.setImage(UIImage(systemName: "person"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .label
         button.contentHorizontalAlignment = .leading
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
@@ -80,9 +80,9 @@ class SettingsViewController: UIViewController {
     private lazy var changePasswordButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("  Change Password", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.label, for: .normal)
         button.setImage(UIImage(systemName: "lock"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .label
         button.contentHorizontalAlignment = .leading
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(changePasswordButtonTapped), for: .touchUpInside)
@@ -92,9 +92,9 @@ class SettingsViewController: UIViewController {
     private lazy var forgotPasswordButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("  Forgot Password", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.label, for: .normal)
         button.setImage(UIImage(systemName: "exclamationmark.lock"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .label
         button.contentHorizontalAlignment = .leading
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(forgotPasswordButtonTapped), for: .touchUpInside)
@@ -135,9 +135,21 @@ class SettingsViewController: UIViewController {
         return button
     }()
     
+    private lazy var changeLanguage: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("  Choose Language", for: .normal)
+        button.setTitleColor(.label, for: .normal)
+        button.setImage(UIImage(systemName: "a.square"), for: .normal)
+        button.tintColor = .label
+        button.contentHorizontalAlignment = .leading
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(changePasswordButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
     private lazy var userName = "Andy"
     private lazy var lastName = "Lexian"
-    private lazy var login = "@" + userName + "999"
+    private lazy var login = "@" + userName + "999" //непонятно откуда брать, можно первую часть от почты
     
 
     // MARK: - Lifecycle
@@ -164,7 +176,8 @@ class SettingsViewController: UIViewController {
             darkModeLabel,
             darkModeSwitch,
             logoutButton,
-            profileChevronImageView
+            profileChevronImageView,
+            changeLanguage
         ]
         elements.forEach { view.addSubview($0) }
 
@@ -206,11 +219,17 @@ class SettingsViewController: UIViewController {
             forgotPasswordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             forgotPasswordButton.heightAnchor.constraint(equalToConstant: 40),
 
-            darkModeLabel.topAnchor.constraint(equalTo: forgotPasswordButton.bottomAnchor, constant: 20),
+            darkModeLabel.topAnchor.constraint(equalTo: forgotPasswordButton.bottomAnchor, constant: 10),
             darkModeLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            darkModeLabel.heightAnchor.constraint(equalToConstant: 40),
+
             darkModeSwitch.centerYAnchor.constraint(equalTo: darkModeLabel.centerYAnchor),
             darkModeSwitch.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-
+            
+            changeLanguage.topAnchor.constraint(equalTo: darkModeLabel.bottomAnchor, constant: 10),
+            changeLanguage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 23),
+            changeLanguage.heightAnchor.constraint(equalToConstant: 40),
+            
             logoutButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
             logoutButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
             logoutButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
@@ -219,14 +238,19 @@ class SettingsViewController: UIViewController {
     }
     
     private func makeLabelWithIcon(text: String, iconName: String) -> NSAttributedString {
+        let configuration = UIImage.SymbolConfiguration(pointSize: 16, weight: .regular)
+        
+        let icon = UIImage(systemName: iconName, withConfiguration: configuration)?
+            .withTintColor(.label, renderingMode: .alwaysOriginal)
+        
         let attachment = NSTextAttachment()
-        attachment.image = UIImage(systemName: iconName)
+        attachment.image = icon
         attachment.bounds = CGRect(x: 0, y: -2, width: 22, height: 22)
 
         let attachmentString = NSAttributedString(attachment: attachment)
         let textString = NSAttributedString(string: "  \(text)", attributes: [
             .font: UIFont.systemFont(ofSize: 16),
-            .foregroundColor: UIColor.black
+            .foregroundColor: UIColor.label
         ])
 
         let result = NSMutableAttributedString()
@@ -254,7 +278,7 @@ class SettingsViewController: UIViewController {
 
     @objc private func profileButtonTapped() {
         let profileVC = ProfileViewController()
-        navigationController?.pushViewController(profileVC, animated: true)
+        navigationController?.pushViewController(profileVC, animated: false)
     }
 
     @objc private func changePasswordButtonTapped() {
@@ -262,7 +286,7 @@ class SettingsViewController: UIViewController {
     }
 
     @objc private func forgotPasswordButtonTapped() {
- 
+        //запрос в файрбейз
     }
 
     @objc private func darkModeSwitchChanged() {

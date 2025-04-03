@@ -24,7 +24,7 @@ class MovieTableViewCell: UITableViewCell {
     private lazy var timeLabel: UILabel = {
             let label = UILabel()
             label.font = .systemFont(ofSize: 10)
-            label.textColor = .black
+        label.textColor = .label
             label.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview(label)
             return label
@@ -33,7 +33,7 @@ class MovieTableViewCell: UITableViewCell {
     private lazy var timeIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "clock.fill")
-        imageView.tintColor = .black
+        imageView.tintColor = .label
         imageView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(imageView)
         return imageView
