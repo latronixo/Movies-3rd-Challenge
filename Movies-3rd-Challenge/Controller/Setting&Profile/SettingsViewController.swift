@@ -25,7 +25,7 @@ class SettingsViewController: UIViewController {
         let label = UILabel()
         label.text = userName + " " + lastName
         label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-        label.textColor = .black
+        label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -43,7 +43,7 @@ class SettingsViewController: UIViewController {
         let label = UILabel()
         label.text = "Personal Info"
         label.font = UIFont.systemFont(ofSize: 13)
-        label.textColor = .black
+        label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -51,9 +51,9 @@ class SettingsViewController: UIViewController {
     private lazy var profileButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("  Profile", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.label, for: .normal)
         button.setImage(UIImage(systemName: "person"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .label
         button.contentHorizontalAlignment = .leading
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
@@ -80,9 +80,9 @@ class SettingsViewController: UIViewController {
     private lazy var changePasswordButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("  Change Password", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.label, for: .normal)
         button.setImage(UIImage(systemName: "lock"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .label
         button.contentHorizontalAlignment = .leading
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(changePasswordButtonTapped), for: .touchUpInside)
@@ -92,9 +92,9 @@ class SettingsViewController: UIViewController {
     private lazy var forgotPasswordButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("  Forgot Password", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.label, for: .normal)
         button.setImage(UIImage(systemName: "exclamationmark.lock"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .label
         button.contentHorizontalAlignment = .leading
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(forgotPasswordButtonTapped), for: .touchUpInside)
@@ -115,7 +115,9 @@ class SettingsViewController: UIViewController {
 
     private lazy var darkModeSwitch: UISwitch = {
         let toggle = UISwitch()
-        toggle.isOn = UserDefaults.standard.bool(forKey: "isDarkMode")
+        let savedTheme = UserDefaults.standard.string(forKey: "AppTheme") ?? "system"
+            toggle.isOn = (savedTheme == "dark")
+
         toggle.onTintColor = UIColor(named: "mainViolet")
         toggle.translatesAutoresizingMaskIntoConstraints = false
         toggle.addTarget(self, action: #selector(darkModeSwitchChanged), for: .valueChanged)
@@ -135,16 +137,28 @@ class SettingsViewController: UIViewController {
         return button
     }()
     
+    private lazy var changeLanguage: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("  Choose Language", for: .normal)
+        button.setTitleColor(.label, for: .normal)
+        button.setImage(UIImage(systemName: "a.square"), for: .normal)
+        button.tintColor = .label
+        button.contentHorizontalAlignment = .leading
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(changeLangTapped), for: .touchUpInside)
+        return button
+    }()
+    
     private lazy var userName = "Andy"
     private lazy var lastName = "Lexian"
-    private lazy var login = "@" + userName + "999"
-    
+    private lazy var login = "@" + userName + "999" //непонятно откуда брать, можно первую часть от почты
+    private var newPassword: String?
 
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
 //        title = "Settings"
         setupUI()
     }
@@ -164,7 +178,8 @@ class SettingsViewController: UIViewController {
             darkModeLabel,
             darkModeSwitch,
             logoutButton,
-            profileChevronImageView
+            profileChevronImageView,
+            changeLanguage
         ]
         elements.forEach { view.addSubview($0) }
 
@@ -206,11 +221,17 @@ class SettingsViewController: UIViewController {
             forgotPasswordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             forgotPasswordButton.heightAnchor.constraint(equalToConstant: 40),
 
-            darkModeLabel.topAnchor.constraint(equalTo: forgotPasswordButton.bottomAnchor, constant: 20),
+            darkModeLabel.topAnchor.constraint(equalTo: forgotPasswordButton.bottomAnchor, constant: 10),
             darkModeLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            darkModeLabel.heightAnchor.constraint(equalToConstant: 40),
+
             darkModeSwitch.centerYAnchor.constraint(equalTo: darkModeLabel.centerYAnchor),
             darkModeSwitch.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-
+            
+            changeLanguage.topAnchor.constraint(equalTo: darkModeLabel.bottomAnchor, constant: 10),
+            changeLanguage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 23),
+            changeLanguage.heightAnchor.constraint(equalToConstant: 40),
+            
             logoutButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
             logoutButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
             logoutButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
@@ -219,14 +240,19 @@ class SettingsViewController: UIViewController {
     }
     
     private func makeLabelWithIcon(text: String, iconName: String) -> NSAttributedString {
+        let configuration = UIImage.SymbolConfiguration(pointSize: 16, weight: .regular)
+        
+        let icon = UIImage(systemName: iconName, withConfiguration: configuration)?
+            .withTintColor(.label, renderingMode: .alwaysOriginal)
+        
         let attachment = NSTextAttachment()
-        attachment.image = UIImage(systemName: iconName)
+        attachment.image = icon
         attachment.bounds = CGRect(x: 0, y: -2, width: 22, height: 22)
 
         let attachmentString = NSAttributedString(attachment: attachment)
         let textString = NSAttributedString(string: "  \(text)", attributes: [
             .font: UIFont.systemFont(ofSize: 16),
-            .foregroundColor: UIColor.black
+            .foregroundColor: UIColor.label
         ])
 
         let result = NSMutableAttributedString()
@@ -237,28 +263,67 @@ class SettingsViewController: UIViewController {
     }
     
     private func setAppTheme(to style: UIUserInterfaceStyle) {
-        UserDefaults.standard.set(style == .dark, forKey: "isDarkMode")
+        let themeString: String
+           switch style {
+           case .dark: themeString = "dark"
+           case .light: themeString = "light"
+           default: themeString = "system"
+           }
 
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-               if let window = windowScene.windows.first {
+           UserDefaults.standard.set(themeString, forKey: "AppTheme")
+
+           if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+               for window in windowScene.windows {
                    window.overrideUserInterfaceStyle = style
                }
            }
-      }
+    }
 
     // MARK: - Actions
 
     @objc private func profileButtonTapped() {
         let profileVC = ProfileViewController()
-        navigationController?.pushViewController(profileVC, animated: true)
+        navigationController?.pushViewController(profileVC, animated: false)
     }
 
     @objc private func changePasswordButtonTapped() {
-
+        let alert = UIAlertController(title: "Enter new password", message: nil, preferredStyle: .alert)
+            
+            alert.addTextField { textField in
+                textField.placeholder = "New password"
+                textField.isSecureTextEntry = true  //не видно, что вводим, зато секьюрно. Можно показывать ввод
+                textField.autocapitalizationType = .none
+                textField.autocorrectionType = .no
+             
+            }
+            
+            let saveAction = UIAlertAction(title: "Save", style: .default) { [weak self] _ in
+                guard let password = alert.textFields?.first?.text, !password.isEmpty else { return }
+                self?.newPassword = password
+                
+                // сохр в Firebase
+            }
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+            
+            alert.addAction(cancelAction)
+            alert.addAction(saveAction)
+            
+            present(alert, animated: true)
     }
 
     @objc private func forgotPasswordButtonTapped() {
- 
+        //запрос в файрбейз
+        let alert = UIAlertController(
+            title: nil,
+            message: "New password was sent to your email",
+                preferredStyle: .alert
+            )
+            
+            let okAction = UIAlertAction(title: "Ок", style: .default)
+            alert.addAction(okAction)
+            
+            present(alert, animated: true)
     }
 
     @objc private func darkModeSwitchChanged() {
@@ -270,8 +335,13 @@ class SettingsViewController: UIViewController {
     }
 
     @objc private func logoutButtonTapped() {
-     
+        //fb
     }
+    
+    @objc private func changeLangTapped() {
+        //локализация
+    }
+    
 }
 
 
