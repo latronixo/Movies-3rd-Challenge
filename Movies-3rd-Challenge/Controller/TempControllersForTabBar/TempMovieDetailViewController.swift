@@ -54,6 +54,7 @@ class TempMovieDetailViewController: UIViewController {
     }
 
 }
+//MARK: CollectionView
 
 extension TempMovieDetailViewController: UICollectionViewDelegate {
     
@@ -73,3 +74,4 @@ extension TempMovieDetailViewController: UICollectionViewDataSource {
 // Задачи: Настроить Collectionview
 // Добавить все элементы на экран
 // Посмотреть зависимость от DarkMode
+
