@@ -17,7 +17,7 @@ final class SearchViewController: UIViewController {
     private var currentPage = 1
     private let limit = 10
 
-    let genres = Constants.genres
+    private let genres = Constants.genres
 
     // Таймер для задержки поиска
     private var searchTimer: Timer?
