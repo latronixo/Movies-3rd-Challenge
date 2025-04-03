@@ -49,15 +49,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		18E97A2AAE7F33398E41A786 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				E4F8E888B92ADD0A7AE44B26 /* Pods-Movies-3rd-Challenge.debug.xcconfig */,
-				0DEF8119CD52440FA7542852 /* Pods-Movies-3rd-Challenge.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		6BB614A52D96D8B4001A86B8 = {
 			isa = PBXGroup;
 			children = (
