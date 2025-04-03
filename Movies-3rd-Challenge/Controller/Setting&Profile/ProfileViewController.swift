@@ -282,7 +282,30 @@ class ProfileViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func editAvatarTapped() {
-        print("Avatar tapped")
+        let alertVC = AvatarViewController()
+            
+            alertVC.modalPresentationStyle = .overFullScreen
+            alertVC.modalTransitionStyle = .crossDissolve
+            
+            alertVC.onTakePhoto = { [weak self] in
+                print("камера")
+            }
+
+            alertVC.onChoosePhoto = { [weak self] in
+                let imagePicker = UIImagePickerController()
+                imagePicker.delegate = self
+                imagePicker.allowsEditing = true
+                imagePicker.sourceType = .photoLibrary
+                self?.present(imagePicker, animated: true, completion: nil)
+            }
+
+            alertVC.onDeletePhoto = { [weak self] in
+                self?.avatarImageView.image = UIImage(systemName: "person.circle.fill")
+                self?.avatarImageView.tintColor = .gray
+                self?.avatarImageView.backgroundColor = .clear
+            }
+
+            present(alertVC, animated: true)
     }
     
     @objc private func genderButtonTapped(_ sender: UIButton) {
@@ -307,10 +330,6 @@ class ProfileViewController: UIViewController {
 
         let formatted = formatter.string(from: datePicker.date)
         dobValueLabel.text = formatted
-        
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-//            self.datePickerContainer.isHidden = true
-//        }
     }
 }
 
@@ -324,4 +343,21 @@ extension UITextField {
     }
 }
 
+//MARK: UIImagePickerControllerDelegate, UINavigationControllerDelegate
 
+extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let selectedImage = info[.editedImage] as? UIImage else {
+            dismiss(animated: true, completion: nil)
+            return
+        }
+        
+        avatarImageView.image = selectedImage
+        
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+}
