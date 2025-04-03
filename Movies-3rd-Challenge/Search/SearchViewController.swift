@@ -58,7 +58,7 @@ final class SearchViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(MovieCell.self, forCellReuseIdentifier: MovieCell.identifier)
-        tableView.rowHeight = 150
+        tableView.rowHeight = 184
         tableView.tableFooterView = UIView()
         return tableView
     }()

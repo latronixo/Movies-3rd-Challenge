@@ -74,11 +74,21 @@ class MovieCell: UITableViewCell {
         return imageView
     }()
     
+    private lazy var genreView: UIView = {
+        let element = UIView()
+        element.backgroundColor = #colorLiteral(red: 0.3195238709, green: 0.3043658733, blue: 0.7124469876, alpha: 1)
+        element.layer.cornerRadius = 6
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     private lazy var genreLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.textColor = .gray
-        return label
+        let element = UILabel()
+        element.font = UIFont.systemFont(ofSize: 10)
+        element.textColor = .white
+        element.textAlignment = .center
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
     }()
 
     private lazy var favoriteButton: UIButton = {
@@ -104,7 +114,8 @@ class MovieCell: UITableViewCell {
         contentView.addSubview(yearLabel)
         
         contentView.addSubview(filmIcon)
-        contentView.addSubview(genreLabel)
+        contentView.addSubview(genreView)
+        genreView.addSubview(genreLabel)
         
         contentView.addSubview(favoriteButton)
         
@@ -126,34 +137,40 @@ class MovieCell: UITableViewCell {
         NSLayoutConstraint.activate([
             posterImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             posterImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            posterImageView.widthAnchor.constraint(equalToConstant: 100),
-            posterImageView.heightAnchor.constraint(equalToConstant: 130),
+            posterImageView.widthAnchor.constraint(equalToConstant: 120),
+            posterImageView.heightAnchor.constraint(equalToConstant: 160),
             
             titleLabel.leadingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: 16),
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
             
             
-            timeIcon.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
+            timeIcon.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 15),
             timeIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             timeIcon.widthAnchor.constraint(equalToConstant: 16),
             timeIcon.heightAnchor.constraint(equalToConstant: 16),
             durationLabel.leadingAnchor.constraint(equalTo: timeIcon.trailingAnchor, constant: 4),
-            durationLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
+            durationLabel.centerYAnchor.constraint(equalTo: timeIcon.centerYAnchor),
             
-            calendarIcon.topAnchor.constraint(equalTo: timeIcon.bottomAnchor, constant: 4),
+            calendarIcon.topAnchor.constraint(equalTo: timeIcon.bottomAnchor, constant: 8),
             calendarIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            timeIcon.widthAnchor.constraint(equalToConstant: 16),
-            timeIcon.heightAnchor.constraint(equalToConstant: 16),
-            yearLabel.leadingAnchor.constraint(equalTo: timeIcon.trailingAnchor, constant: 4),
-            yearLabel.topAnchor.constraint(equalTo: durationLabel.bottomAnchor, constant: 4),
+            calendarIcon.widthAnchor.constraint(equalToConstant: 16),
+            calendarIcon.heightAnchor.constraint(equalToConstant: 16),
+            yearLabel.leadingAnchor.constraint(equalTo: calendarIcon.trailingAnchor, constant: 4),
+            yearLabel.centerYAnchor.constraint(equalTo: calendarIcon.centerYAnchor),
             
             
-            filmIcon.topAnchor.constraint(equalTo: calendarIcon.bottomAnchor, constant: 4),
+            filmIcon.topAnchor.constraint(equalTo: calendarIcon.bottomAnchor, constant: 8),
             filmIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             filmIcon.widthAnchor.constraint(equalToConstant: 16),
             filmIcon.heightAnchor.constraint(equalToConstant: 16),
-            genreLabel.leadingAnchor.constraint(equalTo: filmIcon.trailingAnchor, constant: 4),
-            genreLabel.topAnchor.constraint(equalTo: yearLabel.bottomAnchor, constant: 4),
+            
+            genreView.centerYAnchor.constraint(equalTo: filmIcon.centerYAnchor),
+            genreView.leadingAnchor.constraint(equalTo: filmIcon.trailingAnchor, constant: 4),
+            genreView.widthAnchor.constraint(equalTo: genreLabel.widthAnchor, constant: 30),
+            genreView.heightAnchor.constraint(equalToConstant: 24),
+            
+            genreLabel.centerXAnchor.constraint(equalTo: genreView.centerXAnchor),
+            genreLabel.centerYAnchor.constraint(equalTo: genreView.centerYAnchor),
             
             favoriteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             favoriteButton.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -172,7 +189,7 @@ class MovieCell: UITableViewCell {
         
         titleLabel.text = movie.name
         yearLabel.text = String(movie.year)
-        durationLabel.text = "\(movie.movieLength) мин"
+        durationLabel.text = "\(movie.movieLength) минут"
         genreLabel.text = movie.genres.map { $0.name }.joined(separator: ", ")
         //favoriteButton.isSelected = movie.isFavorite
     }
