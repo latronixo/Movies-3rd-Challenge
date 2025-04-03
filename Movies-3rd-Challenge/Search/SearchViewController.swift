@@ -69,6 +69,7 @@ final class SearchViewController: UIViewController {
         title = "Search"
         
         view.backgroundColor = .white
+        setTitleUpper(navItem: navigationItem, title: "Search")
         setupUI()
         setupConstraints()
         setupGenres()
