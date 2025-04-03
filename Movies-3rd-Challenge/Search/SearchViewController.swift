@@ -17,7 +17,7 @@ final class SearchViewController: UIViewController {
     private var currentPage = 1
     private let limit = 10
     private let networkManager = NetworkService.shared
-    private let apiKey = Constants.apiKey
+    private let apiKey = Secrets.apiKey
     
     // MARK: - UI Components
     private lazy var searchBar: UISearchBar = {
