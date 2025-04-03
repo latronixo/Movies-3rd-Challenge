@@ -17,7 +17,7 @@ final class SearchViewController: UIViewController {
     private var isLoading = false
     private var currentPage = 1
     private let limit = 10
-    private let apiKey = Constants.apiKey
+    private let apiKey = ""
     
     // MARK: - UI Components
     private lazy var searchBar: UISearchBar = {

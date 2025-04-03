@@ -4,11 +4,16 @@
 //
 //  Created by Валентин Картошкин on 31.03.2025.
 //
-
 import UIKit
 
 class TempMovieDetailViewController: UIViewController {
     private let mainView: TempMovieDetailView = .init()
+    var movie: Movie
+    
+    init(movie: Movie) {
+        self.movie = movie
+        super.init(nibName: nil, bundle: nil)
+    }
     
     
     override func loadView() {
@@ -18,6 +23,7 @@ class TempMovieDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        mainView.backgroundColor = .white
         //MARK: NAVIGATION BAR
         let backButton = UIBarButtonItem(
             image: UIImage(named: "Arrow Back"),
@@ -52,26 +58,9 @@ class TempMovieDetailViewController: UIViewController {
     @objc func backTapped() {
                 
     }
-
-}
-//MARK: CollectionView
-
-extension TempMovieDetailViewController: UICollectionViewDelegate {
     
-}
-extension TempMovieDetailViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 0
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return UICollectionViewCell()
-    }
-    
-    
+
 }
-
-// Задачи: Настроить Collectionview
-// Добавить все элементы на экран
-// Посмотреть зависимость от DarkMode
-
