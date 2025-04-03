@@ -425,7 +425,8 @@ extension ProfileViewController: UITextFieldDelegate, UITextViewDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField == firstNameTextField || textField == lastNameTextField {
-            let allowedCharacterSet = CharacterSet.letters
+            var allowedCharacterSet = CharacterSet.letters
+            allowedCharacterSet.insert(charactersIn: " -")
 
             if string.rangeOfCharacter(from: allowedCharacterSet.inverted) != nil {
                 showFormatErrorAlert()
