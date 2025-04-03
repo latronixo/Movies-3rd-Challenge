@@ -16,6 +16,10 @@ final class SearchViewController: UIViewController {
     private var isLoading = false
     private var currentPage = 1
     private let limit = 10
+    
+    // Таймер для задержки поиска
+    private var searchTimer: Timer?
+    
     private let networkManager = NetworkService.shared
     private let apiKey = Constants.apiKey
     
@@ -36,7 +40,7 @@ final class SearchViewController: UIViewController {
     
     private lazy var genreButtons: [UIButton] = {
         let allButton = UIButton(type: .system)
-        allButton.setTitle("All", for: .normal)
+        allButton.setTitle("Все", for: .normal)
         allButton.setTitleColor(.systemBlue, for: .selected)
         allButton.addTarget(self, action: #selector(genreButtonTapped(_:)), for: .touchUpInside)
         allButton.isSelected = true
@@ -69,7 +73,10 @@ final class SearchViewController: UIViewController {
         title = "Search"
         
         view.backgroundColor = .white
-        setTitleUpper(navItem: navigationItem, title: "Search")
+        
+        //убираем разделители между ячейками
+        tableView.separatorStyle = .none
+
         setupUI()
         setupConstraints()
         setupGenres()
@@ -147,7 +154,7 @@ final class SearchViewController: UIViewController {
         genreButtons.forEach { $0.isSelected = ($0 == sender) }
         
         if let title = sender.currentTitle {
-            selectedGenre = (title == "All") ? nil : title
+            selectedGenre = (title == "Все") ? nil : title
         }
         
         currentPage = 1
@@ -189,11 +196,22 @@ extension SearchViewController: UITableViewDelegate {
 // MARK: - UISearchBarDelegate
 extension SearchViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        self.searchText = searchText
-        currentPage = 1
-        movies.removeAll()
-        tableView.reloadData()
-        loadMovies()
+        
+        //отменяем предыдущий таймер, если он был
+        searchTimer?.invalidate()
+        
+        //устанавливаем новый таймер на 3 секунды
+        searchTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) {
+            [weak self] _ in
+            guard let self = self else { return }
+            
+            self.searchText = searchText
+            currentPage = 1
+            movies.removeAll()
+            tableView.reloadData()
+            loadMovies()
+        }
+         
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -224,7 +242,7 @@ extension SearchViewController {
         params["query"] = searchText
     }
 
-    if let genre = selectedGenre, genre != "All" {
+    if let genre = selectedGenre, genre != "Все" {
         params["with_genres"] = genre
     }
 
