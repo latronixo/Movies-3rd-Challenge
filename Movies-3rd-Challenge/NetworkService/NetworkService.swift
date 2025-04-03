@@ -16,10 +16,10 @@ class NetworkService {
     func fetchMovies(currentPage: Int, limit: Int, searchText: String?, genres: String?, completion: @escaping ([Movie]) -> Void) {
         
         let parameters: [String: Any] = [
-            "currentPage": currentPage,
+            "page": currentPage,
             "limit": limit,
-            "query": searchText ?? "Павел"//,
-            //"genres": genres ?? ""
+            "query": searchText ?? "Павел",
+            "genres": genres ?? ""
         ]
         
         AF.request(searchMoviesURLString,
@@ -31,6 +31,7 @@ class NetworkService {
                 
                 switch response.result {
                 case .success(let value):
+                    //print("\(value.docs)")
                     completion(value.docs)
                 case .failure(let error):
                     print("Error fetching movies: \(error)")
