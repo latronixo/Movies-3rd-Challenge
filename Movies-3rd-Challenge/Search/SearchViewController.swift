@@ -16,13 +16,15 @@ final class SearchViewController: UIViewController {
     private var isLoading = false
     private var currentPage = 1
     private let limit = 10
-    
+
+    let genres = Constants.genres
+
     // Таймер для задержки поиска
     private var searchTimer: Timer?
-    
+
     private let networkManager = NetworkService.shared
-    private let apiKey = Constants.apiKey
-    
+    private let apiKey = Secrets.apiKey
+
     // MARK: - UI Components
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -31,13 +33,13 @@ final class SearchViewController: UIViewController {
         searchBar.delegate = self
         return searchBar
     }()
-    
+
     private lazy var genreScroll: UIScrollView = {
         let scroll = UIScrollView()
         scroll.showsHorizontalScrollIndicator = false
         return scroll
     }()
-    
+
     private lazy var genreButtons: [UIButton] = {
         let allButton = UIButton(type: .system)
         allButton.setTitle("Все", for: .normal)
@@ -45,7 +47,6 @@ final class SearchViewController: UIViewController {
         allButton.addTarget(self, action: #selector(genreButtonTapped(_:)), for: .touchUpInside)
         allButton.isSelected = true
         
-        let genres = ["боевик", "приключения", "комедия", "мелодрама", "криминал", "биография", "драма", "история", "документальный", "короткометражка", "музыка", "мультфильм", "фэнтези", "семейный", "фантастика", "триллер"]
         
         return [allButton] + genres.map { genre in
             let button = UIButton(type: .system)
@@ -70,7 +71,7 @@ final class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "Search"
+        setTitleUpper(navItem: navigationItem, title: "Search")
         
         view.backgroundColor = .white
         
@@ -133,9 +134,10 @@ final class SearchViewController: UIViewController {
         guard !isLoading else { return }
         isLoading = true
         
-        networkManager.fetchMovies(currentPage: currentPage, limit: limit, searchText: searchText, genres: selectedGenre) { [weak self] newMovies in
+        DispatchQueue.main.async {
             
-            DispatchQueue.main.async {
+            self.networkManager.fetchMovies(currentPage: self.currentPage, limit: self.limit, searchText: self.searchText, genres: self.selectedGenre) { [weak self] newMovies in
+            
                 if self?.currentPage == 1 {
                     self?.movies = newMovies
                 } else {
@@ -184,13 +186,33 @@ extension SearchViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension SearchViewController: UITableViewDelegate {
     
+    //обработка события окончания пролистывания таблицы (каждый свайп вниз или вверх
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        
         // Загружаем следующую страницу, если достигли конца списка
-        if indexPath.row == movies.count - 1 && !isLoading {
+//        if indexPath.row == movies.count - 1 && !isLoading {
+//            currentPage += 1
+//            loadMovies()
+//            print("подгружаю еще 10 фильмов, страницу \(currentPage)...")
+//        }
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        let lastSectionIndex = tableView.numberOfSections - 1
+        let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
+        
+        if indexPath.section == lastSectionIndex &&
+           indexPath.row == lastRowIndex && !isLoading {
+            // Загружаем следующую страницу при прокрутке до последней ячейки
             currentPage += 1
             loadMovies()
+            print("подгружаю еще 10 фильмов, страничку \(currentPage)...")
+
         }
     }
+
 }
 
 // MARK: - UISearchBarDelegate
@@ -243,7 +265,7 @@ extension SearchViewController {
     }
 
     if let genre = selectedGenre, genre != "Все" {
-        params["with_genres"] = genre
+        params["genres"] = genre
     }
 
     return params
