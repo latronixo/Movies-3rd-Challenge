@@ -10,13 +10,13 @@ import Alamofire
 
 final class SearchViewController: UIViewController {
     
-    // MARK: - Properties
     private var searchText: String = "Павел"
     private var selectedGenre: String?
     private var movies: [Movie] = []
     private var isLoading = false
     private var currentPage = 1
     private let limit = 10
+    private let networkManager = NetworkService.shared
     private let apiKey = Constants.apiKey
     
     // MARK: - UI Components
@@ -72,7 +72,7 @@ final class SearchViewController: UIViewController {
         setupUI()
         setupConstraints()
         setupGenres()
-        fetchMovies()
+        loadMovies()
     }
     
     // MARK: - UI Setup
@@ -121,40 +121,24 @@ final class SearchViewController: UIViewController {
     }
     
     // MARK: - Networking
-    private func fetchMovies() {
+    private func loadMovies() {
         guard !isLoading else { return }
         isLoading = true
         
-        let parameters: [String: Any] = [
-            "currentPage": currentPage,
-            "limit": limit,
-            "query": searchText == "" ? "Павел" : searchText,
-            "genres": selectedGenre ?? ""
-        ]
-        //AF.request("https://api.kinopoisk.dev/v1.4/movie/search", method: .get, parameters: parameters).responseDecodable { response in debugPrint(response) }
-        
-        AF.request("https://api.kinopoisk.dev/v1.4/movie/search",
-                       method: .get,
-                       parameters: parameters,
-                       headers: ["X-API-KEY": apiKey])
-                .responseDecodable(of: MovieResponse.self) { [weak self] response in
-                    guard let self = self else { return }
-                    
-                    self.isLoading = false
-                    
-                    switch response.result {
-                    case .success(let value):
-                        if self.currentPage == 1 {
-                            self.movies = value.docs
-                        } else {
-                            self.movies.append(contentsOf: value.docs)
-                        }
-                        self.tableView.reloadData()
-                        
-                    case .failure(let error):
-                        print("Error fetching movies: \(error)")
-                    }
+        networkManager.fetchMovies(currentPage: currentPage, limit: limit, searchText: searchText, genres: selectedGenre) { [weak self] newMovies in
+            
+            DispatchQueue.main.async {
+                if self?.currentPage == 1 {
+                    self?.movies = newMovies
+                } else {
+                    self?.movies.append(contentsOf: newMovies)
                 }
+                
+                self?.isLoading = false
+                
+                self?.tableView.reloadData()
+            }
+        }
     }
     
     // MARK: - Genre Button Actions
@@ -168,7 +152,7 @@ final class SearchViewController: UIViewController {
         currentPage = 1
         movies.removeAll()
         tableView.reloadData()
-        fetchMovies()
+        loadMovies()
     }
 
 }
@@ -196,15 +180,9 @@ extension SearchViewController: UITableViewDelegate {
         // Загружаем следующую страницу, если достигли конца списка
         if indexPath.row == movies.count - 1 && !isLoading {
             currentPage += 1
-            fetchMovies()
+            loadMovies()
         }
     }
-
-//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        if indexPath.row == movies.count - 1 && !isLoading {
-//            fetchMovies()
-//        }
-//    }
 }
 
 // MARK: - UISearchBarDelegate
@@ -214,7 +192,7 @@ extension SearchViewController: UISearchBarDelegate {
         currentPage = 1
         movies.removeAll()
         tableView.reloadData()
-        fetchMovies()
+        loadMovies()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -231,7 +209,7 @@ extension SearchViewController {
         currentPage = 1
         movies.removeAll()
         tableView.reloadData()
-        fetchMovies()
+        loadMovies()
     }
 
     // Метод для формирования параметров запроса
@@ -274,7 +252,7 @@ extension SearchViewController {
          message: "Не удалось загрузить данные. Проверьте подключение к интернету.", preferredStyle: .alert)
          
          alert.addAction(UIAlertAction(title: "Повторить", style: .default) { _ in
-             self.fetchMovies()
+             self.loadMovies()
          } )
      
      present(alert, animated: true)
