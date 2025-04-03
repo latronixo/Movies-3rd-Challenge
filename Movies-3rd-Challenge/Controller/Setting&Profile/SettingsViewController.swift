@@ -143,14 +143,14 @@ class SettingsViewController: UIViewController {
         button.tintColor = .label
         button.contentHorizontalAlignment = .leading
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(changePasswordButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(changeLangTapped), for: .touchUpInside)
         return button
     }()
     
     private lazy var userName = "Andy"
     private lazy var lastName = "Lexian"
     private lazy var login = "@" + userName + "999" //непонятно откуда брать, можно первую часть от почты
-    
+    private var newPassword: String?
 
     // MARK: - Lifecycle
 
@@ -282,11 +282,43 @@ class SettingsViewController: UIViewController {
     }
 
     @objc private func changePasswordButtonTapped() {
-
+        let alert = UIAlertController(title: "Enter new password", message: nil, preferredStyle: .alert)
+            
+            alert.addTextField { textField in
+                textField.placeholder = "New password"
+                textField.isSecureTextEntry = true  //не видно, что вводим, зато секьюрно. Можно показывать ввод
+                textField.autocapitalizationType = .none
+                textField.autocorrectionType = .no
+             
+            }
+            
+            let saveAction = UIAlertAction(title: "Save", style: .default) { [weak self] _ in
+                guard let password = alert.textFields?.first?.text, !password.isEmpty else { return }
+                self?.newPassword = password
+                
+                // сохр в Firebase
+            }
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+            
+            alert.addAction(cancelAction)
+            alert.addAction(saveAction)
+            
+            present(alert, animated: true)
     }
 
     @objc private func forgotPasswordButtonTapped() {
         //запрос в файрбейз
+        let alert = UIAlertController(
+            title: nil,
+            message: "New password was sent to your email",
+                preferredStyle: .alert
+            )
+            
+            let okAction = UIAlertAction(title: "Ок", style: .default)
+            alert.addAction(okAction)
+            
+            present(alert, animated: true)
     }
 
     @objc private func darkModeSwitchChanged() {
@@ -298,11 +330,14 @@ class SettingsViewController: UIViewController {
     }
 
     @objc private func logoutButtonTapped() {
-     
+        //fb
     }
+    
+    @objc private func changeLangTapped() {
+        //локализация
+    }
+    
 }
-
-
 
 
 //#Preview { SettingsViewController() }

@@ -36,11 +36,13 @@ class ProfileViewController: UIViewController {
     private lazy var emailLabel = makeLabel(text: "E-mail")
     private lazy var dobLabel = makeLabel(text: "Date of Birth")
     private lazy var genderLabel = makeLabel(text: "Gender")
-    private lazy var locationLabel = makeLabel(text: "Location")
+    private lazy var locationLabel = makeLabel(text: "Location/notes")
     
     private lazy var firstNameTextField = makeTextField(placeholder: "First Name")
     private lazy var lastNameTextField = makeTextField(placeholder: "Last Name")
     private lazy var emailTextField = makeTextField(placeholder: "E-mail")
+    private lazy var locationTextView = makeTextField(placeholder: "Location/notes")
+
     
     private lazy var dobView: UIView = {
         let view = UIView()
@@ -56,7 +58,7 @@ class ProfileViewController: UIViewController {
     
     private lazy var dobValueLabel: UILabel = {
         let label = UILabel()
-        label.text = "24 February 1992"
+        label.text = ""
         label.font = UIFont.systemFont(ofSize: 15)
         label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -75,17 +77,6 @@ class ProfileViewController: UIViewController {
     private lazy var maleButton = makeGenderButton(title: "Male", isSelected: true)
     private lazy var femaleButton = makeGenderButton(title: "Female", isSelected: false)
     
-    private lazy var locationTextView: UITextView = {
-        let textView = UITextView()
-        textView.text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-        textView.font = UIFont.systemFont(ofSize: 14)
-        textView.textColor = .gray
-        textView.layer.borderColor = UIColor(named: "mainViolet")?.cgColor
-        textView.layer.borderWidth = 1
-        textView.layer.cornerRadius = 18
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        return textView
-    }()
     
     private lazy var saveButton: UIButton = {
         let button = UIButton(type: .system)
@@ -95,10 +86,11 @@ class ProfileViewController: UIViewController {
         button.layer.cornerRadius = 24
         button.isEnabled = false
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(saveChangesButtonAction), for: .touchUpInside)
         return button
     }()
     
-    private var datePicker: UIDatePicker = {
+    private lazy var datePicker: UIDatePicker = {
         let picker = UIDatePicker()
         picker.datePickerMode = .date
         picker.preferredDatePickerStyle = .inline
@@ -121,18 +113,30 @@ class ProfileViewController: UIViewController {
         return view
     }()
     
+    private var firstName = ""
+    private var lastName = ""
+    private var email = ""
+    private var notes = ""
+    private var birthDate = ""
+    private var newPassword = ""
+    
     // MARK: - View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         title = "Profile"
-        setupLayout()
+        setupUI()
+        
+        firstNameTextField.delegate = self
+        lastNameTextField.delegate = self
+        emailTextField.delegate = self
+        locationTextView.delegate = self
     }
     
     // MARK: - Setup
     
-    private func setupLayout() {
+    private func setupUI() {
         let scrollView = UIScrollView()
         let contentView = UIView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -237,6 +241,9 @@ class ProfileViewController: UIViewController {
             datePicker.leadingAnchor.constraint(equalTo: datePickerContainer.leadingAnchor),
             datePicker.trailingAnchor.constraint(equalTo: datePickerContainer.trailingAnchor)
         ])
+        
+        emailTextField.textContentType = .emailAddress
+        emailTextField.keyboardType = .emailAddress
     }
     
     // MARK: - ui methods
@@ -287,7 +294,7 @@ class ProfileViewController: UIViewController {
             alertVC.modalPresentationStyle = .overFullScreen
             alertVC.modalTransitionStyle = .crossDissolve
             
-            alertVC.onTakePhoto = { [weak self] in
+            alertVC.onTakePhoto = { 
                 print("камера")
             }
 
@@ -331,6 +338,40 @@ class ProfileViewController: UIViewController {
         let formatted = formatter.string(from: datePicker.date)
         dobValueLabel.text = formatted
     }
+    
+    //проверка емейла
+    private func isValidEmail(_ email: String) -> Bool {
+        let emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
+        return email.firstMatch(of: emailRegex) != nil
+    }
+    
+    private func showFormatErrorAlert() {
+        let alert = UIAlertController(title: "Error", message: "Invalid format", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(okAction)
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
+    private func showPassErrorAlert() {
+        let alert = UIAlertController(title: "Error", message: "Password should be no less than 6 symbols", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(okAction)
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
+    private func showSucessSaveAlert() {
+        let alert = UIAlertController(title: "Saved successfully!", message: nil, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(okAction)
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
+    @objc func saveChangesButtonAction(_ button: UIButton) {
+       //save to FB
+        }
 }
 
 // MARK: - UITextField Padding Helper
@@ -361,3 +402,43 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
         dismiss(animated: true, completion: nil)
     }
 }
+
+extension ProfileViewController: UITextFieldDelegate, UITextViewDelegate {
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        switch textField {
+        case firstNameTextField:
+            firstName = textField.text ?? ""
+        case lastNameTextField:
+            lastName = textField.text ?? ""
+        case emailTextField:
+            if let text = textField.text, isValidEmail(text) {
+                email = text
+            } else {
+                showFormatErrorAlert()
+                textField.text = ""
+            }
+        default:
+            break
+        }
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == firstNameTextField || textField == lastNameTextField {
+            let allowedCharacterSet = CharacterSet.letters
+
+            if string.rangeOfCharacter(from: allowedCharacterSet.inverted) != nil {
+                showFormatErrorAlert()
+                return false
+            }
+        }
+        return true
+    }
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView == locationTextView {
+            notes = textView.text ?? ""
+        }
+    }
+}
+
