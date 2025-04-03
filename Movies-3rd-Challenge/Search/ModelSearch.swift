@@ -34,6 +34,15 @@ struct Genre: Decodable {
     let name: String
 }
 
+// заглушка для верстки
+let movie1 = Movie(id: 1,
+                   name: "Luck",
+                   year: 2021,
+                   movieLength: 148,
+                   rating: Rating(kp: 4.5),
+                   poster: Poster(previewUrl: "https://image.openmoviedb.com/kinopoisk-images/1773646/b3e1e427-5cba-4d47-9187-e939431d706a/x1000"),
+                   genres: [Genre(name: "Animation")]
+)
 
 //------------------------------------------------------------
 //ИСПОЛЬЗОВАТЬ ПОЗЖЕ

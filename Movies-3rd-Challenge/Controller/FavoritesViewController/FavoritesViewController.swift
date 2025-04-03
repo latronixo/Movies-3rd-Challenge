@@ -24,14 +24,14 @@ class FavoritesViewController: UIViewController {
     
     // MARK: - Private Properties
     
-    private var favorites: [Movie] = [movie1, movie2, movie3]
+    private var favorites: [Movie] = [movie1, movie1, movie1, movie1, movie1, movie1,]
     
     // MARK: - Set Views
     
     private func setViews() {
         view.backgroundColor = .white
         
-        tableView.register(MovieCell.self, forCellReuseIdentifier: K.MovieCellIndetifier)
+        tableView.register(MovieCell.self, forCellReuseIdentifier: MovieCell.identifier)
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         
@@ -54,13 +54,18 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: K.MovieCellIndetifier, for: indexPath) as? MovieCell else { fatalError() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: MovieCell.identifier, for: indexPath) as? MovieCell else { fatalError() }
         
         let favoriteMovie = favorites[indexPath.row]
         cell.selectionStyle = .none
         cell.configure(with: favoriteMovie)
         return cell
     }
+    
+    // Задание минимальной высоты ячейки
+       func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+           return 150 
+       }
 }
 
 // MARK: - Setup Constraints

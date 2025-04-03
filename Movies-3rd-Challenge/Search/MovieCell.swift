@@ -20,7 +20,7 @@ class MovieCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-
+    
     static let identifier = "MovieCell"
     
     private lazy var posterImageView: UIImageView = {
@@ -37,6 +37,15 @@ class MovieCell: UITableViewCell {
         return label
     }()
     
+    private lazy var timeIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "clock")
+        imageView.tintColor = UIColor(named: "")
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(imageView)
+        return imageView
+    }()
+    
     private lazy var durationLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
@@ -44,6 +53,13 @@ class MovieCell: UITableViewCell {
         return label
     }()
 
+    private lazy var calendarIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "calendar")
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
     private lazy var yearLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
@@ -51,6 +67,13 @@ class MovieCell: UITableViewCell {
         return label
     }()
 
+    private lazy var filmIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "film")
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
     private lazy var genreLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
@@ -71,10 +94,18 @@ class MovieCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         contentView.addSubview(posterImageView)
+        
         contentView.addSubview(titleLabel)
+        
+        contentView.addSubview(timeIcon)
         contentView.addSubview(durationLabel)
+        
+        contentView.addSubview(calendarIcon)
         contentView.addSubview(yearLabel)
+        
+        contentView.addSubview(filmIcon)
         contentView.addSubview(genreLabel)
+        
         contentView.addSubview(favoriteButton)
         
         setupConstraints()
@@ -101,13 +132,27 @@ class MovieCell: UITableViewCell {
             titleLabel.leadingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: 16),
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
             
-            durationLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            
+            timeIcon.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
+            timeIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            timeIcon.widthAnchor.constraint(equalToConstant: 16),
+            timeIcon.heightAnchor.constraint(equalToConstant: 16),
+            durationLabel.leadingAnchor.constraint(equalTo: timeIcon.trailingAnchor, constant: 4),
             durationLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
             
-            yearLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            calendarIcon.topAnchor.constraint(equalTo: timeIcon.bottomAnchor, constant: 4),
+            calendarIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            timeIcon.widthAnchor.constraint(equalToConstant: 16),
+            timeIcon.heightAnchor.constraint(equalToConstant: 16),
+            yearLabel.leadingAnchor.constraint(equalTo: timeIcon.trailingAnchor, constant: 4),
             yearLabel.topAnchor.constraint(equalTo: durationLabel.bottomAnchor, constant: 4),
             
-            genreLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            
+            filmIcon.topAnchor.constraint(equalTo: calendarIcon.bottomAnchor, constant: 4),
+            filmIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            filmIcon.widthAnchor.constraint(equalToConstant: 16),
+            filmIcon.heightAnchor.constraint(equalToConstant: 16),
+            genreLabel.leadingAnchor.constraint(equalTo: filmIcon.trailingAnchor, constant: 4),
             genreLabel.topAnchor.constraint(equalTo: yearLabel.bottomAnchor, constant: 4),
             
             favoriteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
