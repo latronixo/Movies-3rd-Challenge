@@ -115,7 +115,9 @@ class SettingsViewController: UIViewController {
 
     private lazy var darkModeSwitch: UISwitch = {
         let toggle = UISwitch()
-        toggle.isOn = UserDefaults.standard.bool(forKey: "isDarkMode")
+        let savedTheme = UserDefaults.standard.string(forKey: "AppTheme") ?? "system"
+            toggle.isOn = (savedTheme == "dark")
+
         toggle.onTintColor = UIColor(named: "mainViolet")
         toggle.translatesAutoresizingMaskIntoConstraints = false
         toggle.addTarget(self, action: #selector(darkModeSwitchChanged), for: .valueChanged)
@@ -261,17 +263,20 @@ class SettingsViewController: UIViewController {
     }
     
     private func setAppTheme(to style: UIUserInterfaceStyle) {
-        UserDefaults.standard.set(style == .dark, forKey: "isDarkMode")
-        
-        if #available(iOS 13.0, *) {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-                windowScene.windows.first?.overrideUserInterfaceStyle = style
-            }            }
-        
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-            windowScene.windows.first?.setNeedsLayout()
-            windowScene.windows.first?.layoutIfNeeded()
-        }
+        let themeString: String
+           switch style {
+           case .dark: themeString = "dark"
+           case .light: themeString = "light"
+           default: themeString = "system"
+           }
+
+           UserDefaults.standard.set(themeString, forKey: "AppTheme")
+
+           if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+               for window in windowScene.windows {
+                   window.overrideUserInterfaceStyle = style
+               }
+           }
     }
 
     // MARK: - Actions

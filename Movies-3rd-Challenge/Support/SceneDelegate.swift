@@ -18,17 +18,33 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let auth = true
         
+        if let theme = UserDefaults.standard.string(forKey: "AppTheme") {
+            switch theme {
+            case "dark":
+                window?.overrideUserInterfaceStyle = .dark
+            case "light":
+                window?.overrideUserInterfaceStyle = .light
+            default:
+                window?.overrideUserInterfaceStyle = .unspecified
+            }
+        }
+        
         window?.rootViewController = UINavigationController(rootViewController: auth ? TabBarController() : OnboardingViewController())
         
         window?.makeKeyAndVisible()
     }
-    func sceneDidBecomeActive(_ scene: UIScene) {
-            if let isDarkMode = UserDefaults.standard.value(forKey: "isDarkMode") as? Bool {
-                if #available(iOS 13.0, *) {
-                    window?.overrideUserInterfaceStyle = isDarkMode ? .dark : .light
-                }
-            }
-        }
+//    func sceneDidBecomeActive(_ scene: UIScene) {
+//        if let theme = UserDefaults.standard.string(forKey: "AppTheme") {
+//                switch theme {
+//                case "dark":
+//                    window?.overrideUserInterfaceStyle = .dark
+//                case "light":
+//                    window?.overrideUserInterfaceStyle = .light
+//                default:
+//                    window?.overrideUserInterfaceStyle = .unspecified  
+//                }
+//            }
+//        }
   
 }
 
