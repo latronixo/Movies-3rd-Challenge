@@ -46,14 +46,12 @@ class NetworkService {
         var parameters: [String: Any] = [
             "page": currentPage,
             "limit": limit,
-            "genres.name": "боевик",
             "sortField": "rating.kp",
             "sortType": -1,
             "notNullFields": "name",
          ]
         
         //формируем список жанров
-        //let genresList: [String]
         if let genre = genres {
             if genre == "другие" {
                 parameters["genres.name"] = ["!боевик", "!приключения", "!детектив", "!фэнтези"]
@@ -76,7 +74,6 @@ class NetworkService {
                    encoding: URLEncoding.default,
                    headers: ["X-API-KEY": apiKey])
         
-        //print("Request URL: \(String(describing: request.url) )")
         request.responseDecodable(of: MovieResponse.self) { [weak self] response in
                 guard self != nil else { return }
                 
