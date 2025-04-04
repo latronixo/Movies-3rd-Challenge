@@ -19,7 +19,7 @@ class NetworkService {
         let parameters: [String: Any] = [
             "page": currentPage,
             "limit": limit,
-            "query": searchText ?? "Павел"
+            "query": searchText
         ]
         
         AF.request(searchMoviesURLString,
@@ -43,18 +43,6 @@ class NetworkService {
     //поиск по жанрам и рейтингу
     func fetchMovies(_ currentPage: Int, _ limit: Int, _ genres: String?, _ rating: String?, completion: @escaping ([Movie]) -> Void) {
         
-        //формируем список жанров
-        let genresList: [String]
-        if let genre = genres {
-            if genre == "другие" {
-                genresList = ["!боевик", "!приключения", "!детектив", "!фэнтези"]
-            } else {
-                genresList = [genre]
-            }
-        } else {
-            genresList = [""]
-        }
-
         var parameters: [String: Any] = [
             "page": currentPage,
             "limit": limit,
@@ -64,9 +52,22 @@ class NetworkService {
             "notNullFields": "name",
          ]
         
+        //формируем список жанров
+        //let genresList: [String]
+        if let genre = genres {
+            if genre == "другие" {
+                parameters["genres.name"] = ["!боевик", "!приключения", "!детектив", "!фэнтези"]
+            } else {
+                parameters["genres.name"] = genre
+            }
+        } else {
+            parameters["genres.name"] = [""]
+        }
+
+        
         // Формируем правильный параметр для рейтинга
         if let ratingNotNil = rating {
-            parameters["rating.kp"] = [String(ratingNotNil)]
+            parameters["rating.kp"] = ratingNotNil
         }
         
         let request = AF.request("https://api.kinopoisk.dev/v1.4/movie",
@@ -82,7 +83,7 @@ class NetworkService {
                 
                 switch response.result {
                 case .success(let value):
-                    //print("\(value)")
+                    print("\(value)")
                     completion(value.docs)
                 case .failure(let error):
                     print("Error fetching movies: \(error)")
