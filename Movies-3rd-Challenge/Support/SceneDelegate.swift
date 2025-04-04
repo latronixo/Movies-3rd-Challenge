@@ -29,7 +29,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         }
         
-        window?.rootViewController = UINavigationController(rootViewController: auth ? TabBarController() : OnboardingViewController())
+        window?.rootViewController = UINavigationController(rootViewController: TempMovieDetailViewController(movie: 1) /*auth ? TabBarController() : OnboardingViewController()*/)
         
         window?.makeKeyAndVisible()
     }
