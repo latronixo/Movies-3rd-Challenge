@@ -119,8 +119,12 @@ class MovieCell: UITableViewCell {
 
     func configure(with movie: Movie) {
         // Загружаем постер
-        if let previewURL = movie.poster.previewUrl, let url = URL(string: previewURL) {
+        if let poster = movie.poster {
+            if let previewURL = poster.previewUrl, let url = URL(string: previewURL) {
                 posterImageView.kf.setImage(with: url)
+            } else {
+                posterImageView.image = UIImage(named: "posterNotFound")
+            }
         } else {
             posterImageView.image = UIImage(named: "posterNotFound")
         }

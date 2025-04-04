@@ -12,6 +12,7 @@ final class SearchViewController: UIViewController {
     
     private var searchText: String = "Павел"
     private var selectedGenre: String?
+    private var selectedRating: String?
     private var movies: [Movie] = []
     private var isLoading = false
     private var currentPage = 1
@@ -134,21 +135,42 @@ final class SearchViewController: UIViewController {
         guard !isLoading else { return }
         isLoading = true
         
-        DispatchQueue.main.async {
-            
-            self.networkManager.fetchMovies(currentPage: self.currentPage, limit: self.limit, searchText: self.searchText, genres: self.selectedGenre) { [weak self] newMovies in
-            
-                if self?.currentPage == 1 {
-                    self?.movies = newMovies
-                } else {
-                    self?.movies.append(contentsOf: newMovies)
+            networkManager.fetchMovies(currentPage, limit, searchText) { [weak self] newMovies in
+                
+                DispatchQueue.main.async {
+                    
+                    if self?.currentPage == 1 {
+                        self?.movies = newMovies
+                    } else {
+                        self?.movies.append(contentsOf: newMovies)
+                    }
+                    
+                    self?.isLoading = false
+                    
+                    self?.tableView.reloadData()
                 }
-                
-                self?.isLoading = false
-                
-                self?.tableView.reloadData()
             }
-        }
+    }
+    
+    private func loadMoviesWithFilters() {
+        guard !isLoading else { return }
+        isLoading = true
+        
+        networkManager.fetchMovies(currentPage, limit, selectedGenre, selectedRating) { [weak self] newMovies in
+                
+                DispatchQueue.main.async {
+                    
+                    if self?.currentPage == 1 {
+                        self?.movies = newMovies
+                    } else {
+                        self?.movies.append(contentsOf: newMovies)
+                    }
+                    
+                    self?.isLoading = false
+                    
+                    self?.tableView.reloadData()
+                }
+            }
     }
     
     // MARK: - Genre Button Actions
@@ -161,8 +183,7 @@ final class SearchViewController: UIViewController {
         
         currentPage = 1
         movies.removeAll()
-        tableView.reloadData()
-        loadMovies()
+        loadMoviesWithFilters()
     }
 
 }
@@ -187,17 +208,6 @@ extension SearchViewController: UITableViewDataSource {
 extension SearchViewController: UITableViewDelegate {
     
     //обработка события окончания пролистывания таблицы (каждый свайп вниз или вверх
-    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
-        
-        // Загружаем следующую страницу, если достигли конца списка
-//        if indexPath.row == movies.count - 1 && !isLoading {
-//            currentPage += 1
-//            loadMovies()
-//            print("подгружаю еще 10 фильмов, страницу \(currentPage)...")
-//        }
-    }
-    
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         let lastSectionIndex = tableView.numberOfSections - 1
