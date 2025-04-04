@@ -129,16 +129,27 @@ class MovieCell: UITableViewCell {
     
     func configure(with movie: Movie) {
         // Загружаем постер
-        if let previewURL = movie.poster.previewUrl, let url = URL(string: previewURL) {
+        if let previewURL = movie.poster?.previewUrl, let url = URL(string: previewURL) {
                 posterImageView.kf.setImage(with: url)
         } else {
             posterImageView.image = UIImage(named: "posterNotFound")
         }
         
         titleLabel.text = movie.name
-        yearLabel.text = String(movie.year)
-        durationLabel.text = "\(movie.movieLength) минут"
-        genres = movie.genres.map {$0.name}
+        if let year = movie.year {
+            yearLabel.text = String(year)
+        } else {
+            yearLabel.text = ""
+        }
+        if let duration = movie.movieLength {
+            durationLabel.text = "\(duration) минут"
+        } else {
+            durationLabel.text = ""
+        }
+        
+        if let genresObjects = movie.genres {
+            genres = genresObjects.compactMap {$0.name}
+        }
         
 //        DispatchQueue.main.async {
 //                self.genreCollectionView.collectionViewLayout.invalidateLayout()
