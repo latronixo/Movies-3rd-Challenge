@@ -139,7 +139,7 @@ class FilterView: UIView {
     // MARK: - Data
     
     // Массив доступных категорий
-    private let categories = ["All", "Action", "Adventure", "Mystery", "Fantasy", "Others"]
+    private let categories = Constants.genres //["All", "Action", "Adventure", "Mystery", "Fantasy", "Others"]
     
     // Массив доступных рейтингов (количество звезд)
     private let ratings = [1, 2, 3, 4, 5]

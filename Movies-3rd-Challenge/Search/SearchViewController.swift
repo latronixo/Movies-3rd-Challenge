@@ -8,7 +8,7 @@
 import UIKit
 import Alamofire
 
-final class SearchViewController: UIViewController {
+final class SearchViewController: UIViewController, UITextFieldDelegate {
     
     private var searchText: String = ""
     private var selectedGenre: String?
@@ -27,14 +27,88 @@ final class SearchViewController: UIViewController {
     private let apiKey = Secrets.apiKey
 
     // MARK: - UI Components
-    private lazy var searchBar: UISearchBar = {
-        let searchBar = UISearchBar()
-        searchBar.placeholder = "Поиск фильмов"
-        searchBar.showsCancelButton = true
-        searchBar.delegate = self
-        return searchBar
+    
+    private lazy var searchBar: UIView = {
+        let container = UIView()
+        container.backgroundColor = .clear
+        
+        // Основное текстовое поле
+        let textField = UITextField()
+        textField.placeholder = "Поиск фильмов"
+        textField.backgroundColor = .white
+        textField.layer.borderWidth = 1
+        textField.layer.borderColor = #colorLiteral(red: 0.4023004472, green: 0.3941448927, blue: 0.7470854521, alpha: 1)
+        textField.layer.cornerRadius = 25
+        textField.clipsToBounds = true
+        textField.leftViewMode = .always
+        textField.delegate = self
+        textField.clearButtonMode = .never // Отключаем стандартный крестик
+        
+        // Иконка поиска слева
+        let searchIcon = UIImageView(image: UIImage(named: "searchIcon")?.withTintColor(#colorLiteral(red: 0.4023004472, green: 0.3941448927, blue: 0.7470854521, alpha: 1)))
+        searchIcon.contentMode = .scaleAspectFit
+        let searchIconContainer = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 30))
+        searchIcon.frame = CGRect(x: 10, y: 5, width: 18, height: 18)
+        searchIconContainer.addSubview(searchIcon)
+        textField.leftView = searchIconContainer
+        
+        // Кнопка крестика (внутри текстового поля, слева от фильтра)
+        let clearButton = UIButton(type: .custom)
+        clearButton.setImage(UIImage(named: "close"), for: .normal)
+        clearButton.tintColor = #colorLiteral(red: 0.4023004472, green: 0.3941448927, blue: 0.7470854521, alpha: 1)
+        clearButton.addTarget(self, action: #selector(clearSearch), for: .touchUpInside)
+        
+        // Кнопка фильтра (внутри текстового поля справа)
+        let filterButton = UIButton(type: .custom)
+        filterButton.setImage(UIImage(named: "filterIcon"), for: .normal)
+        filterButton.tintColor = #colorLiteral(red: 0.4023004472, green: 0.3941448927, blue: 0.7470854521, alpha: 1)
+        filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        
+        // Контейнер для правых кнопок
+        let rightButtonsContainer = UIView()
+        rightButtonsContainer.addSubview(clearButton)
+        rightButtonsContainer.addSubview(filterButton)
+        
+        // Расположение кнопок в контейнере
+        clearButton.translatesAutoresizingMaskIntoConstraints = false
+        filterButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            clearButton.trailingAnchor.constraint(equalTo: filterButton.leadingAnchor),
+            clearButton.centerYAnchor.constraint(equalTo: rightButtonsContainer.centerYAnchor),
+            clearButton.widthAnchor.constraint(equalToConstant: 30),
+            clearButton.heightAnchor.constraint(equalToConstant: 30),
+            
+            filterButton.trailingAnchor.constraint(equalTo: rightButtonsContainer.trailingAnchor, constant: -10),
+            filterButton.centerYAnchor.constraint(equalTo: rightButtonsContainer.centerYAnchor),
+            filterButton.widthAnchor.constraint(equalToConstant: 30),
+            filterButton.heightAnchor.constraint(equalToConstant: 30),
+            
+            rightButtonsContainer.widthAnchor.constraint(equalToConstant: 68), // 30 + 8 + 30
+            rightButtonsContainer.heightAnchor.constraint(equalToConstant: 30)
+        ])
+        
+        textField.rightView = rightButtonsContainer
+        textField.rightViewMode = .always
+        
+        container.addSubview(textField)
+        
+        // Констрейнты для текстового поля
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            textField.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            textField.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            textField.topAnchor.constraint(equalTo: container.topAnchor),
+            textField.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+            textField.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        
+        self.searchTextField = textField
+        return container
     }()
-
+    // Добавьте эти свойства в класс
+    private weak var searchTextField: UITextField!
+    private weak var clearButton: UIButton!
+    
     private lazy var genreScroll: UIScrollView = {
         let scroll = UIScrollView()
         scroll.showsHorizontalScrollIndicator = false
@@ -42,18 +116,12 @@ final class SearchViewController: UIViewController {
     }()
 
     private lazy var genreButtons: [UIButton] = {
-        let allButton = UIButton(type: .system)
-        allButton.setTitle("Все", for: .normal)
-        allButton.setTitleColor(.systemBlue, for: .selected)
-        allButton.addTarget(self, action: #selector(genreButtonTapped(_:)), for: .touchUpInside)
-        allButton.isSelected = true
-        
-        
-        return [allButton] + genresList.map { genre in
+        return genresList.map { genre in
             let button = UIButton(type: .system)
             button.setTitle(genre, for: .normal)
             button.setTitleColor(.systemBlue, for: .selected)
             button.addTarget(self, action: #selector(genreButtonTapped(_:)), for: .touchUpInside)
+            button.isSelected = genre == "Все" ? true : false
             return button
         }
     }()
@@ -79,6 +147,8 @@ final class SearchViewController: UIViewController {
         //убираем разделители между ячейками
         tableView.separatorStyle = .none
 
+        //searchBar.searchTextField.bringSubviewToFront(searchBar.searchTextField.rightView ?? UIView())
+                                                      
         setupUI()
         setupConstraints()
         setupGenres()
@@ -96,16 +166,27 @@ final class SearchViewController: UIViewController {
         }
     }
     
+    @objc private func clearSearch() {
+        searchTextField.text = ""
+        searchText = ""
+        currentPage = 1
+        movies.removeAll()
+        tableView.reloadData()
+        loadMovies()
+    }
+    
     private func setupConstraints() {
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         genreScroll.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            searchBar.heightAnchor.constraint(equalToConstant: 44),
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -20),
+            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            searchBar.heightAnchor.constraint(equalToConstant: 50),
+
+            //searchBar.searchTextField.heightAnchor.constraint(equalToConstant: 50),
             
             genreScroll.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
             genreScroll.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -117,6 +198,16 @@ final class SearchViewController: UIViewController {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
+        
+//        if let textField = searchBar.searchTextField as? UITextField {
+//             textField.translatesAutoresizingMaskIntoConstraints = false
+//             NSLayoutConstraint.activate([
+//                 textField.leadingAnchor.constraint(equalTo: searchBar.leadingAnchor),
+//                 textField.trailingAnchor.constraint(equalTo: searchBar.trailingAnchor),
+//                 textField.centerYAnchor.constraint(equalTo: searchBar.centerYAnchor),
+//                 textField.heightAnchor.constraint(equalToConstant: 50)
+//             ])
+//         }
     }
     
     private func setupGenres() {
@@ -186,8 +277,86 @@ final class SearchViewController: UIViewController {
         loadMoviesWithFilters()
         tableView.reloadData()
     }
+    
+    
+    @objc private func filterButtonTapped() {
 
+    //    let alert = UIAlertController(title: "Фильтры", message: nil, preferredStyle: .actionSheet)
+    //
+    //    alert.addAction(UIAlertAction(title: "По жанру", style: .default) { _ in
+    //        // Обработка выбора фильтра по жанру
+    //    })
+    //
+    //    alert.addAction(UIAlertAction(title: "По рейтингу", style: .default) { _ in
+    //        // Обработка выбора фильтра по рейтингу
+    //    })
+    //
+    //    alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
+        
+        let filterVC = FilterViewController()
+        filterVC.delegate = self
+        
+        // Передаем текущие значения фильтров, если они есть
+        if let genres = selectedGenre, let ratings = selectedRating {
+            filterVC.setInitialFilters(category: genres, rating: Int(ratings))
+        } else {
+            if let genres = selectedGenre {
+                filterVC.setInitialFilters(category: genres, rating: 0)
+            } else {
+                if let ratings = selectedRating {
+                    filterVC.setInitialFilters(category: "", rating: Int(ratings))
+                } else {
+                    filterVC.setInitialFilters(category: "", rating: 0)
+                }
+            }
+        }
+        present(filterVC, animated: true)}
+
+
+
+
+    // MARK: - Helper Methods
+
+    // Обновляет текст метки с выбранными фильтрами
+    private func updateSelectedFiltersLabel() {
+        var filterText = "Выбранные фильтры: "
+        
+        if let category = selectedGenre, let rating = selectedRating {
+            filterText += "категория - \(category), рейтинг - \(rating) звезд"
+        } else if let category = selectedGenre {
+            filterText += "категория - \(category)"
+        } else if let rating = selectedRating {
+            filterText += "рейтинг - \(rating) звезд"
+        } else {
+            filterText += "нет"
+        }
+        
+        //selectedFiltersLabel.text = filterText
+    }
+    
 }
+
+// MARK: - FilterViewControllerDelegate
+
+extension SearchViewController: FilterViewControllerDelegate {
+    // Вызывается когда пользователь применяет фильтры
+    func filterViewController(_ controller: FilterViewController, didApplyFilters category: String?, rating: Int?) {
+        selectedGenre = category
+        if let ratings = rating {
+            selectedRating = String(ratings)
+        }
+        updateSelectedFiltersLabel()
+    }
+
+    // Вызывается когда пользователь сбрасывает фильтры
+    func filterViewControllerDidReset(_ controller: FilterViewController) {
+        selectedGenre = nil
+        selectedRating = nil
+        updateSelectedFiltersLabel()
+    }
+}
+
+
 
 // MARK: - UITableViewDataSource
 extension SearchViewController: UITableViewDataSource {
@@ -238,11 +407,13 @@ extension SearchViewController: UISearchBarDelegate {
             [weak self] _ in
             guard let self = self else { return }
             
-            self.searchText = searchText
-            currentPage = 1
-            movies.removeAll()
-            tableView.reloadData()
-            loadMovies()
+            if !searchText.isEmpty {
+                self.searchText = searchText
+                currentPage = 1
+                movies.removeAll()
+                tableView.reloadData()
+                loadMovies()
+            }
         }
          
     }
@@ -251,36 +422,6 @@ extension SearchViewController: UISearchBarDelegate {
         searchBar.text = ""
         searchBar.resignFirstResponder()
     }
-}
-
-// MARK: - Networking Helper
-extension SearchViewController {
-    // Метод для очистки поиска
-    private func clearSearch() {
-        searchText = ""
-        currentPage = 1
-        movies.removeAll()
-        tableView.reloadData()
-        loadMovies()
-    }
-
-    // Метод для формирования параметров запроса
-//    private func requestParameters() -> Parameters {
-//    var params: Parameters = [
-//        "api_key": apiKey,
-//        "currentPage": String(currentPage)
-//    ]
-//
-//    if !searchText.isEmpty {
-//        params["query"] = searchText
-//    }
-//
-//    if let genre = selectedGenre, genre != "Все" {
-//        params["genres.name"] = genre
-//    }
-//
-//    return params
-//    }
 }
 
 // MARK: - UI Improvements

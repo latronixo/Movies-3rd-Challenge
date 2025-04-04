@@ -8,5 +8,5 @@
 import Foundation
 
 enum Constants {
-    static let genres = ["боевик", "приключения", "детектив", "фэнтези", "другие"]
+    static let genres = ["Все", "боевик", "приключения", "детектив", "фэнтези", "другие"]
 }
