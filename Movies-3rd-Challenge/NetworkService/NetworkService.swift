@@ -5,7 +5,7 @@ class NetworkService {
     
     private let searchMoviesURLString = "https://api.kinopoisk.dev/v1.4/movie/search"
     private let MovieDetailURLString = "https://api.kinopoisk.dev/v1.4/movie/" //1070216
-    private let apiKey = Secrets.apiKey
+    private let apiKey = /*Secrets.apiKey*/ ""
 
     static let shared = NetworkService()
     

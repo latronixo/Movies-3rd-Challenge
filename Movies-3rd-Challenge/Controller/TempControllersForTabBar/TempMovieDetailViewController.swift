@@ -8,10 +8,11 @@ import UIKit
 
 class TempMovieDetailViewController: UIViewController {
     private let mainView: TempMovieDetailView = .init()
-    var movie: Movie
+    private var movieID: Int
+    private var descriptionIsOpen: Bool = false
     
-    init(movie: Movie) {
-        self.movie = movie
+    init(movie: Int) {
+        self.movieID = movie
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -24,12 +25,18 @@ class TempMovieDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         mainView.backgroundColor = .white
-        //MARK: NAVIGATION BAR
+        navigationBarSetup()
+        mainView.openTextButton.addTarget(self, action: #selector(showTextDescription), for: .touchUpInside)
+    }
+    
+    //MARK: NAVIGATION BAR
+    func navigationBarSetup() {
         let backButton = UIBarButtonItem(
             image: UIImage(named: "Arrow Back"),
             style: .plain,
             target: self,
             action: #selector(backTapped))
+        backButton.tintColor = .black
         
         let titleLabel = UILabel()
         titleLabel.attributedText = NSAttributedString(
@@ -42,6 +49,7 @@ class TempMovieDetailViewController: UIViewController {
             style: .plain,
             target: self,
             action: #selector(doneTapped))
+        rightButton.tintColor = .black
         
         self.navigationItem.titleView = titleLabel
         self.navigationItem.rightBarButtonItem = rightButton
@@ -57,6 +65,17 @@ class TempMovieDetailViewController: UIViewController {
             
     @objc func backTapped() {
                 
+    }
+    
+    @objc func showTextDescription() {
+        descriptionIsOpen.toggle()
+        if descriptionIsOpen {
+            mainView.descriptionOfMovie.numberOfLines = 0
+            mainView.openTextButton.setTitle("Скрыть", for: .normal)
+        } else {
+            mainView.descriptionOfMovie.numberOfLines = 3
+            mainView.openTextButton.setTitle("Показать все", for: .normal)
+        }
     }
     
     required init?(coder: NSCoder) {

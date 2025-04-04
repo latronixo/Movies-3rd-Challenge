@@ -139,13 +139,33 @@ class TempMovieDetailView: UIView {
     lazy var descriptionOfMovie: UILabel = {
         let label = UILabel()
         label.text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book Show More"
-        label.numberOfLines = 5
+        label.numberOfLines = 3
+        label.font = .systemFont(ofSize: 14)
+        label.lineBreakMode = .byTruncatingTail
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
+    lazy var openTextButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Показать все", for: .normal)
+        button.setTitleColor(.button, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 14)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    lazy var litleDescriptionStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [descriptionOfMovie, openTextButton])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.alignment = .leading
+        stackView.spacing = 4
+        stackView.axis = .vertical
+        return stackView
+    }()
+    
     lazy var descriptionStack: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [storyLine, descriptionOfMovie])
+        let stackView = UIStackView(arrangedSubviews: [storyLine, litleDescriptionStack])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.alignment = .leading
         stackView.spacing = 16
@@ -207,6 +227,7 @@ class TempMovieDetailView: UIView {
             let starImage = UIImageView(image: UIImage(systemName: "star"))
             starImage.heightAnchor.constraint(equalToConstant: 16).isActive = true
             starImage.widthAnchor.constraint(equalToConstant: 16).isActive = true
+            starImage.tintColor = .systemYellow
             self.stars.append(starImage)
             self.starStack.addArrangedSubview(starImage)
         }

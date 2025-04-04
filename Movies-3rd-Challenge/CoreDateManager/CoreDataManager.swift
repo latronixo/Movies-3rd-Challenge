@@ -16,16 +16,6 @@ class CoreDataManager {
     //MARK: Сохранение фильма в избранное
     func saveMovie(favoriteMovie: Movie) {
         
-        guard !favoriteMovie.name.isEmpty else {
-            print("У фильма должно быть имя")
-            return
-        }
-        
-        guard favoriteMovie.rating.kp >= 0 && favoriteMovie.rating.kp <= 10 else {
-            print("Рейтинг долэен быть 0 до 10")
-            return
-        }
-        
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             print("Ошибка в app Delegate")
             return
@@ -54,8 +44,8 @@ class CoreDataManager {
             movie.genresThree = coutnOfGenres >= 3 ? mygenres[2] : ""
             movie.genresFour = coutnOfGenres >= 4 ? mygenres[3] : ""
             movie.id = Int32(favoriteMovie.id)
-            movie.movieLength = Int32(favoriteMovie.movieLength)
-            movie.name = favoriteMovie.name
+            movie.movieLength = favoriteMovie.movieLength != nil ? Int32(favoriteMovie.movieLength) : Int32(0)
+            movie.name = favoriteMovie.name != nil ? favoriteMovie.name : "Фильм"
             movie.poster = favoriteMovie.poster.previewUrl != nil ? favoriteMovie.poster.previewUrl : ""
             movie.rating = favoriteMovie.rating.kp
             movie.year = Int32(favoriteMovie.year)
