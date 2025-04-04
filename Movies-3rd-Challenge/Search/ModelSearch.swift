@@ -14,17 +14,17 @@ struct MovieResponse: Decodable {
 
 //модель для поиска по названию
 struct Movie: Decodable {
-    let id: Int
+    let id: Int?
     let name: String?
-    let year: Int
+    let year: Int?
     let movieLength: Int?
-    let rating: Rating
+    let rating: Rating?
     let poster: Poster?
-    let genres: [Genre]
+    let genres: [Genre]?
 }
 
 struct Rating: Decodable {
-    let kp: Double
+    let kp: Double?
 }
 
 struct Poster: Decodable {
@@ -32,7 +32,7 @@ struct Poster: Decodable {
 }
 
 struct Genre: Decodable {
-    let name: String
+    let name: String?
 }
 
 

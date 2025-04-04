@@ -130,9 +130,20 @@ class MovieCell: UITableViewCell {
         }
         
         titleLabel.text = movie.name
-        yearLabel.text = String(movie.year)
-        durationLabel.text = "\(movie.movieLength) мин"
-        genreLabel.text = movie.genres.map { $0.name }.joined(separator: ", ")
+        
+        if let year = movie.year {
+            yearLabel.text = String(year)
+        }
+        
+        if let movieLength = movie.movieLength, movieLength != 0 {
+            durationLabel.text = "\(movieLength) мин"
+        } else {
+            durationLabel.text = "сериал"
+        }
+        
+        if let genres = movie.genres {
+            genreLabel.text = genres.map { $0.name ?? "" }.joined(separator: ", ")
+        }
         //favoriteButton.isSelected = movie.isFavorite
     }
 
