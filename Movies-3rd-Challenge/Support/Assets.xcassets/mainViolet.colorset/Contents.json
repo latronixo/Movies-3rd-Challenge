@@ -19,6 +19,7 @@
           "value" : "dark"
         }
       ],
+<<<<<<< HEAD
       "color" : {
         "color-space" : "srgb",
         "components" : {
@@ -28,6 +29,8 @@
           "red" : "1.000"
         }
       },
+=======
+>>>>>>> 04d5b2c7afbc0227cc52190011b5061c43c2710f
       "idiom" : "universal"
     }
   ],

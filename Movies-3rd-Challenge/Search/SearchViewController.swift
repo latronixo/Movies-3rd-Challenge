@@ -11,15 +11,22 @@ import Alamofire
 
 final class SearchViewController: UIViewController {
     
-    // MARK: - Properties
-    private var searchText: String = ""
+
+    private var searchText: String = "Павел"
     private var selectedGenre: String?
     private var movies: [Movie] = []
     private var isLoading = false
     private var currentPage = 1
     private let limit = 10
-    private let apiKey = Constants.apiKey
-    
+
+    private let genres = Constants.genres
+
+    // Таймер для задержки поиска
+    private var searchTimer: Timer?
+
+    private let networkManager = NetworkService.shared
+    private let apiKey = Secrets.apiKey
+
     // MARK: - UI Components
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -28,22 +35,20 @@ final class SearchViewController: UIViewController {
         searchBar.delegate = self
         return searchBar
     }()
-    
+
     private lazy var genreScroll: UIScrollView = {
         let scroll = UIScrollView()
         scroll.showsHorizontalScrollIndicator = false
         return scroll
     }()
-    
+
     private lazy var genreButtons: [UIButton] = {
         let allButton = UIButton(type: .system)
-        allButton.setTitle("All", for: .normal)
+        allButton.setTitle("Все", for: .normal)
         allButton.setTitleColor(.systemBlue, for: .selected)
         allButton.addTarget(self, action: #selector(genreButtonTapped(_:)), for: .touchUpInside)
         allButton.isSelected = true
-        
-        let genres = ["Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Horror", "Mystery", "Romance", "Sci-Fi", "Thriller"]
-        
+                
         return [allButton] + genres.map { genre in
             let button = UIButton(type: .system)
             button.setTitle(genre, for: .normal)
@@ -67,13 +72,17 @@ final class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "Search"
+        setTitleUpper(navItem: navigationItem, title: "Search")
         
         view.backgroundColor = .white
+        
+        //убираем разделители между ячейками
+        tableView.separatorStyle = .none
+
         setupUI()
         setupConstraints()
         setupGenres()
-        fetchMovies()
+        loadMovies()
     }
     
     // MARK: - UI Setup
@@ -122,40 +131,25 @@ final class SearchViewController: UIViewController {
     }
     
     // MARK: - Networking
-    private func fetchMovies() {
+    private func loadMovies() {
         guard !isLoading else { return }
         isLoading = true
         
-        let parameters: [String: Any] = [
-            "currentPage": currentPage,
-            "limit": limit,
-            "query": searchText == "" ? "Павел" : searchText,
-            "genres": selectedGenre ?? ""
-        ]
-        //AF.request("https://api.kinopoisk.dev/v1.4/movie/search", method: .get, parameters: parameters).responseDecodable { response in debugPrint(response) }
-        
-        AF.request("https://api.kinopoisk.dev/v1.4/movie/search",
-                       method: .get,
-                       parameters: parameters,
-                       headers: ["X-API-KEY": apiKey])
-                .responseDecodable(of: MovieResponse.self) { [weak self] response in
-                    guard let self = self else { return }
-                    
-                    self.isLoading = false
-                    
-                    switch response.result {
-                    case .success(let value):
-                        if self.currentPage == 1 {
-                            self.movies = value.docs
-                        } else {
-                            self.movies.append(contentsOf: value.docs)
-                        }
-                        self.tableView.reloadData()
-                        
-                    case .failure(let error):
-                        print("Error fetching movies: \(error)")
-                    }
+        DispatchQueue.main.async {
+            
+            self.networkManager.fetchMovies(currentPage: self.currentPage, limit: self.limit, searchText: self.searchText, genres: self.selectedGenre) { [weak self] newMovies in
+            
+                if self?.currentPage == 1 {
+                    self?.movies = newMovies
+                } else {
+                    self?.movies.append(contentsOf: newMovies)
                 }
+                
+                self?.isLoading = false
+                
+                self?.tableView.reloadData()
+            }
+        }
     }
     
     // MARK: - Genre Button Actions
@@ -163,13 +157,13 @@ final class SearchViewController: UIViewController {
         genreButtons.forEach { $0.isSelected = ($0 == sender) }
         
         if let title = sender.currentTitle {
-            selectedGenre = (title == "All") ? nil : title
+            selectedGenre = (title == "Все") ? nil : title
         }
         
         currentPage = 1
         movies.removeAll()
         tableView.reloadData()
-        fetchMovies()
+        loadMovies()
     }
 
 }
@@ -193,29 +187,54 @@ extension SearchViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension SearchViewController: UITableViewDelegate {
     
+    //обработка события окончания пролистывания таблицы (каждый свайп вниз или вверх
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        
         // Загружаем следующую страницу, если достигли конца списка
-        if indexPath.row == movies.count - 1 && !isLoading {
+//        if indexPath.row == movies.count - 1 && !isLoading {
+//            currentPage += 1
+//            loadMovies()
+//            print("подгружаю еще 10 фильмов, страницу \(currentPage)...")
+//        }
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        let lastSectionIndex = tableView.numberOfSections - 1
+        let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
+        
+        if indexPath.section == lastSectionIndex &&
+           indexPath.row == lastRowIndex && !isLoading {
+            // Загружаем следующую страницу при прокрутке до последней ячейки
             currentPage += 1
-            fetchMovies()
+            loadMovies()
+            print("подгружаю еще 10 фильмов, страничку \(currentPage)...")
+
         }
     }
 
-//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        if indexPath.row == movies.count - 1 && !isLoading {
-//            fetchMovies()
-//        }
-//    }
 }
 
 // MARK: - UISearchBarDelegate
 extension SearchViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        self.searchText = searchText
-        currentPage = 1
-        movies.removeAll()
-        tableView.reloadData()
-        fetchMovies()
+        
+        //отменяем предыдущий таймер, если он был
+        searchTimer?.invalidate()
+        
+        //устанавливаем новый таймер на 3 секунды
+        searchTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) {
+            [weak self] _ in
+            guard let self = self else { return }
+            
+            self.searchText = searchText
+            currentPage = 1
+            movies.removeAll()
+            tableView.reloadData()
+            loadMovies()
+        }
+         
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -232,7 +251,7 @@ extension SearchViewController {
         currentPage = 1
         movies.removeAll()
         tableView.reloadData()
-        fetchMovies()
+        loadMovies()
     }
 
     // Метод для формирования параметров запроса
@@ -246,8 +265,8 @@ extension SearchViewController {
         params["query"] = searchText
     }
 
-    if let genre = selectedGenre, genre != "All" {
-        params["with_genres"] = genre
+    if let genre = selectedGenre, genre != "Все" {
+        params["genres"] = genre
     }
 
     return params
@@ -275,7 +294,7 @@ extension SearchViewController {
          message: "Не удалось загрузить данные. Проверьте подключение к интернету.", preferredStyle: .alert)
          
          alert.addAction(UIAlertAction(title: "Повторить", style: .default) { _ in
-             self.fetchMovies()
+             self.loadMovies()
          } )
      
      present(alert, animated: true)

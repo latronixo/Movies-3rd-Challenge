@@ -15,9 +15,11 @@ class TempWishlistViewController: UIViewController {
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         
         view.addSubview(labelLogin)
         

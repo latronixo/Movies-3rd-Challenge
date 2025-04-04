@@ -20,7 +20,7 @@ final class MainViewController: UIViewController {
                topLayout.minimumLineSpacing = 16
                topLayout.sectionInset = .init(top: 0, left: 16, bottom: 0, right: 16)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: topLayout)
-        collectionView.backgroundColor = .clear
+        collectionView.backgroundColor = .systemBackground
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(TopCell.self, forCellWithReuseIdentifier: "TopCell")
@@ -46,7 +46,7 @@ final class MainViewController: UIViewController {
         catLayout.scrollDirection = .horizontal
         catLayout.minimumLineSpacing = 12
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: catLayout)
-        collectionView.backgroundColor = .clear
+        collectionView.backgroundColor = .systemBackground
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(CategoryCell.self, forCellWithReuseIdentifier: "CategoryCell")
@@ -93,7 +93,7 @@ final class MainViewController: UIViewController {
 
     private lazy var greetingLabel: UILabel = {
         let label = UILabel()
-        label.text = "Hello, name 👋"
+        label.text = "Hello, \(username) 👋"
         label.font = .systemFont(ofSize: 18, weight: .medium)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -125,12 +125,13 @@ final class MainViewController: UIViewController {
         return button
     }()
     
+    private var username = "Name"
     let banners = ["rectPoster", "rectPoster", "rectPoster"]
     let movies = ["Drifting Home", "Jurassic World","Drifting Home","Drifting Home","Drifting Home"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
 
         setupScrollView()
         setupUI()
