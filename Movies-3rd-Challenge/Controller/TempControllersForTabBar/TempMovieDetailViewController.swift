@@ -25,48 +25,54 @@ class TempMovieDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         mainView.backgroundColor = .white
-        navigationBarSetup()
-        mainView.openTextButton.addTarget(self, action: #selector(showTextDescription), for: .touchUpInside)
-    }
-    
-    //MARK: NAVIGATION BAR
-    func navigationBarSetup() {
-        let backButton = UIBarButtonItem(
-            image: UIImage(named: "Arrow Back"),
-            style: .plain,
-            target: self,
-            action: #selector(backTapped))
-        backButton.tintColor = .black
-        
-        let titleLabel = UILabel()
-        titleLabel.attributedText = NSAttributedString(
-            string: "Movie Detail",
-            attributes: [
-                .font: UIFont.boldSystemFont(ofSize: 20)])
-        
-        let rightButton = UIBarButtonItem(
-            image: UIImage(systemName: "suit.heart"),
-            style: .plain,
-            target: self,
-            action: #selector(doneTapped))
-        rightButton.tintColor = .black
-        
-        self.navigationItem.titleView = titleLabel
-        self.navigationItem.rightBarButtonItem = rightButton
-        self.navigationItem.leftBarButtonItem = backButton
-        self.navigationItem.hidesBackButton = true
-    }
-    
-    @objc func doneTapped() {
-        //проверка на наличие элементв в сохраненных
-        //если нет, то добавить и закрасить сердечко
-        // если есть, то удалить из избраннного
-    }
+        //MARK: NAVIGATION BAR
+            let backButton = UIBarButtonItem(
+                image: UIImage(named: "Arrow Back"),
+                style: .plain,
+                target: self,
+                action: #selector(backTapped))
+            backButton.tintColor = .black
             
-    @objc func backTapped() {
-                
+            let titleLabel = UILabel()
+            titleLabel.attributedText = NSAttributedString(
+                string: "Movie Detail",
+                attributes: [
+                    .font: UIFont(name: "PlusJakartaSans-ExtraBold", size: 18) ?? UIFont.systemFont(ofSize: 18)])
+            
+            let rightButton = UIBarButtonItem(
+                image: UIImage(systemName: "suit.heart"),
+                style: .plain,
+                target: self,
+                action: #selector(heartTapped))
+            rightButton.tintColor = .black
+            
+            self.navigationItem.titleView = titleLabel
+            self.navigationItem.rightBarButtonItem = rightButton
+            self.navigationItem.leftBarButtonItem = backButton
+            self.navigationItem.hidesBackButton = true
+        mainView.openTextButton.addTarget(self, action: #selector(showTextDescription), for: .touchUpInside)
+
     }
-    
+
+    @objc func heartTapped() {
+        var isFavorite: Bool = CoreDataManager.shared.isMovieInFavorites(withId: self.movieID)
+        if isFavorite == true {
+            self.navigationItem.rightBarButtonItem?.image = UIImage(systemName: "suit.heart.fill")
+            self.navigationItem.rightBarButtonItem?.tintColor = .red
+            CoreDataManager.shared.deleteMovie(withId: self.movieID)
+        } else {
+//            let favoriteMovie: Movie = загрузить мувик и передать его для сохранения в CoreData
+//            CoreDataManager.shared.saveMovie(favoriteMovie: <#T##Movie#>)
+        }
+    }
+    //MARK: NavigationFunctions
+    @objc func backTapped() {
+        navigationController?.popViewController(animated: true)
+    }
+    @objc func warchNowTapped() {
+        //прописать переход на другой контроллер
+    }
+    //MARK: ShowDescription
     @objc func showTextDescription() {
         descriptionIsOpen.toggle()
         if descriptionIsOpen {
@@ -77,6 +83,9 @@ class TempMovieDetailViewController: UIViewController {
             mainView.openTextButton.setTitle("Показать все", for: .normal)
         }
     }
+    private func rePrintStars() {
+    }
+
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

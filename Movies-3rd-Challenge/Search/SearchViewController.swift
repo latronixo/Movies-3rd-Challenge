@@ -23,7 +23,7 @@ final class SearchViewController: UIViewController {
     private var searchTimer: Timer?
 
     private let networkManager = NetworkService.shared
-    private let apiKey = /*Secrets.apiKey*/ ""
+    private let apiKey = Secrets.apiKey
 
     // MARK: - UI Components
     private lazy var searchBar: UISearchBar = {
