@@ -12,18 +12,19 @@ struct MovieResponse: Decodable {
     let docs: [Movie]
 }
 
+//модель для поиска по названию
 struct Movie: Decodable {
-    let id: Int
-    let name: String
-    let year: Int
-    let movieLength: Int
-    let rating: Rating
-    let poster: Poster
-    let genres: [Genre]
+    let id: Int?
+    let name: String?
+    let year: Int?
+    let movieLength: Int?
+    let rating: Rating?
+    let poster: Poster?
+    let genres: [Genre]?
 }
 
 struct Rating: Decodable {
-    let kp: Double
+    let kp: Double?
 }
 
 struct Poster: Decodable {
@@ -31,7 +32,7 @@ struct Poster: Decodable {
 }
 
 struct Genre: Decodable {
-    let name: String
+    let name: String?
 }
 
 // заглушка для верстки
@@ -44,7 +45,5 @@ let movie1 = Movie(id: 1,
                    genres: [Genre(name: "Action"), Genre(name: "Drama"), Genre(name: "Animation"), Genre(name: "Melodrama")]
 )
 
-let luckPreviewUrlPoster = "https://image.openmoviedb.com/kinopoisk-images/1773646/b3e1e427-5cba-4d47-9187-e939431d706a/x1000"
-
-//Модель для деталей о фильме
+//Модель для поиска по с фильтрами по жанрам и рейтингу
 

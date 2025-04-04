@@ -18,9 +18,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let auth = true
         
-<<<<<<< HEAD
-        window?.rootViewController = UINavigationController(rootViewController: auth ? TabBarController() : TempLoginViewController())
-=======
         if let theme = UserDefaults.standard.string(forKey: "AppTheme") {
             switch theme {
             case "dark":
@@ -32,8 +29,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         }
         
-        window?.rootViewController = UINavigationController(rootViewController: auth ? TabBarController() : OnboardingViewController())
->>>>>>> 04d5b2c7afbc0227cc52190011b5061c43c2710f
+        window?.rootViewController = UINavigationController(rootViewController: TempMovieDetailViewController(movie: 1) /*auth ? TabBarController() : OnboardingViewController()*/)
         
         window?.makeKeyAndVisible()
     }

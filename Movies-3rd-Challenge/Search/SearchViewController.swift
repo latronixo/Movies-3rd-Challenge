@@ -11,15 +11,15 @@ import Alamofire
 
 final class SearchViewController: UIViewController {
     
-
-    private var searchText: String = "Павел"
+    private var searchText: String = ""
     private var selectedGenre: String?
+    private var selectedRating: String?
     private var movies: [Movie] = []
     private var isLoading = false
     private var currentPage = 1
     private let limit = 10
 
-    private let genres = Constants.genres
+    private let genresList = Constants.genres
 
     // Таймер для задержки поиска
     private var searchTimer: Timer?
@@ -48,8 +48,9 @@ final class SearchViewController: UIViewController {
         allButton.setTitleColor(.systemBlue, for: .selected)
         allButton.addTarget(self, action: #selector(genreButtonTapped(_:)), for: .touchUpInside)
         allButton.isSelected = true
-                
-        return [allButton] + genres.map { genre in
+        
+        
+        return [allButton] + genresList.map { genre in
             let button = UIButton(type: .system)
             button.setTitle(genre, for: .normal)
             button.setTitleColor(.systemBlue, for: .selected)
@@ -82,7 +83,7 @@ final class SearchViewController: UIViewController {
         setupUI()
         setupConstraints()
         setupGenres()
-        loadMovies()
+        //loadMovies()
     }
     
     // MARK: - UI Setup
@@ -135,21 +136,42 @@ final class SearchViewController: UIViewController {
         guard !isLoading else { return }
         isLoading = true
         
-        DispatchQueue.main.async {
-            
-            self.networkManager.fetchMovies(currentPage: self.currentPage, limit: self.limit, searchText: self.searchText, genres: self.selectedGenre) { [weak self] newMovies in
-            
-                if self?.currentPage == 1 {
-                    self?.movies = newMovies
-                } else {
-                    self?.movies.append(contentsOf: newMovies)
+            networkManager.fetchMovies(currentPage, limit, searchText) { [weak self] newMovies in
+                
+                DispatchQueue.main.async {
+                    
+                    if self?.currentPage == 1 {
+                        self?.movies = newMovies
+                    } else {
+                        self?.movies.append(contentsOf: newMovies)
+                    }
+                    
+                    self?.isLoading = false
+                    
+                    self?.tableView.reloadData()
                 }
-                
-                self?.isLoading = false
-                
-                self?.tableView.reloadData()
             }
-        }
+    }
+    
+    private func loadMoviesWithFilters() {
+        guard !isLoading else { return }
+        isLoading = true
+        
+        networkManager.fetchMovies(currentPage, limit, selectedGenre, selectedRating) { [weak self] newMovies in
+                
+                DispatchQueue.main.async {
+                    
+                    if self?.currentPage == 1 {
+                        self?.movies = newMovies
+                    } else {
+                        self?.movies.append(contentsOf: newMovies)
+                    }
+                    
+                    self?.isLoading = false
+                    
+                    self?.tableView.reloadData()
+                }
+            }
     }
     
     // MARK: - Genre Button Actions
@@ -162,8 +184,8 @@ final class SearchViewController: UIViewController {
         
         currentPage = 1
         movies.removeAll()
+        loadMoviesWithFilters()
         tableView.reloadData()
-        loadMovies()
     }
 
 }
@@ -187,32 +209,21 @@ extension SearchViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension SearchViewController: UITableViewDelegate {
     
-    //обработка события окончания пролистывания таблицы (каждый свайп вниз или вверх
-    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
-        
-        // Загружаем следующую страницу, если достигли конца списка
-//        if indexPath.row == movies.count - 1 && !isLoading {
+    //обработка события окончания пролистывания таблицы (каждый свайп вниз или вверх (закомментировал, потому что при разработке попусту тратит лимит на количество запросов в сутки. Если до защиты останется время, можно будет раскомментировать и проверить, работает или нет)
+//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//        
+//        let lastSectionIndex = tableView.numberOfSections - 1
+//        let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
+//        
+//        if indexPath.section == lastSectionIndex &&
+//           indexPath.row == lastRowIndex && !isLoading {
+//            // Загружаем следующую страницу при прокрутке до последней ячейки
 //            currentPage += 1
 //            loadMovies()
-//            print("подгружаю еще 10 фильмов, страницу \(currentPage)...")
+//            print("подгружаю еще 10 фильмов, страничку \(currentPage)...")
+//
 //        }
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
-        let lastSectionIndex = tableView.numberOfSections - 1
-        let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
-        
-        if indexPath.section == lastSectionIndex &&
-           indexPath.row == lastRowIndex && !isLoading {
-            // Загружаем следующую страницу при прокрутке до последней ячейки
-            currentPage += 1
-            loadMovies()
-            print("подгружаю еще 10 фильмов, страничку \(currentPage)...")
-
-        }
-    }
+//    }
 
 }
 
@@ -255,22 +266,22 @@ extension SearchViewController {
     }
 
     // Метод для формирования параметров запроса
-    private func requestParameters() -> Parameters {
-    var params: Parameters = [
-        "api_key": apiKey,
-        "currentPage": String(currentPage)
-    ]
-
-    if !searchText.isEmpty {
-        params["query"] = searchText
-    }
-
-    if let genre = selectedGenre, genre != "Все" {
-        params["genres"] = genre
-    }
-
-    return params
-    }
+//    private func requestParameters() -> Parameters {
+//    var params: Parameters = [
+//        "api_key": apiKey,
+//        "currentPage": String(currentPage)
+//    ]
+//
+//    if !searchText.isEmpty {
+//        params["query"] = searchText
+//    }
+//
+//    if let genre = selectedGenre, genre != "Все" {
+//        params["genres.name"] = genre
+//    }
+//
+//    return params
+//    }
 }
 
 // MARK: - UI Improvements

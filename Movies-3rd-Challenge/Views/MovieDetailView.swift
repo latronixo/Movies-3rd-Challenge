@@ -36,7 +36,7 @@ class TempMovieDetailView: UIView {
     lazy var titleOfMovie: UILabel = {
         let label = UILabel()
         label.text = "Movie"
-        label.font = .systemFont(ofSize: 24)
+        label.font = UIFont(name: "PlusJakartaSans-Bold", size: 24)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -55,7 +55,7 @@ class TempMovieDetailView: UIView {
     lazy var dateOfMovie: UILabel = {
         let label = UILabel()
         label.text = "17 Sep 2021"
-        label.font = .systemFont(ofSize: 12)
+        label.font = UIFont(name: "Montserrat-Medium", size: 12)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -79,7 +79,7 @@ class TempMovieDetailView: UIView {
     lazy var durationOfMovie: UILabel = {
         let label = UILabel()
         label.text = "148 Minutes"
-        label.font = .systemFont(ofSize: 12)
+        label.font = UIFont(name: "Montserrat-Medium", size: 12)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -103,7 +103,7 @@ class TempMovieDetailView: UIView {
     }()
     lazy var categoryLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12)
+        label.font = UIFont(name: "Montserrat-Medium", size: 12)
         label.text = "Action"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -151,7 +151,7 @@ class TempMovieDetailView: UIView {
     lazy var storyLine: UILabel = {
         let label = UILabel()
         label.text = "Story Line"
-        label.font = .systemFont(ofSize: 16, weight: .bold)
+        label.font = UIFont(name: "PlusJakartaSans-SemiBold", size: 14)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -159,30 +159,34 @@ class TempMovieDetailView: UIView {
     lazy var descriptionOfMovie: UILabel = {
         let label = UILabel()
         label.text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book Show More"
-        label.numberOfLines = 5
+        label.numberOfLines = 3
+        label.font = UIFont(name:"PlusJakartaSans-ExtraLight", size: 16)
+        label.lineBreakMode = .byTruncatingTail
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    lazy var stackOfInfo: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [storyLine, descriptionOfMovie])
+    lazy var openTextButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Показать все", for: .normal)
+        button.setTitleColor(.button, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 14)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    lazy var litleDescriptionStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [descriptionOfMovie, openTextButton])
         stackView.translatesAutoresizingMaskIntoConstraints = false
-<<<<<<< HEAD:Movies-3rd-Challenge/Views/MovieDetailView.swift
+        stackView.alignment = .leading
+        stackView.spacing = 4
         stackView.axis = .vertical
         return stackView
     }()
-    //MARK: Actors
-    lazy var labelOfCollection: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    lazy var actorsCollectionView: UICollectionView = {
-        let collectionView = UICollectionView()
-        return collectionView
-    }()
     
-=======
+    lazy var descriptionStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [storyLine, litleDescriptionStack])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.alignment = .leading
         stackView.spacing = 16
         stackView.axis = .vertical
@@ -195,6 +199,7 @@ class TempMovieDetailView: UIView {
         button.setTitle("Watch Now", for: .normal)
         button.backgroundColor = .button
         button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = UIFont(name: "PlusJakartaSans-SemiBold", size: 16)
         button.layer.cornerRadius = 25
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -240,7 +245,6 @@ class TempMovieDetailView: UIView {
             wathchButton.widthAnchor.constraint(equalToConstant: 181),
             wathchButton.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
->>>>>>> 04d5b2c7afbc0227cc52190011b5061c43c2710f:Movies-3rd-Challenge/Views/TempMovieDetailView.swift
         
     }
     required init?(coder: NSCoder) {
@@ -251,6 +255,7 @@ class TempMovieDetailView: UIView {
             let starImage = UIImageView(image: UIImage(systemName: "star"))
             starImage.heightAnchor.constraint(equalToConstant: 16).isActive = true
             starImage.widthAnchor.constraint(equalToConstant: 16).isActive = true
+            starImage.tintColor = .systemYellow
             self.stars.append(starImage)
             self.starStack.addArrangedSubview(starImage)
         }

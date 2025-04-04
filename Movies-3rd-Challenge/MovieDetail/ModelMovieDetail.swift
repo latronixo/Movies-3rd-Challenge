@@ -8,18 +8,18 @@
 import Foundation
 
 struct MoviewDetailResponse: Decodable {
-    let id: Int
-    let name: String
+    let id: Int?
+    let name: String?
     let description: String?
-    let rating: Rating
-    let premiere: Premiere
-    let poster: Poster
-    let genres: [Genre]
-    let persons: [Person]
+    let rating: Rating?
+    let movieLength: Int?
+    let poster: Poster?
+    let genres: [Genre]?
+    let persons: [Person]?
 }
 
 struct Premiere: Decodable {
-    let world: String
+    let world: String?
 }
 
 struct Person: Decodable {
