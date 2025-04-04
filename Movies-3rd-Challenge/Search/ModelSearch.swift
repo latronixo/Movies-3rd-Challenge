@@ -14,12 +14,13 @@ struct MovieResponse: Decodable {
 
 //модель для поиска по названию
 struct Movie: Decodable {
-    let id: Int?
+    let id: Int
     let name: String?
-    let year: Int?
-    let movieLength: Int?
+    let description: String?
     let rating: Rating?
+    let movieLength: Int?
     let poster: Poster?
+    let votes: Votes?
     let genres: [Genre]?
 }
 
@@ -31,10 +32,22 @@ struct Poster: Decodable {
     let previewUrl: String?
 }
 
+struct Votes: Decodable {
+    let kp: Int?
+}
+
 struct Genre: Decodable {
     let name: String?
 }
 
+//модель для получения списка актеров и съемочной группы - для поиска по Id
+struct MovieDetail: Decodable {
+    let persons: [Person]?
+}
 
-//Модель для поиска по с фильтрами по жанрам и рейтингу
+struct Person: Decodable {
+    let photo: String?
+    let name: String?
+    let profession: String?
+}
 
