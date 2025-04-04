@@ -9,11 +9,11 @@ import Foundation
 
 struct MoviewDetailResponse: Decodable {
     let id: Int
-    let name: String
+    let name: String?
     let description: String?
     let rating: Rating
-    let premiere: Premiere
-    let poster: Poster
+    let movieLength: Int?
+    let poster: Poster?
     let genres: [Genre]
     let persons: [Person]
 }
