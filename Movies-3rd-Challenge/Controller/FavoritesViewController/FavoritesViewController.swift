@@ -11,8 +11,13 @@ class FavoritesViewController: UIViewController {
 
     // MARK: - UI
     
-    private let tableView = UITableView()
+    private let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.rowHeight = 184
+        return tableView
+    }()
     
+    // MARK: - Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,10 +67,12 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
-    // Задание минимальной высоты ячейки
-       func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-           return 184
-       }
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        let favoriteMovie = favorites[indexPath.row]
+//        
+//        let movieDetailVC = TempMovieDetailView(coder: favoriteMovie.id)
+//        navigationController?.pushViewController(movieDetailVC, animated: true)
+//    }
 }
 
 // MARK: - Setup Constraints
