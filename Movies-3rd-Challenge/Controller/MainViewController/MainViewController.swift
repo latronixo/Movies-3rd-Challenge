@@ -258,7 +258,9 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
 extension MainViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == topCollectionView {
-            //
+            let selectedMovie = banners[indexPath.item]
+//            let vc = TempMovieDetailViewController(movie: Movie)
+//                    navigationController?.pushViewController(vc, animated: true)
         } else {
             // Для CategoryCell
             if let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell {
@@ -291,6 +293,12 @@ extension MainViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+           let selectedMovie = movies[indexPath.row]
+        //            let vc = TempMovieDetailViewController(movie: Movie)
+        //                    navigationController?.pushViewController(vc, animated: true)
+       }
 }
 
 
