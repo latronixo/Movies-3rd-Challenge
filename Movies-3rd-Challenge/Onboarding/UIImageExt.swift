@@ -6,7 +6,14 @@
 //
 import UIKit
 
+// Расширение для класса UIImage для добавления дополнительных функций
 extension UIImage {
+    // Создает изображение скругленного прямоугольника заданного размера и цвета
+    // - Parameters:
+    //   - width: Ширина изображения
+    //   - height: Высота изображения
+    //   - cornerRadius: Радиус скругления углов
+    //   - color: Цвет заливки прямоугольника
     static func roundedRectangle(width: CGFloat, height: CGFloat, cornerRadius: CGFloat, color: UIColor) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(CGSize(width: width, height: height), false, 0)
         let ctx = UIGraphicsGetCurrentContext()!
