@@ -7,18 +7,30 @@
 import UIKit
 
 // MARK: - Protocol for Cell Delegate
+
+// Протокол для делегирования событий из ячейки онбординга
 protocol OnboardingCellDelegate: AnyObject {
+    // Вызывается при нажатии на кнопку продолжения
     func didTapContinueButton(at index: Int)
+    
+    // Вызывается при нажатии на кнопку начала использования приложения
     func didTapStartButton()
 }
 
 // MARK: - Onboarding Cell
+
+// Ячейка для отображения одного слайда онбординга
 final class OnboardingCell: UICollectionViewCell {
     
     // MARK: - Properties
+    
+    // Делегат для обработки событий ячейки
     weak var delegate: OnboardingCellDelegate?
+    
+    // Индекс пути этой ячейки в коллекции
     var indexPath: IndexPath?
     
+    // Основной контейнер для всего содержимого
     private lazy var containerView: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
@@ -26,6 +38,7 @@ final class OnboardingCell: UICollectionViewCell {
         return view
     }()
     
+    // Контейнер для изображений
     private lazy var imageContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
@@ -33,6 +46,7 @@ final class OnboardingCell: UICollectionViewCell {
         return view
     }()
     
+    // Основное изображение слайда
     private lazy var mainImageView: UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
@@ -42,6 +56,7 @@ final class OnboardingCell: UICollectionViewCell {
         return iv
     }()
     
+    // Дополнительное изображение слева (для последнего слайда)
     private lazy var leftImageView: UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
@@ -53,6 +68,7 @@ final class OnboardingCell: UICollectionViewCell {
         return iv
     }()
     
+    // Дополнительное изображение справа (для последнего слайда)
     private lazy var rightImageView: UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
@@ -64,6 +80,7 @@ final class OnboardingCell: UICollectionViewCell {
         return iv
     }()
     
+    // Карточка для отображения текстового содержимого
     private lazy var contentCardView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor { traitCollection in
@@ -74,6 +91,7 @@ final class OnboardingCell: UICollectionViewCell {
         return view
     }()
     
+    // Заголовок слайда
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 26, weight: .bold)
@@ -83,6 +101,7 @@ final class OnboardingCell: UICollectionViewCell {
         return label
     }()
     
+    // Описание слайда
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 18)
@@ -93,6 +112,7 @@ final class OnboardingCell: UICollectionViewCell {
         return label
     }()
     
+    // Кнопка действия (Продолжить/Начать)
     private lazy var actionButton: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = .onboardingBG
@@ -105,6 +125,8 @@ final class OnboardingCell: UICollectionViewCell {
     }()
     
     // MARK: - Init
+    
+    // Инициализатор с фреймом
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -115,6 +137,8 @@ final class OnboardingCell: UICollectionViewCell {
     }
     
     // MARK: - UI Setup
+    
+    // Настройка пользовательского интерфейса и ограничений
     private func setupUI() {
         contentView.addSubview(containerView)
         
@@ -175,6 +199,14 @@ final class OnboardingCell: UICollectionViewCell {
     }
     
     // MARK: - Configuration
+    
+    // Настраивает ячейку с заданными данными
+    // - Parameters:
+    //   - image: Название основного изображения
+    //   - additionalImages: Массив названий дополнительных изображений для последнего слайда
+    //   - title: Заголовок слайда
+    //   - description: Описание слайда
+    //   - isLastCell: Флаг, указывающий является ли ячейка последним слайдом
     func configure(image: String, additionalImages: [String]? = nil, title: String, description: String, isLastCell: Bool) {
         mainImageView.image = UIImage(named: image)
         titleLabel.text = title
@@ -204,6 +236,8 @@ final class OnboardingCell: UICollectionViewCell {
     }
     
     // MARK: - Actions
+    
+    // Обработчик нажатия на кнопку действия
     @objc private func buttonTapped() {
         guard let indexPath = indexPath else { return }
         
@@ -214,6 +248,7 @@ final class OnboardingCell: UICollectionViewCell {
         }
     }
     
+    // Обновляет интерфейс при изменении темы системы
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         
@@ -224,6 +259,7 @@ final class OnboardingCell: UICollectionViewCell {
         }
     }
     
+    // Сбрасывает состояние ячейки при повторном использовании
     override func prepareForReuse() {
         super.prepareForReuse()
         leftImageView.isHidden = true
