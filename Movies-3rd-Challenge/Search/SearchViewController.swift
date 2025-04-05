@@ -8,7 +8,7 @@
 import UIKit
 import Alamofire
 
-final class SearchViewController: UIViewController, UITextFieldDelegate {
+final class SearchViewController: UIViewController {
     
     private var searchText: String = ""
     private var selectedGenre: String?
@@ -121,7 +121,7 @@ final class SearchViewController: UIViewController, UITextFieldDelegate {
             button.setTitle(genre, for: .normal)
             button.setTitleColor(.systemBlue, for: .selected)
             button.addTarget(self, action: #selector(genreButtonTapped(_:)), for: .touchUpInside)
-            button.isSelected = genre == "Все" ? true : false
+            //button.isSelected = genre == "Все" ? true : false
             return button
         }
     }()
@@ -169,10 +169,10 @@ final class SearchViewController: UIViewController, UITextFieldDelegate {
     @objc private func clearSearch() {
         searchTextField.text = ""
         searchText = ""
-        currentPage = 1
-        movies.removeAll()
-        tableView.reloadData()
-        loadMovies()
+        //currentPage = 1
+//        movies.removeAll()
+//        tableView.reloadData()
+//        loadMovies()
     }
     
     private func setupConstraints() {
@@ -182,14 +182,14 @@ final class SearchViewController: UIViewController, UITextFieldDelegate {
         
         NSLayoutConstraint.activate([
             searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -20),
-            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
             searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             searchBar.heightAnchor.constraint(equalToConstant: 50),
 
             //searchBar.searchTextField.heightAnchor.constraint(equalToConstant: 50),
             
             genreScroll.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
-            genreScroll.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            genreScroll.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
             genreScroll.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             genreScroll.heightAnchor.constraint(equalToConstant: 44),
             
@@ -273,6 +273,7 @@ final class SearchViewController: UIViewController, UITextFieldDelegate {
         }
         
         currentPage = 1
+        clearSearch()
         movies.removeAll()
         loadMoviesWithFilters()
         tableView.reloadData()
@@ -396,28 +397,74 @@ extension SearchViewController: UITableViewDelegate {
 }
 
 // MARK: - UISearchBarDelegate
-extension SearchViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+extension SearchViewController: UITextFieldDelegate {
+    
+    //нажатие на Enter в поле поиска
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        // Скрываем клавиатуру
+        textField.resignFirstResponder()
         
-        //отменяем предыдущий таймер, если он был
-        searchTimer?.invalidate()
-        
-        //устанавливаем новый таймер на 3 секунды
-        searchTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) {
-            [weak self] _ in
-            guard let self = self else { return }
-            
-            if !searchText.isEmpty {
-                self.searchText = searchText
-                currentPage = 1
-                movies.removeAll()
-                tableView.reloadData()
-                loadMovies()
-            }
+        // Проверяем, есть ли текст в поле поиска
+        if let searchText = textField.text, !searchText.isEmpty {
+            self.searchText = searchText
+            goSearchByName()
         }
-         
+        
+        return true
     }
     
+    //событие ввода символа в поле поиска. Спустя 3 секунды загружаем список фильмов в tableView
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        // 1. Отменяем предыдущий таймер (если был)
+        searchTimer?.invalidate()
+        
+        // 2. Получаем текущий текст + нововведенный символ
+        let currentText = textField.text ?? ""
+        guard let textRange = Range(range, in: currentText) else { return true }
+        let updatedText = currentText.replacingCharacters(in: textRange, with: string)
+        
+        // 3. Если текст пустой — сразу сбрасываем поиск
+        if updatedText.isEmpty {
+            clearSearch()
+            return true
+        }
+        
+        // 4. Запускаем таймер на 3 секунды
+        searchTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.searchText = updatedText
+            goSearchByName()
+        }
+        
+        return true
+    }
+    
+    func goSearchByName() {
+        self.currentPage = 1
+        self.loadMovies()
+
+    }
+    
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//        
+//        //отменяем предыдущий таймер, если он был
+//        searchTimer?.invalidate()
+//        
+//        //устанавливаем новый таймер на 3 секунды
+//        searchTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) {
+//            [weak self] _ in
+//            guard let self = self else { return }
+//            
+//            if !searchText.isEmpty {
+//                self.searchText = searchText
+//                currentPage = 1
+//                movies.removeAll()
+//                tableView.reloadData()
+//                loadMovies()
+//            }
+//        }
+         
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""
         searchBar.resignFirstResponder()

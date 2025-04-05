@@ -48,7 +48,7 @@ class NetworkService {
             "limit": limit,
             "sortField": "rating.kp",
             "sortType": -1,
-            "notNullFields": "name",
+            "notNullFields": ["name", "id", "poster.url"],
         ]
         
         //формируем список жанров
@@ -58,10 +58,7 @@ class NetworkService {
             } else {
                 parameters["genres.name"] = genre
             }
-        } else {
-            parameters["genres.name"] = [""]
         }
-        
         
         // Формируем правильный параметр для рейтинга
         if let ratingNotNil = rating {
@@ -80,7 +77,7 @@ class NetworkService {
             
             switch response.result {
             case .success(let value):
-                print("\(value)")
+                //print("\(value)")
                 completion(value.docs)
             case .failure(let error):
                 print("Error fetching movies: \(error)")

@@ -28,7 +28,7 @@ struct Rating: Decodable {
 }
 
 struct Poster: Decodable {
-    let previewUrl: String?
+    let url: String?
 }
 
 struct Genre: Decodable {
