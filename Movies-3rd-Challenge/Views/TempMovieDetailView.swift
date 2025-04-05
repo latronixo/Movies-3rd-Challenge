@@ -211,4 +211,35 @@ class TempMovieDetailView: UIView {
             self.starStack.addArrangedSubview(starImage)
         }
     }
+    
+    func configure(with movie: Movie) {
+        titleOfMovie.text = movie.displayTitle
+        durationOfMovie.text = movie.displayLength
+        categoryLabel.text = movie.displayGenre
+        descriptionOfMovie.text = movie.description ?? "Нет описания"
+        
+        if let year = movie.year {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy"
+            dateOfMovie.text = "\(year)"
+        }
+
+        if let url = movie.posterURL {
+            DispatchQueue.global().async {
+                if let data = try? Data(contentsOf: url),
+                   let image = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        self.imageOfMovie.image = image
+                    }
+                }
+            }
+        }
+
+        let rating = movie.rating?.kp ?? 0
+        let fiveStarRating = rating / 2.0
+        for (index, star) in stars.enumerated() {
+            star.image = UIImage(systemName: index < Int(round(fiveStarRating)) ? "star.fill" : "star")
+            star.tintColor = .systemYellow
+        }
+    }
 }

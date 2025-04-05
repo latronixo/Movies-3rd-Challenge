@@ -17,17 +17,21 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Splash Screen" translatesAutoresizingMaskIntoConstraints="NO" id="7WZ-gQ-SCq">
-                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Splash Screen" translatesAutoresizingMaskIntoConstraints="NO" id="7WZ-gQ-SCq">
+                                <rect key="frame" x="-60" y="0.0" width="512" height="852"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="852" id="Om6-TK-1Hs"/>
+                                    <constraint firstAttribute="width" constant="512" id="r4j-oB-tbU"/>
+                                </constraints>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="7WZ-gQ-SCq" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="DIt-zP-5vz"/>
-                            <constraint firstAttribute="bottom" secondItem="7WZ-gQ-SCq" secondAttribute="bottom" id="VcA-Ur-BK1"/>
-                            <constraint firstItem="7WZ-gQ-SCq" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="YbD-DI-Fme"/>
-                            <constraint firstItem="7WZ-gQ-SCq" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="xKZ-YL-tJq"/>
+                            <constraint firstItem="7WZ-gQ-SCq" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="0la-Na-oLc"/>
+                            <constraint firstAttribute="trailing" secondItem="7WZ-gQ-SCq" secondAttribute="trailing" constant="-59" id="IlU-l6-Mxu"/>
+                            <constraint firstItem="7WZ-gQ-SCq" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" constant="-60" id="Pja-ZS-0sd"/>
+                            <constraint firstAttribute="bottom" secondItem="7WZ-gQ-SCq" secondAttribute="bottom" id="lK5-s6-XnJ"/>
                         </constraints>
                     </view>
                 </viewController>

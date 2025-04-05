@@ -8,12 +8,14 @@ import UIKit
 
 class TempMovieDetailViewController: UIViewController {
     private let mainView: TempMovieDetailView = .init()
-    var movie: MoviewDetailResponse
+    var movie: Movie
+    var detail: MovieDetail
     
-    init(movie: MoviewDetailResponse) {
-        self.movie = movie
-        super.init(nibName: nil, bundle: nil)
-    }
+    init(movie: Movie, detail: MovieDetail) {
+           self.movie = movie
+           self.detail = detail
+           super.init(nibName: nil, bundle: nil)
+       }
     
     
     override func loadView() {
@@ -47,6 +49,10 @@ class TempMovieDetailViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = rightButton
         self.navigationItem.leftBarButtonItem = backButton
         self.navigationItem.hidesBackButton = true
+        
+        mainView.configure(with: movie)
+        print("Persons received: \(detail)") // персоны
+
     }
     
     @objc func doneTapped() {
