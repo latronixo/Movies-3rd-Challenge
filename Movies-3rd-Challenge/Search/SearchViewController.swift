@@ -115,15 +115,19 @@ final class SearchViewController: UIViewController {
         return scroll
     }()
 
-    private lazy var genreButtons: [UIButton] = {
-        return genresList.map { genre in
-            let button = UIButton(type: .system)
-            button.setTitle(genre, for: .normal)
-            button.setTitleColor(.systemBlue, for: .selected)
-            button.addTarget(self, action: #selector(genreButtonTapped(_:)), for: .touchUpInside)
-            //button.isSelected = genre == "Все" ? true : false
-            return button
-        }
+    private lazy var categoryCollectionView: UICollectionView = {
+        let catLayout = UICollectionViewFlowLayout()
+        catLayout.scrollDirection = .horizontal
+        catLayout.minimumLineSpacing = 12
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: catLayout)
+        collectionView.backgroundColor = .systemBackground
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(CategoryCell.self, forCellWithReuseIdentifier: "CategoryCell")
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.isPagingEnabled = true
+        collectionView.showsHorizontalScrollIndicator = false
+        return collectionView
     }()
     
     private lazy var tableView: UITableView = {
@@ -158,12 +162,12 @@ final class SearchViewController: UIViewController {
     // MARK: - UI Setup
     private func setupUI() {
         view.addSubview(searchBar)
-        view.addSubview(genreScroll)
+        view.addSubview(categoryCollectionView)
         view.addSubview(tableView)
         
-        genreButtons.forEach {
-            genreScroll.addSubview($0)
-        }
+//        genreButtons.forEach {
+//            genreScroll.addSubview($0)
+//        }
     }
     
     @objc private func clearSearch() {
@@ -188,12 +192,12 @@ final class SearchViewController: UIViewController {
 
             //searchBar.searchTextField.heightAnchor.constraint(equalToConstant: 50),
             
-            genreScroll.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
-            genreScroll.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
-            genreScroll.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            genreScroll.heightAnchor.constraint(equalToConstant: 44),
+            categoryCollectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
+            categoryCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
+            categoryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            categoryCollectionView.heightAnchor.constraint(equalToConstant: 44),
             
-            tableView.topAnchor.constraint(equalTo: genreScroll.bottomAnchor),
+            tableView.topAnchor.constraint(equalTo: categoryCollectionView.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
