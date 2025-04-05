@@ -8,9 +8,9 @@ import UIKit
 
 class TempMovieDetailViewController: UIViewController {
     private let mainView: TempMovieDetailView = .init()
-    var movie: Movie
+    var movie: MoviewDetailResponse
     
-    init(movie: Movie) {
+    init(movie: MoviewDetailResponse) {
         self.movie = movie
         super.init(nibName: nil, bundle: nil)
     }

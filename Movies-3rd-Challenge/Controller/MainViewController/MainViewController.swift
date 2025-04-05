@@ -126,8 +126,8 @@ final class MainViewController: UIViewController {
     }()
     
     private var username = "Name"
-    let banners = ["rectPoster", "rectPoster", "rectPoster"]
-    let movies = ["Drifting Home", "Jurassic World","Drifting Home","Drifting Home","Drifting Home"]
+    private var banners: [Movie] = []   // верхняя карусель
+    private var movies: [Movie] = [] // бокс офис
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -135,6 +135,9 @@ final class MainViewController: UIViewController {
 
         setupScrollView()
         setupUI()
+        
+        loadBannerMovies()
+        loadBoxOfficeMovies()
     }
 
     // MARK: private methods
@@ -203,7 +206,7 @@ final class MainViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20)
         ])
     }
-    
+
     @objc private func seeAllTapped() {
         print("открыть экран си олл")
     }
@@ -214,7 +217,7 @@ final class MainViewController: UIViewController {
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == topCollectionView {
-            return banners.count
+            return min(banners.count, 5)
         } else {
             return categories.count
         }
@@ -223,9 +226,12 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == topCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TopCell", for: indexPath) as! TopCell
-            cell.configure(imageName: banners[indexPath.item],
-                           category: categories[indexPath.item],
-                           title: "ThorThorThor")
+            let movie = banners[indexPath.item]
+            cell.configure(
+                title: movie.displayTitle,
+                    category: movie.displayGenre,
+                    imageURL: movie.posterURL
+            )
                 return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
@@ -259,8 +265,15 @@ extension MainViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == topCollectionView {
             let selectedMovie = banners[indexPath.item]
-//            let vc = TempMovieDetailViewController(movie: Movie)
-//                    navigationController?.pushViewController(vc, animated: true)
+            guard let id = selectedMovie.id else { return }
+            
+            NetworkService.shared.fetchMovieDetail(id: id) { [weak self] detail in
+                guard let detail = detail else { return }
+                DispatchQueue.main.async {
+                    let vc = TempMovieDetailViewController(movie: detail)
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
         } else {
             // Для CategoryCell
             if let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell {
@@ -271,7 +284,7 @@ extension MainViewController: UICollectionViewDelegate {
 }
 
 
-// MARK: TableView
+// MARK: TableView BOX office
 
 extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -280,11 +293,15 @@ extension MainViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell", for: indexPath) as! MovieTableViewCell
-        cell.configure(title: movies[indexPath.row],
-                       rating: "111",
-                       imageName: "miniPoster",
-                       duration: "124 min",
-                       category: categories[indexPath.row])
+        let movie = movies[indexPath.row]
+        cell.configure(
+            title: movie.displayTitle,
+                rating: movie.displayRating,
+                imageURL: movie.posterURL,
+                duration: movie.displayLength,
+                category: movie.displayGenre
+        )
+
         return cell
     }
 }
@@ -295,10 +312,38 @@ extension MainViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-           let selectedMovie = movies[indexPath.row]
-        //            let vc = TempMovieDetailViewController(movie: Movie)
-        //                    navigationController?.pushViewController(vc, animated: true)
-       }
+        let movie = movies[indexPath.row]
+        guard let id = movie.id else { return }
+        
+        NetworkService.shared.fetchMovieDetail(id: id) { [weak self] detail in
+            guard let detail = detail else { return }
+            DispatchQueue.main.async {
+                let vc = TempMovieDetailViewController(movie: detail)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            }
+        }
+    }
+}
+
+// MARK: Network
+extension MainViewController {
+    private func loadBannerMovies() {
+        NetworkService.shared.fetchMoviesCaruselHomeScreen(1, 10) { [weak self] movies in
+            self?.banners = movies
+            DispatchQueue.main.async {
+                self?.topCollectionView.reloadData()
+            }
+        }
+    }
+    
+    private func loadBoxOfficeMovies() {
+        NetworkService.shared.fetchMoviesBoxOfficeHomeScreen(1, 20, nil) { [weak self] movies in
+            self?.movies = movies
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+            }
+        }
+    }
 }
 
 

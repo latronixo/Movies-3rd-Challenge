@@ -100,9 +100,24 @@ final class TopCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
-    func configure(imageName: String, category: String, title: String) {
-        imageView.image = UIImage(named: imageName)
-        categoryLabel.text = category
+    func configure(title: String, category: String, imageURL: URL?) {
         titleLabel.text = title
+        categoryLabel.text = category
+        if let url = imageURL {
+            loadImage(from: url, into: imageView)
+        } else {
+            imageView.image = UIImage(named: "placeholder")  
+        }
+    }
+    
+    func loadImage(from url: URL, into imageView: UIImageView) {
+        DispatchQueue.global().async {
+            if let data = try? Data(contentsOf: url),
+               let image = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    imageView.image = image
+                }
+            }
+        }
     }
 }

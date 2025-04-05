@@ -101,13 +101,29 @@ class MovieTableViewCell: UITableViewCell {
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
-    func configure(title: String, rating: String, imageName: String, duration: String, category: String) {
-            titleLabel.text = title
-            ratingLabel.text = "⭐" + rating
-            posterImageView.image = UIImage(named: imageName)
+    func configure(title: String, rating: String, imageURL: URL?, duration: String, category: String) {
+        titleLabel.text = title
+        ratingLabel.text = "⭐️ \(rating)"
+        
         timeLabel.text = duration
         categoryLabel.text = category
         
+        if let url = imageURL {
+            loadImage(from: url, into: posterImageView)
+        } else {
+            posterImageView.image = UIImage(named: "miniPoster")
+        }
+    }
+    
+    func loadImage(from url: URL, into imageView: UIImageView) {
+        DispatchQueue.global().async {
+            if let data = try? Data(contentsOf: url),
+               let image = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    imageView.image = image
+                }
+            }
+        }
     }
     
     @objc private func toggleHeart() {

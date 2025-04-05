@@ -141,7 +141,7 @@ class NetworkService {
                 //print("\(value)")
                 completion(value.docs)
             case .failure(let error):
-                print("Error fetching movies: \(error)")
+                print("Error fetching movies Carusel: \(error)")
                 //print("Response data: \(String(data: response.data ?? Data(), encoding: .utf8) ?? "No data")")
                 completion([])
             }
@@ -186,11 +186,15 @@ class NetworkService {
             case .success(let value):
                 print("\(value)")
                 completion(value.docs)
+                
+                print("Box office movies count: \(value.docs.count)")
+
             case .failure(let error):
-                print("Error fetching movies: \(error)")
+                print("Error fetching movies BOX office: \(error)")
                 print("Response data: \(String(data: response.data ?? Data(), encoding: .utf8) ?? "No data")")
                 completion([])
             }
+            
         }
     }
     
