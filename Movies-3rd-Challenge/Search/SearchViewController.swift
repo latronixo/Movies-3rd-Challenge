@@ -221,6 +221,12 @@ final class SearchViewController: UIViewController, UITextFieldDelegate {
         genreScroll.contentSize = CGSize(width: currentX, height: 44)
     }
     
+    func updateWithBoxOffice(movies: [Movie]) {
+        self.movies = movies
+        self.tableView.reloadData()
+
+    }
+    
     // MARK: - Networking
     private func loadMovies() {
         guard !isLoading else { return }

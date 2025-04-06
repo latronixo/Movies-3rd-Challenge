@@ -59,7 +59,6 @@ final class MainViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(MovieTableViewCell.self, forCellReuseIdentifier: "MovieCell")
-        tableView.dataSource = self
         tableView.rowHeight = 80
         tableView.separatorStyle = .none
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -125,16 +124,33 @@ final class MainViewController: UIViewController {
         return button
     }()
     
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .gray
+        indicator.hidesWhenStopped = true
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
+    }()
+    
     private var username = "Name"
-    let banners = ["rectPoster", "rectPoster", "rectPoster"]
-    let movies = ["Drifting Home", "Jurassic World","Drifting Home","Drifting Home","Drifting Home"]
+    private var banners: [Movie] = []   // верхняя карусель
+    private var movies: [Movie] = [] // бокс офис
+    private var genres: String = "комедия"
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
 
+        
         setupScrollView()
         setupUI()
+        
+        loadBannerMovies()
+        loadBoxOfficeMovies(category: nil)
+        
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(MovieTableViewCell.self, forCellReuseIdentifier: "MovieCell")
     }
 
     // MARK: private methods
@@ -169,7 +185,9 @@ final class MainViewController: UIViewController {
         contentView.addSubview(categoryLabel)
         contentView.addSubview(boxOfficeLabel)
         contentView.addSubview(seeAllButton)
-
+        contentView.addSubview(activityIndicator)
+        
+            
         NSLayoutConstraint.activate([
             headerStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             headerStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -199,13 +217,23 @@ final class MainViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: boxOfficeLabel.bottomAnchor, constant: 5),
             tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            tableView.heightAnchor.constraint(equalToConstant: CGFloat(movies.count * 80)),
-            tableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20)
+            tableView.heightAnchor.constraint(equalToConstant: 500),
+            tableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
-    
+
     @objc private func seeAllTapped() {
-        print("открыть экран си олл")
+        guard let tabBarController = self.tabBarController else { return }
+
+            tabBarController.selectedIndex = 0
+
+            if let navVC = tabBarController.viewControllers?[0] as? UINavigationController,
+               let searchVC = navVC.viewControllers.first as? SearchViewController {
+                searchVC.updateWithBoxOffice(movies: self.movies)
+            }
     }
 }
 
@@ -214,7 +242,7 @@ final class MainViewController: UIViewController {
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == topCollectionView {
-            return banners.count
+            return min(banners.count, 5)
         } else {
             return categories.count
         }
@@ -223,9 +251,12 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == topCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TopCell", for: indexPath) as! TopCell
-            cell.configure(imageName: banners[indexPath.item],
-                           category: categories[indexPath.item],
-                           title: "ThorThorThor")
+            let movie = banners[indexPath.item]
+            cell.configure(
+                title: movie.displayTitle,
+                    category: movie.displayGenre,
+                    imageURL: movie.posterURL
+            )
                 return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
@@ -258,31 +289,48 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
 extension MainViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == topCollectionView {
-            //
+            let selectedMovie = banners[indexPath.item]
+            guard let id = selectedMovie.id else { return }
+            
+            NetworkService.shared.fetchMovieDetail(id: id) { [weak self] detail in
+                guard let detail = detail else { return }
+                DispatchQueue.main.async {
+                    let vc = TempMovieDetailViewController(movie: selectedMovie, detail: detail)
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
         } else {
             // Для CategoryCell
-            if let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell {
-                cell.isCellSelected.toggle()
+            for i in 0..<categories.count {
+                let index = IndexPath(item: i, section: 0)
+                if let cell = collectionView.cellForItem(at: index) as? CategoryCell {
+                    cell.isCellSelected = false
+                }
+                
+                if let selectedCell = collectionView.cellForItem(at: indexPath) as? CategoryCell {
+                    selectedCell.isCellSelected = true
+                    let category = categories[indexPath.item]
+                    genres = category
+                    loadBoxOfficeMovies(category: genres)
+                }
             }
         }
     }
 }
 
 
-// MARK: TableView
+// MARK: TableView BOX office
 
 extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        movies.count
+        min(movies.count, 5)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell", for: indexPath) as! MovieTableViewCell
-        cell.configure(title: movies[indexPath.row],
-                       rating: "111",
-                       imageName: "miniPoster",
-                       duration: "124 min",
-                       category: categories[indexPath.row])
+        let movie = movies[indexPath.row]
+        cell.configure(movie: movie)
+
         return cell
     }
 }
@@ -290,6 +338,44 @@ extension MainViewController: UITableViewDataSource {
 extension MainViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let movie = movies[indexPath.row]
+        guard let id = movie.id else { return }
+        
+        NetworkService.shared.fetchMovieDetail(id: id) { [weak self] detail in
+            guard let detail = detail else { return }
+            DispatchQueue.main.async {
+                let vc = TempMovieDetailViewController(movie: movie, detail: detail)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            }
+        }
+    }
+}
+
+// MARK: Network
+extension MainViewController {
+    private func loadBannerMovies() {
+        NetworkService.shared.fetchMoviesCaruselHomeScreen(1, 10) { [weak self] movies in
+            self?.banners = movies
+            DispatchQueue.main.async {
+                self?.topCollectionView.reloadData()
+            }
+        }
+    }
+    
+    private func loadBoxOfficeMovies(category: String?) {
+        activityIndicator.startAnimating()
+
+        NetworkService.shared.fetchMoviesBoxOfficeHomeScreen(1, 20, category) { [weak self] films in
+            self?.movies = films
+            DispatchQueue.main.async {
+                self?.activityIndicator.stopAnimating()
+                self?.movies = films
+                self?.tableView.reloadData()
+            }
+        }
     }
 }
 

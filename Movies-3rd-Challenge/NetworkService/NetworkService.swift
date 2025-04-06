@@ -92,7 +92,7 @@ class NetworkService {
     
     
     //поиск по id
-    func fetchMovieDetail(id: Int, completion: @escaping (MoviewDetailResponse?) -> Void) {
+    func fetchMovieDetail(id: Int, completion: @escaping (MovieDetail?) -> Void) {
         
         let parameters: [String: Any] = [:]
         
@@ -101,7 +101,7 @@ class NetworkService {
                    method: .get,
                    parameters: parameters,
                    headers: ["X-API-KEY": apiKey])
-        .responseDecodable(of: MoviewDetailResponse.self) { [weak self] response in
+        .responseDecodable(of: MovieDetail.self) { [weak self] response in
             guard self != nil else { return }
             
             switch response.result {
@@ -117,8 +117,8 @@ class NetworkService {
     //наполнение для карусели главного экрана
     func fetchMoviesCaruselHomeScreen(_ currentPage: Int, _ limit: Int, completion: @escaping ([Movie]) -> Void) {
         
-        var parameters: [String: Any] = [
-            "page": 1,
+        let parameters: [String: Any] = [
+            "page": Int.random(in: 1...4),
             "limit": 10,
             "sortField": "rating.kp",
             "sortType": -1,
@@ -141,7 +141,7 @@ class NetworkService {
                 //print("\(value)")
                 completion(value.docs)
             case .failure(let error):
-                print("Error fetching movies: \(error)")
+                print("Error fetching movies Carusel: \(error)")
                 //print("Response data: \(String(data: response.data ?? Data(), encoding: .utf8) ?? "No data")")
                 completion([])
             }
@@ -156,7 +156,7 @@ class NetworkService {
             "limit": limit,
             "sortField": "rating.kp",
             "sortType": -1,
-            "notNullFields": "name",
+            "notNullFields": ["name", "id"],
             "type": "movie",
             "year": "2025"
         ]
@@ -165,14 +165,12 @@ class NetworkService {
         if let genre = genres {
             if genre == "другие" {
                 parameters["genres.name"] = ["!боевик", "!приключения", "!детектив", "!фэнтези"]
-            } else {
+            } else if genre != "all" {
                 parameters["genres.name"] = genre
             }
-        } else {
-            parameters["genres.name"] = [""]
-        }
+        } // если жанр "ALL" то параметр не добавляется = показываются все фильмы без фильтра
         
-        let request = AF.request("https://api.kinopoisk.dev/v1.4/movie/random",
+        let request = AF.request("https://api.kinopoisk.dev/v1.4/movie",
                                  method: .get,
                                  parameters: parameters,
                                  encoding: URLEncoding.default,
@@ -184,14 +182,26 @@ class NetworkService {
             
             switch response.result {
             case .success(let value):
-                print("\(value)")
+                print("BOX OFFICE \(value)")
+//                print("BOX OFFICE json success")
+
                 completion(value.docs)
+                
+
             case .failure(let error):
-                print("Error fetching movies: \(error)")
+                print("Error fetching movies BOX office: \(error)")
                 print("Response data: \(String(data: response.data ?? Data(), encoding: .utf8) ?? "No data")")
                 completion([])
             }
+            
         }
     }
+    
+    func formatRatingToFiveScale(_ rating: Double?) -> String {
+        guard let rating = rating else { return "–" }
+        let converted = rating / 2.0
+        return String(format: "%.1f", converted)
+    }
+    
     
 }
