@@ -127,6 +127,8 @@ final class SearchViewController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.isPagingEnabled = true
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.allowsSelection = true
+        collectionView.allowsMultipleSelection = false
         return collectionView
     }()
     
@@ -155,7 +157,7 @@ final class SearchViewController: UIViewController {
                                                       
         setupUI()
         setupConstraints()
-        setupGenres()
+        //setupGenres()
         //loadMovies()
     }
     
@@ -214,16 +216,16 @@ final class SearchViewController: UIViewController {
 //         }
     }
     
-    private func setupGenres() {
-        var currentX: CGFloat = 16
-        
-        genreButtons.forEach { button in
-            button.frame = CGRect(x: currentX, y: 0, width: button.intrinsicContentSize.width + 32, height: 44)
-            currentX += button.frame.width + 8
-        }
-        
-        genreScroll.contentSize = CGSize(width: currentX, height: 44)
-    }
+//    private func setupGenres() {
+//        var currentX: CGFloat = 16
+//        
+//        genreButtons.forEach { button in
+//            button.frame = CGRect(x: currentX, y: 0, width: button.intrinsicContentSize.width + 32, height: 44)
+//            currentX += button.frame.width + 8
+//        }
+//        
+//        genreScroll.contentSize = CGSize(width: currentX, height: 44)
+//    }
     
     // MARK: - Networking
     private func loadMovies() {
@@ -269,21 +271,21 @@ final class SearchViewController: UIViewController {
     }
     
     // MARK: - Genre Button Actions
-    @objc private func genreButtonTapped(_ sender: UIButton) {
-        genreButtons.forEach { $0.isSelected = ($0 == sender) }
-        
-        if let title = sender.currentTitle {
-            selectedGenre = (title == "Все") ? nil : title
-        }
-        
-        currentPage = 1
-        clearSearch()
-        movies.removeAll()
-        loadMoviesWithFilters()
-        tableView.reloadData()
-    }
+//    @objc private func genreButtonTapped(_ sender: UIButton) {
+//        genreButtons.forEach { $0.isSelected = ($0 == sender) }
+//        
+//        if let title = sender.currentTitle {
+//            selectedGenre = (title == "Все") ? nil : title
+//        }
+//        
+//        currentPage = 1
+//        clearSearch()
+//        movies.removeAll()
+//        loadMoviesWithFilters()
+//        tableView.reloadData()
+//    }
     
-    
+    //нажатие на кнопку с фильтрами - вызов алерта с фильтрами
     @objc private func filterButtonTapped() {
 
     //    let alert = UIAlertController(title: "Фильтры", message: nil, preferredStyle: .actionSheet)
@@ -472,6 +474,59 @@ extension SearchViewController: UITextFieldDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""
         searchBar.resignFirstResponder()
+    }
+}
+
+
+extension SearchViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return genresList.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
+        cell.configure(title: genresList[indexPath.item])
+        // Устанавливаем выделение для текущей ячейки
+        cell.isCellSelected = indexPath.item == 0 ? true : false
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+            let title = genresList[indexPath.item]
+            let width = (title as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: 14)]).width + 32
+            return CGSize(width: width, height: 32)
+    }
+    
+    //событие нажатия на ячейку
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // Получаем выбранную ячейку
+        guard let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell else { return }
+
+        // Получаем текст из ячейки
+        selectedGenre = cell.titleLabel.text
+
+        // Снимаем выделение со всех видимых ячеек
+        collectionView.visibleCells.forEach { visibleCell in
+            if let categoryCell = visibleCell as? CategoryCell {
+                categoryCell.isCellSelected = false
+            }
+        }
+        
+        // Устанавливаем выделение для текущей ячейки
+        cell.isCellSelected = true
+        
+        currentPage = 1
+        clearSearch()
+        movies.removeAll()
+        loadMoviesWithFilters()
+        
+        //Перезагружаем таблицу с фильмами
+        tableView.reloadData()
+
     }
 }
 

@@ -55,7 +55,7 @@ class NetworkService {
         if let genre = genres {
             if genre == "другие" {
                 parameters["genres.name"] = ["!боевик", "!приключения", "!детектив", "!фэнтези"]
-            } else {
+            } else if genre != "Все" {
                 parameters["genres.name"] = genre
             }
         }
