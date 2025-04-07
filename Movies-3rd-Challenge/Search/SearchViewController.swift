@@ -265,22 +265,22 @@ final class SearchViewController: UIViewController {
     // MARK: - Helper Methods
 
     // Обновляет текст метки с выбранными фильтрами
-    private func updateSelectedFiltersLabel() {
-        var filterText = "Выбранные фильтры: "
-        
-        if let category = selectedGenre, let rating = selectedRating {
-            filterText += "категория - \(category), рейтинг - \(rating) звезд"
-        } else if let category = selectedGenre {
-            filterText += "категория - \(category)"
-        } else if let rating = selectedRating {
-            filterText += "рейтинг - \(rating) звезд"
-        } else {
-            filterText += "нет"
-        }
-        
-        //selectedFiltersLabel.text = filterText
-        present(filterVC, animated: true)
-    }
+//    private func updateSelectedFiltersLabel() {
+//        var filterText = "Выбранные фильтры: "
+//        
+//        if let category = selectedGenre, let rating = selectedRating {
+//            filterText += "категория - \(category), рейтинг - \(rating) звезд"
+//        } else if let category = selectedGenre {
+//            filterText += "категория - \(category)"
+//        } else if let rating = selectedRating {
+//            filterText += "рейтинг - \(rating) звезд"
+//        } else {
+//            filterText += "нет"
+//        }
+//        
+//        //selectedFiltersLabel.text = filterText
+//        present(filterVC, animated: true)
+//    }
 
 }
 
@@ -291,7 +291,7 @@ extension SearchViewController: FilterViewControllerDelegate {
     func filterViewController(_ controller: FilterViewController, didApplyFilters category: String?, rating: Int?) {
         selectedGenre = category
         selectedRating = rating
-        updateSelectedFiltersLabel()
+        //updateSelectedFiltersLabel()
         
         // Сбрасываем страницу и загружаем фильмы с новыми фильтрами
         currentPage = 1
@@ -304,7 +304,7 @@ extension SearchViewController: FilterViewControllerDelegate {
     func filterViewControllerDidReset(_ controller: FilterViewController) {
         selectedGenre = nil
         selectedRating = nil
-        updateSelectedFiltersLabel()
+        //updateSelectedFiltersLabel()
         
         // Сбрасываем страницу и загружаем фильмы без фильтров
         currentPage = 1
