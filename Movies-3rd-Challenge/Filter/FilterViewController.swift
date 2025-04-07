@@ -43,8 +43,11 @@ class FilterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        // Передаем начальные значения фильтров в FilterView
         filterView.selectedCategory = selectedCategory
         filterView.selectedRating = selectedRating
+        // После установки значений обновляем UI с выбранными фильтрами
+        filterView.updateSelectedFilters()
         
         setupViewController()
     }
@@ -97,6 +100,7 @@ extension FilterViewController: FilterViewDelegate {
         selectedCategory = filterView.getSelectedCategory()
         selectedRating = filterView.getSelectedRating()
         
+        // Передаем выбранные фильтры обратно в SearchViewController через делегат
         delegate?.filterViewController(self, didApplyFilters: selectedCategory, rating: selectedRating)
         dismiss(animated: true)
     }

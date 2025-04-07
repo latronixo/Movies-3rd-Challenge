@@ -242,13 +242,6 @@ class FilterView: UIView {
             let defaultRatingIndex = IndexPath(item: indexOfRating, section: 0)
             ratingCollectionView.selectItem(at: defaultRatingIndex, animated: false, scrollPosition: .top)
         }
-        
-//        var indexOfRating: Int?
-//        if let selRating = selectedRating {
-//            indexOfRating = ratings.firstIndex(of: selRating)
-//        }
-
-        //SearchViewController.selectedGenre
    }
     
     // Настройка обработчиков действий
@@ -285,6 +278,32 @@ class FilterView: UIView {
     }
     
     // MARK: - Public Methods
+    
+    // Обновляет выбранные фильтры в UI
+    func updateSelectedFilters() {
+        // Сначала сбрасываем все выделения
+        categoriesCollectionView.selectItem(at: nil, animated: false, scrollPosition: .top)
+        ratingCollectionView.selectItem(at: nil, animated: false, scrollPosition: .top)
+        
+        // Устанавливаем выбранную категорию
+        if let selCategory = selectedCategory, let index = categories.firstIndex(of: selCategory) {
+            let indexPath = IndexPath(item: index, section: 0)
+            categoriesCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .top)
+            selectedCategoryIndex = indexPath
+        } else {
+            // По умолчанию выбираем первую категорию
+            let defaultCategoryIndex = IndexPath(item: 0, section: 0)
+            categoriesCollectionView.selectItem(at: defaultCategoryIndex, animated: false, scrollPosition: .top)
+            selectedCategoryIndex = defaultCategoryIndex
+        }
+        
+        // Устанавливаем выбранный рейтинг
+        if let selRating = selectedRating, let index = ratings.firstIndex(of: selRating) {
+            let indexPath = IndexPath(item: index, section: 0)
+            ratingCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .top)
+            selectedRatingIndex = indexPath
+        }
+    }
     
     // Возвращает выбранную категорию
     func getSelectedCategory() -> String? {
