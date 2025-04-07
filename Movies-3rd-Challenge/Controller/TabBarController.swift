@@ -53,7 +53,7 @@ final class TabBarController: UITabBarController {
             case .search: return self.wrappedInNavigationController(with: SearchViewController(), title: $0.title)
             case .recentWatch: return self.wrappedInNavigationController(with: TempRecentWatchViewController(), title: $0.title)
             case .home: return self.wrappedInNavigationController(with: MainViewController(), title: $0.title)
-            case .wishlist: return self.wrappedInNavigationController(with: TempWishlistViewController(), title: $0.title)
+            case .wishlist: return self.wrappedInNavigationController(with: FavoritesViewController(), title: $0.title)
             case .settings: return self.wrappedInNavigationController(with: SettingsViewController(), title: $0.title)
             }
         }
@@ -77,6 +77,8 @@ final class TabBarController: UITabBarController {
         let appearance = UITabBarAppearance()
         appearance.stackedLayoutAppearance.normal.iconColor = #colorLiteral(red: 0.4862866998, green: 0.4863470197, blue: 0.4821907878, alpha: 1)
         appearance.stackedLayoutAppearance.selected.iconColor = #colorLiteral(red: 0.3195238709, green: 0.3043658733, blue: 0.7124469876, alpha: 1)
+        appearance.configureWithOpaqueBackground()
+        appearance.shadowColor = .clear
         
         //поддержка темной темы:
         appearance.configureWithOpaqueBackground()

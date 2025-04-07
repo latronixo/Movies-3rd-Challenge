@@ -23,7 +23,7 @@ class MovieTableViewCell: UITableViewCell {
     private let timeLabel: UILabel = {
             let label = UILabel()
             label.font = .systemFont(ofSize: 10)
-        label.textColor = .label
+            label.textColor = .label
             label.translatesAutoresizingMaskIntoConstraints = false
             return label
         }()
