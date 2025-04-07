@@ -1,17 +1,28 @@
 {
   "images" : [
     {
-      "filename" : "calendar.png",
-      "idiom" : "universal",
-      "scale" : "1x"
+      "filename" : "calendarL 1.svg",
+      "idiom" : "universal"
     },
     {
-      "idiom" : "universal",
-      "scale" : "2x"
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "light"
+        }
+      ],
+      "filename" : "calendarL.svg",
+      "idiom" : "universal"
     },
     {
-      "idiom" : "universal",
-      "scale" : "3x"
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "calendar.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {
