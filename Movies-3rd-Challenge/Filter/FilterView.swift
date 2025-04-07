@@ -22,6 +22,12 @@ protocol FilterViewDelegate: AnyObject {
 // View для отображения экрана фильтров
 class FilterView: UIView {
     
+    // Выбранная категория
+    var selectedCategory: String?
+    
+    // Выбранный рейтинг
+    var selectedRating: Int?
+
     // Делегат для обработки действий пользователя
     weak var delegate: FilterViewDelegate?
     
@@ -139,7 +145,7 @@ class FilterView: UIView {
     // MARK: - Data
     
     // Массив доступных категорий
-    private let categories = Constants.genres //["All", "Action", "Adventure", "Mystery", "Fantasy", "Others"]
+    private let categories = Constants.genres
     
     // Массив доступных рейтингов (количество звезд)
     private let ratings = [1, 2, 3, 4, 5]
@@ -223,11 +229,27 @@ class FilterView: UIView {
             applyButton.heightAnchor.constraint(equalToConstant: 50)
         ])
         
-        // По умолчанию выбираем первую категорию (All)
-        let defaultCategoryIndex = IndexPath(item: 0, section: 0)
-        categoriesCollectionView.selectItem(at: defaultCategoryIndex, animated: false, scrollPosition: .top)
-        selectedCategoryIndex = defaultCategoryIndex
-    }
+        // Выбираем категорию, выбранную на экране Search. А по умолчанию - Все
+        var indexOfDefaultSelectedCategory: Int? = 0
+        if let selCategory = selectedCategory, let indexOfCategory = categories.firstIndex(of: selCategory) {
+            indexOfDefaultSelectedCategory = indexOfCategory
+        }
+            let defaultCategoryIndex = IndexPath(item: indexOfDefaultSelectedCategory!, section: 0)
+            categoriesCollectionView.selectItem(at: defaultCategoryIndex, animated: false, scrollPosition: .top)
+            selectedCategoryIndex = defaultCategoryIndex
+     
+        if let selRating = selectedRating, let indexOfRating = ratings.firstIndex(of: selRating) {
+            let defaultRatingIndex = IndexPath(item: indexOfRating, section: 0)
+            ratingCollectionView.selectItem(at: defaultRatingIndex, animated: false, scrollPosition: .top)
+        }
+        
+//        var indexOfRating: Int?
+//        if let selRating = selectedRating {
+//            indexOfRating = ratings.firstIndex(of: selRating)
+//        }
+
+        //SearchViewController.selectedGenre
+   }
     
     // Настройка обработчиков действий
     private func setupActions() {

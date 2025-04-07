@@ -10,7 +10,7 @@ let categories = Constants.genres
 import UIKit
 
 final class CategoryCell: UICollectionViewCell {
-    private let titleLabel = UILabel()
+    let titleLabel = UILabel()
     private let bgView = UIView()
 
     var isCellSelected: Bool = false {
