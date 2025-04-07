@@ -234,32 +234,32 @@ final class SearchViewController: UIViewController {
     }
     
     // MARK: - Networking
-    private func loadMovies() {
+    private func loadMoviesByName() {
         guard !isLoading else { return }
         isLoading = true
         
-            networkManager.fetchMovies(currentPage, limit, searchText) { [weak self] newMovies in
+        networkManager.fetchMovies(currentPage, searchText) { [weak self] newMovies in
+            
+            DispatchQueue.main.async {
                 
-                DispatchQueue.main.async {
-                    
-                    if self?.currentPage == 1 {
-                        self?.movies = newMovies
-                    } else {
-                        self?.movies.append(contentsOf: newMovies)
-                    }
-                    
-                    self?.isLoading = false
-                    
-                    self?.tableView.reloadData()
+                if self?.currentPage == 1 {
+                    self?.movies = newMovies
+                } else {
+                    self?.movies.append(contentsOf: newMovies)
                 }
+                
+                self?.isLoading = false
+                
+                self?.tableView.reloadData()
             }
+        }
     }
     
     private func loadMoviesWithFilters() {
         guard !isLoading else { return }
         isLoading = true
         
-        networkManager.fetchMovies(currentPage, limit, selectedGenre, selectedRating) { [weak self] newMovies in
+        networkManager.fetchMovies(currentPage, selectedGenre, selectedRating) { [weak self] newMovies in
                 
                 DispatchQueue.main.async {
                     
@@ -453,7 +453,7 @@ extension SearchViewController: UITextFieldDelegate {
     
     func goSearchByName() {
         self.currentPage = 1
-        self.loadMovies()
+        self.loadMoviesByName()
 
     }
     
@@ -556,7 +556,7 @@ extension SearchViewController {
          message: "Не удалось загрузить данные. Проверьте подключение к интернету.", preferredStyle: .alert)
          
          alert.addAction(UIAlertAction(title: "Повторить", style: .default) { _ in
-             self.loadMovies()
+             self.loadMoviesByName()
          } )
      
      present(alert, animated: true)
