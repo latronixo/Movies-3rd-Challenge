@@ -26,6 +26,7 @@ final class SearchViewController: UIViewController {
     private let networkManager = NetworkService.shared
     private let apiKey = Secrets.apiKey
 
+
     // MARK: - UI Components
     
     private lazy var searchBar: UIView = {
@@ -293,38 +294,16 @@ final class SearchViewController: UIViewController {
     
     //нажатие на кнопку с фильтрами - вызов алерта с фильтрами
     @objc private func filterButtonTapped() {
-
-    //    let alert = UIAlertController(title: "Фильтры", message: nil, preferredStyle: .actionSheet)
-    //
-    //    alert.addAction(UIAlertAction(title: "По жанру", style: .default) { _ in
-    //        // Обработка выбора фильтра по жанру
-    //    })
-    //
-    //    alert.addAction(UIAlertAction(title: "По рейтингу", style: .default) { _ in
-    //        // Обработка выбора фильтра по рейтингу
-    //    })
-    //
-    //    alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
-        
+        // Создаем экземпляр контроллера фильтров
         let filterVC = FilterViewController()
         filterVC.delegate = self
+        
+        // Передаем текущие значения фильтров
         filterVC.setInitialFilters(category: selectedGenre, rating: selectedRating)
         
-//        // Передаем текущие значения фильтров, если они есть
-//        if let genres = selectedGenre, let ratings = selectedRating {
-//            filterVC.setInitialFilters(category: genres, rating: Int(ratings))
-//        } else {
-//            if let genres = selectedGenre {
-//                filterVC.setInitialFilters(category: genres, rating: 0)
-//            } else {
-//                if let ratings = selectedRating {
-//                    filterVC.setInitialFilters(category: "", rating: Int(ratings))
-//                } else {
-//                    filterVC.setInitialFilters(category: "", rating: 0)
-//                }
-//            }
-//        }
-        present(filterVC, animated: true)}
+        // Показываем экран фильтров
+        present(filterVC, animated: true)
+    }
 
 
 
@@ -358,6 +337,12 @@ extension SearchViewController: FilterViewControllerDelegate {
         selectedGenre = category
         selectedRating = rating
         updateSelectedFiltersLabel()
+        
+        // Сбрасываем страницу и загружаем фильмы с новыми фильтрами
+        currentPage = 1
+        movies.removeAll()
+        loadMoviesWithFilters()
+        tableView.reloadData()
     }
 
     // Вызывается когда пользователь сбрасывает фильтры
@@ -365,6 +350,12 @@ extension SearchViewController: FilterViewControllerDelegate {
         selectedGenre = nil
         selectedRating = nil
         updateSelectedFiltersLabel()
+        
+        // Сбрасываем страницу и загружаем фильмы без фильтров
+        currentPage = 1
+        movies.removeAll()
+        loadMoviesWithFilters()
+        tableView.reloadData()
     }
 }
 
