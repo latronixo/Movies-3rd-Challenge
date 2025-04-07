@@ -71,7 +71,7 @@ extension Movie {
     }
 
     var posterURL: URL? {
-        guard let url = poster?.previewUrl else { return nil }
+        guard let url = poster?.url else { return nil }
         return URL(string: url)
     }
 }
