@@ -8,11 +8,11 @@
 import UIKit
 import Alamofire
 
-final class SearchViewController: UIViewController, UITextFieldDelegate {
+final class SearchViewController: UIViewController {
     
     private var searchText: String = ""
     private var selectedGenre: String?
-    private var selectedRating: String?
+    private var selectedRating: Int?
     private var movies: [Movie] = []
     private var isLoading = false
     private var currentPage = 1
@@ -115,15 +115,21 @@ final class SearchViewController: UIViewController, UITextFieldDelegate {
         return scroll
     }()
 
-    private lazy var genreButtons: [UIButton] = {
-        return genresList.map { genre in
-            let button = UIButton(type: .system)
-            button.setTitle(genre, for: .normal)
-            button.setTitleColor(.systemBlue, for: .selected)
-            button.addTarget(self, action: #selector(genreButtonTapped(_:)), for: .touchUpInside)
-            button.isSelected = genre == "Все" ? true : false
-            return button
-        }
+    private lazy var categoryCollectionView: UICollectionView = {
+        let catLayout = UICollectionViewFlowLayout()
+        catLayout.scrollDirection = .horizontal
+        catLayout.minimumLineSpacing = 12
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: catLayout)
+        collectionView.backgroundColor = .systemBackground
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(CategoryCell.self, forCellWithReuseIdentifier: "CategoryCell")
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.isPagingEnabled = true
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.allowsSelection = true
+        collectionView.allowsMultipleSelection = false
+        return collectionView
     }()
     
     private lazy var tableView: UITableView = {
@@ -151,28 +157,28 @@ final class SearchViewController: UIViewController, UITextFieldDelegate {
                                                       
         setupUI()
         setupConstraints()
-        setupGenres()
+        //setupGenres()
         //loadMovies()
     }
     
     // MARK: - UI Setup
     private func setupUI() {
         view.addSubview(searchBar)
-        view.addSubview(genreScroll)
+        view.addSubview(categoryCollectionView)
         view.addSubview(tableView)
         
-        genreButtons.forEach {
-            genreScroll.addSubview($0)
-        }
+//        genreButtons.forEach {
+//            genreScroll.addSubview($0)
+//        }
     }
     
     @objc private func clearSearch() {
         searchTextField.text = ""
         searchText = ""
-        currentPage = 1
-        movies.removeAll()
-        tableView.reloadData()
-        loadMovies()
+        //currentPage = 1
+//        movies.removeAll()
+//        tableView.reloadData()
+//        loadMovies()
     }
     
     private func setupConstraints() {
@@ -182,18 +188,18 @@ final class SearchViewController: UIViewController, UITextFieldDelegate {
         
         NSLayoutConstraint.activate([
             searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -20),
-            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
             searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             searchBar.heightAnchor.constraint(equalToConstant: 50),
 
             //searchBar.searchTextField.heightAnchor.constraint(equalToConstant: 50),
             
-            genreScroll.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
-            genreScroll.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            genreScroll.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            genreScroll.heightAnchor.constraint(equalToConstant: 44),
+            categoryCollectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
+            categoryCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
+            categoryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            categoryCollectionView.heightAnchor.constraint(equalToConstant: 44),
             
-            tableView.topAnchor.constraint(equalTo: genreScroll.bottomAnchor),
+            tableView.topAnchor.constraint(equalTo: categoryCollectionView.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
@@ -210,16 +216,16 @@ final class SearchViewController: UIViewController, UITextFieldDelegate {
 //         }
     }
     
-    private func setupGenres() {
-        var currentX: CGFloat = 16
-        
-        genreButtons.forEach { button in
-            button.frame = CGRect(x: currentX, y: 0, width: button.intrinsicContentSize.width + 32, height: 44)
-            currentX += button.frame.width + 8
-        }
-        
-        genreScroll.contentSize = CGSize(width: currentX, height: 44)
-    }
+//    private func setupGenres() {
+//        var currentX: CGFloat = 16
+//        
+//        genreButtons.forEach { button in
+//            button.frame = CGRect(x: currentX, y: 0, width: button.intrinsicContentSize.width + 32, height: 44)
+//            currentX += button.frame.width + 8
+//        }
+//        
+//        genreScroll.contentSize = CGSize(width: currentX, height: 44)
+//    }
     
     func updateWithBoxOffice(movies: [Movie]) {
         self.movies = movies
@@ -271,20 +277,21 @@ final class SearchViewController: UIViewController, UITextFieldDelegate {
     }
     
     // MARK: - Genre Button Actions
-    @objc private func genreButtonTapped(_ sender: UIButton) {
-        genreButtons.forEach { $0.isSelected = ($0 == sender) }
-        
-        if let title = sender.currentTitle {
-            selectedGenre = (title == "Все") ? nil : title
-        }
-        
-        currentPage = 1
-        movies.removeAll()
-        loadMoviesWithFilters()
-        tableView.reloadData()
-    }
+//    @objc private func genreButtonTapped(_ sender: UIButton) {
+//        genreButtons.forEach { $0.isSelected = ($0 == sender) }
+//        
+//        if let title = sender.currentTitle {
+//            selectedGenre = (title == "Все") ? nil : title
+//        }
+//        
+//        currentPage = 1
+//        clearSearch()
+//        movies.removeAll()
+//        loadMoviesWithFilters()
+//        tableView.reloadData()
+//    }
     
-    
+    //нажатие на кнопку с фильтрами - вызов алерта с фильтрами
     @objc private func filterButtonTapped() {
 
     //    let alert = UIAlertController(title: "Фильтры", message: nil, preferredStyle: .actionSheet)
@@ -301,21 +308,22 @@ final class SearchViewController: UIViewController, UITextFieldDelegate {
         
         let filterVC = FilterViewController()
         filterVC.delegate = self
+        filterVC.setInitialFilters(category: selectedGenre, rating: selectedRating)
         
-        // Передаем текущие значения фильтров, если они есть
-        if let genres = selectedGenre, let ratings = selectedRating {
-            filterVC.setInitialFilters(category: genres, rating: Int(ratings))
-        } else {
-            if let genres = selectedGenre {
-                filterVC.setInitialFilters(category: genres, rating: 0)
-            } else {
-                if let ratings = selectedRating {
-                    filterVC.setInitialFilters(category: "", rating: Int(ratings))
-                } else {
-                    filterVC.setInitialFilters(category: "", rating: 0)
-                }
-            }
-        }
+//        // Передаем текущие значения фильтров, если они есть
+//        if let genres = selectedGenre, let ratings = selectedRating {
+//            filterVC.setInitialFilters(category: genres, rating: Int(ratings))
+//        } else {
+//            if let genres = selectedGenre {
+//                filterVC.setInitialFilters(category: genres, rating: 0)
+//            } else {
+//                if let ratings = selectedRating {
+//                    filterVC.setInitialFilters(category: "", rating: Int(ratings))
+//                } else {
+//                    filterVC.setInitialFilters(category: "", rating: 0)
+//                }
+//            }
+//        }
         present(filterVC, animated: true)}
 
 
@@ -345,12 +353,10 @@ final class SearchViewController: UIViewController, UITextFieldDelegate {
 // MARK: - FilterViewControllerDelegate
 
 extension SearchViewController: FilterViewControllerDelegate {
-    // Вызывается когда пользователь применяет фильтры
+    // Вызывается когда пользователь применяет фильтры в алерте
     func filterViewController(_ controller: FilterViewController, didApplyFilters category: String?, rating: Int?) {
         selectedGenre = category
-        if let ratings = rating {
-            selectedRating = String(ratings)
-        }
+        selectedRating = rating
         updateSelectedFiltersLabel()
     }
 
@@ -402,31 +408,130 @@ extension SearchViewController: UITableViewDelegate {
 }
 
 // MARK: - UISearchBarDelegate
-extension SearchViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+extension SearchViewController: UITextFieldDelegate {
+    
+    //нажатие на Enter в поле поиска
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        // Скрываем клавиатуру
+        textField.resignFirstResponder()
         
-        //отменяем предыдущий таймер, если он был
-        searchTimer?.invalidate()
-        
-        //устанавливаем новый таймер на 3 секунды
-        searchTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) {
-            [weak self] _ in
-            guard let self = self else { return }
-            
-            if !searchText.isEmpty {
-                self.searchText = searchText
-                currentPage = 1
-                movies.removeAll()
-                tableView.reloadData()
-                loadMovies()
-            }
+        // Проверяем, есть ли текст в поле поиска
+        if let searchText = textField.text, !searchText.isEmpty {
+            self.searchText = searchText
+            goSearchByName()
         }
-         
+        
+        return true
     }
     
+    //событие ввода символа в поле поиска. Спустя 3 секунды загружаем список фильмов в tableView
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        // 1. Отменяем предыдущий таймер (если был)
+        searchTimer?.invalidate()
+        
+        // 2. Получаем текущий текст + нововведенный символ
+        let currentText = textField.text ?? ""
+        guard let textRange = Range(range, in: currentText) else { return true }
+        let updatedText = currentText.replacingCharacters(in: textRange, with: string)
+        
+        // 3. Если текст пустой — сразу сбрасываем поиск
+        if updatedText.isEmpty {
+            clearSearch()
+            return true
+        }
+        
+        // 4. Запускаем таймер на 3 секунды
+        searchTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.searchText = updatedText
+            goSearchByName()
+        }
+        
+        return true
+    }
+    
+    func goSearchByName() {
+        self.currentPage = 1
+        self.loadMovies()
+
+    }
+    
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//        
+//        //отменяем предыдущий таймер, если он был
+//        searchTimer?.invalidate()
+//        
+//        //устанавливаем новый таймер на 3 секунды
+//        searchTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) {
+//            [weak self] _ in
+//            guard let self = self else { return }
+//            
+//            if !searchText.isEmpty {
+//                self.searchText = searchText
+//                currentPage = 1
+//                movies.removeAll()
+//                tableView.reloadData()
+//                loadMovies()
+//            }
+//        }
+         
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""
         searchBar.resignFirstResponder()
+    }
+}
+
+
+extension SearchViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return genresList.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
+        cell.configure(title: genresList[indexPath.item])
+        // Устанавливаем выделение для текущей ячейки
+        cell.isCellSelected = indexPath.item == 0 ? true : false
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+            let title = genresList[indexPath.item]
+            let width = (title as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: 14)]).width + 32
+            return CGSize(width: width, height: 32)
+    }
+    
+    //событие нажатия на ячейку
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // Получаем выбранную ячейку
+        guard let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell else { return }
+
+        // Получаем текст из ячейки
+        selectedGenre = cell.titleLabel.text
+
+        // Снимаем выделение со всех видимых ячеек
+        collectionView.visibleCells.forEach { visibleCell in
+            if let categoryCell = visibleCell as? CategoryCell {
+                categoryCell.isCellSelected = false
+            }
+        }
+        
+        // Устанавливаем выделение для текущей ячейки
+        cell.isCellSelected = true
+        
+        currentPage = 1
+        clearSearch()
+        movies.removeAll()
+        loadMoviesWithFilters()
+        
+        //Перезагружаем таблицу с фильмами
+        tableView.reloadData()
+
     }
 }
 
