@@ -47,6 +47,13 @@ class NetworkService {
                 return
             }
             
+            // Обработка ошибки 401 (Unauthorized)
+            guard let httpResponce = response as? HTTPURLResponse, httpResponce.statusCode == 401 else {
+                print("Ошибка 401: Истек дневной лимит для вашего API-ключа")
+                completion([])
+                return
+            }
+            
             //Проверяем статус кода
             guard let httpResponce = response as? HTTPURLResponse, (200...299).contains(httpResponce.statusCode) else {
                 print("Invalid response status code")
@@ -144,6 +151,13 @@ class NetworkService {
                 return
             }
             
+            // Обработка ошибки 401 (Unauthorized)
+            guard let httpResponce = response as? HTTPURLResponse, httpResponce.statusCode == 401 else {
+                print("Ошибка 401: Истек дневной лимит для вашего API-ключа")
+                completion([])
+                return
+            }
+            
             // Проверяем статус кода
             guard let httpResponse = response as? HTTPURLResponse,
                   (200...299).contains(httpResponse.statusCode) else {
@@ -193,6 +207,13 @@ class NetworkService {
             // Проверяем наличие ошибки
             if let error = error {
                 print("Error fetching movies: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            
+            // Обработка ошибки 401 (Unauthorized)
+            guard let httpResponce = response as? HTTPURLResponse, httpResponce.statusCode == 401 else {
+                print("Ошибка 401: Истек дневной лимит для вашего API-ключа")
                 completion(nil)
                 return
             }
@@ -273,6 +294,13 @@ class NetworkService {
                 return
             }
             
+            // Обработка ошибки 401 (Unauthorized)
+            guard let httpResponce = response as? HTTPURLResponse, httpResponce.statusCode == 401 else {
+                print("Ошибка 401: Истек дневной лимит для вашего API-ключа")
+                completion([])
+                return
+            }
+            
             //Проверяем статус кода
             guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
                 print("Invalid response status code")
@@ -344,6 +372,13 @@ class NetworkService {
             //Проверяем на наличие ошибки
             if let error = error {
                 print("Error fetching movies: \(error.localizedDescription)")
+                completion([])
+                return
+            }
+            
+            // Обработка ошибки 401 (Unauthorized)
+            guard let httpResponce = response as? HTTPURLResponse, httpResponce.statusCode == 401 else {
+                print("Ошибка 401: Истек дневной лимит для вашего API-ключа")
                 completion([])
                 return
             }
