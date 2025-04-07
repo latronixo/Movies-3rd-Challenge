@@ -19,7 +19,7 @@ class NetworkService {
         // Создаем базовые компоненты URL
         var urlComponents = URLComponents(string: searchMoviesURLString)
         
-        //создаем массив для query items
+        //создаем массив для query items. Для поиска по названию нельзя установить параметр notNullFields или задать список требуемых полей
         let queryItems = [
             URLQueryItem(name: "page", value: String(currentPage)),
             URLQueryItem(name: "limit", value: String(10)),
@@ -84,9 +84,18 @@ class NetworkService {
             URLQueryItem(name: "limit", value: String(10)),
             URLQueryItem(name: "sortField", value: "rating.kp"),
             URLQueryItem(name: "sortType", value: "-1"),
-            URLQueryItem(name: "notNullFields", value: "name"),
             URLQueryItem(name: "notNullFields", value: "id"),
-            URLQueryItem(name: "notNullFields", value: "poster.url")
+            URLQueryItem(name: "notNullFields", value: "name"),
+            URLQueryItem(name: "notNullFields", value: "poster.url"),
+            URLQueryItem(name: "selectFields", value: "id"),
+            URLQueryItem(name: "selectFields", value: "name"),
+            URLQueryItem(name: "selectFields", value: "description"),
+            URLQueryItem(name: "selectFields", value: "rating"),
+            URLQueryItem(name: "selectFields", value: "movieLength"),
+            URLQueryItem(name: "selectFields", value: "poster"),
+            URLQueryItem(name: "selectFields", value: "votes"),
+            URLQueryItem(name: "selectFields", value: "genres"),
+            URLQueryItem(name: "selectFields", value: "year"),
         ]
         
         // Добавляем параметры жанра
@@ -165,6 +174,8 @@ class NetworkService {
     //поиск по id для получения массива актеров и съемочной группы
     func fetchMovieDetail(id: Int, completion: @escaping (MovieDetail?) -> Void) {
         
+        //Для поиска по id нельзя установить параметр notNullFields или задать список требуемых полей
+        
         // Проверяем валидность URL
         guard let url = URL(string: movieDetailURLString + String(id)) else {
             print("Invalid URL")
@@ -221,14 +232,24 @@ class NetworkService {
         
         //Создаем массив для query items
         let queryItems = [
-            URLQueryItem(name: "page", value: String(Int.random(in: 1...4))),
+            URLQueryItem(name: "page", value: String(Int.random(in: 1...10))),
             URLQueryItem(name: "limit", value: String(limit)),
             URLQueryItem(name: "sortField", value: "rating.kp"),
             URLQueryItem(name: "sortType", value: "-1"),
+            URLQueryItem(name: "notNullFields", value: "id"),
+            URLQueryItem(name: "notNullFields", value: "name"),
             URLQueryItem(name: "notNullFields", value: "poster.url"),
             URLQueryItem(name: "notNullFields", value: "genres.name"),
-            URLQueryItem(name: "notNullFields", value: "name"),
             URLQueryItem(name: "year", value: String(Calendar.current.component(.year, from: Date()))),
+            URLQueryItem(name: "selectFields", value: "id"),
+            URLQueryItem(name: "selectFields", value: "name"),
+            URLQueryItem(name: "selectFields", value: "description"),
+            URLQueryItem(name: "selectFields", value: "rating"),
+            URLQueryItem(name: "selectFields", value: "movieLength"),
+            URLQueryItem(name: "selectFields", value: "poster"),
+            URLQueryItem(name: "selectFields", value: "votes"),
+            URLQueryItem(name: "selectFields", value: "genres"),
+            URLQueryItem(name: "selectFields", value: "year"),
         ]
         
         urlComponents.queryItems = queryItems
@@ -286,15 +307,24 @@ class NetworkService {
         
         // Создаем массив для query items
         let queryItems = [
-            URLQueryItem(name: "page", value: String(currentPage)),
-            URLQueryItem(name: "limit", value: String(limit)),
+            URLQueryItem(name: "page", value: String(Int.random(in: 1...10))),
             URLQueryItem(name: "limit", value: String(limit)),
             URLQueryItem(name: "sortField", value: "rating.kp"),
             URLQueryItem(name: "sortType", value: "-1"),
-            URLQueryItem(name: "notNullFields", value: "name"),
+            URLQueryItem(name: "type", value: "movie"),
             URLQueryItem(name: "notNullFields", value: "id"),
+            URLQueryItem(name: "notNullFields", value: "name"),
             URLQueryItem(name: "notNullFields", value: "poster.url"),
             URLQueryItem(name: "year", value: String(Calendar.current.component(.year, from: Date()))),
+            URLQueryItem(name: "selectFields", value: "id"),
+            URLQueryItem(name: "selectFields", value: "name"),
+            URLQueryItem(name: "selectFields", value: "description"),
+            URLQueryItem(name: "selectFields", value: "rating"),
+            URLQueryItem(name: "selectFields", value: "movieLength"),
+            URLQueryItem(name: "selectFields", value: "poster"),
+            URLQueryItem(name: "selectFields", value: "votes"),
+            URLQueryItem(name: "selectFields", value: "genres"),
+            URLQueryItem(name: "selectFields", value: "year"),
         ]
         
         urlComponents.queryItems = queryItems
