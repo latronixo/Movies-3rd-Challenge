@@ -77,6 +77,8 @@ final class TabBarController: UITabBarController {
         let appearance = UITabBarAppearance()
         appearance.stackedLayoutAppearance.normal.iconColor = #colorLiteral(red: 0.4862866998, green: 0.4863470197, blue: 0.4821907878, alpha: 1)
         appearance.stackedLayoutAppearance.selected.iconColor = #colorLiteral(red: 0.3195238709, green: 0.3043658733, blue: 0.7124469876, alpha: 1)
+        appearance.configureWithOpaqueBackground()
+        appearance.shadowColor = .clear
         
         //поддержка темной темы:
         appearance.configureWithOpaqueBackground()

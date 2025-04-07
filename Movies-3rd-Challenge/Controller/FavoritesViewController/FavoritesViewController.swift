@@ -22,6 +22,9 @@ class FavoritesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setTitleUpper(navItem: navigationItem, title: "Favorites")
+        navigationBarAppearanceSettings()
+        
         setViews()
         setDelegates()
         setupConstraints()
@@ -36,7 +39,7 @@ class FavoritesViewController: UIViewController {
     // MARK: - Set Views
     
     private func setViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         
         tableView.register(MovieCell.self, forCellReuseIdentifier: MovieCell.identifier)
         tableView.separatorStyle = .none
@@ -50,6 +53,17 @@ class FavoritesViewController: UIViewController {
     private func setDelegates() {
         tableView.dataSource = self
         tableView.delegate = self
+    }
+    
+    func navigationBarAppearanceSettings() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.label]
+        appearance.backgroundColor = .systemBackground
+        appearance.shadowColor = .clear
+        
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
     }
 }
 
@@ -69,14 +83,19 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let favoriteMovie = favorites[indexPath.row]
-//        
-//        let movieDetailVC = TempMovieDetailView(coder: favoriteMovie.id)
-//        navigationController?.pushViewController(movieDetailVC, animated: true)
-//    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedMovie = favorites[indexPath.item]
+        guard let id = selectedMovie.id else { return }
+        
+        NetworkService.shared.fetchMovieDetail(id: id) { [weak self] detail in
+            guard let detail = detail else { return }
+            DispatchQueue.main.async {
+                let vc = TempMovieDetailViewController(movie: selectedMovie, detail: detail)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            }
+        }
+    }
 }
-
 // MARK: - Setup Constraints
 
 extension FavoritesViewController {
@@ -90,3 +109,4 @@ extension FavoritesViewController {
         ])
     }
 }
+

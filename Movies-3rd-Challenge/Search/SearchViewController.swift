@@ -137,7 +137,7 @@ final class SearchViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(MovieCell.self, forCellReuseIdentifier: MovieCell.identifier)
-        tableView.rowHeight = 174
+        tableView.rowHeight = 184
         tableView.tableFooterView = UIView()
         return tableView
     }()
@@ -404,6 +404,18 @@ extension SearchViewController: UITableViewDelegate {
 //
 //        }
 //    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedMovie = movies[indexPath.item]
+        guard let id = selectedMovie.id else { return }
+        
+        NetworkService.shared.fetchMovieDetail(id: id) { [weak self] detail in
+            guard let detail = detail else { return }
+            DispatchQueue.main.async {
+                let vc = TempMovieDetailViewController(movie: selectedMovie, detail: detail)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            }
+        }
+    }
 
 }
 

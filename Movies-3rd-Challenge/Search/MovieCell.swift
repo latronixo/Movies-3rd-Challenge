@@ -34,9 +34,11 @@ class MovieCell: UITableViewCell {
     }()
     
     private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16, weight:.semibold)
-        return label
+        let element = UILabel()
+        element.font = UIFont.systemFont(ofSize: 16, weight:.semibold)
+        element.numberOfLines = 4
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
     }()
     
     private lazy var timeIcon: UIImageView = {
@@ -47,25 +49,27 @@ class MovieCell: UITableViewCell {
         return imageView
     }()
     
-    private lazy var durationLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.textColor = .gray
-        return label
+    private lazy var movieLengthLabel: UILabel = {
+        let element = UILabel()
+        element.font = UIFont.systemFont(ofSize: 12)
+        element.textColor = .gray
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
     }()
 
     private lazy var calendarIcon: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "calendar")
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
+        let element = UIImageView()
+        element.image = UIImage(named: "calendar")
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
     }()
     
     private lazy var yearLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.textColor = .gray
-        return label
+        let element = UILabel()
+        element.font = UIFont.systemFont(ofSize: 12)
+        element.textColor = .gray
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
     }()
     
     private lazy var genreCollectionView: UICollectionView = {
@@ -113,7 +117,7 @@ class MovieCell: UITableViewCell {
         contentView.addSubview(titleLabel)
         
         contentView.addSubview(timeIcon)
-        contentView.addSubview(durationLabel)
+        contentView.addSubview(movieLengthLabel)
         
         contentView.addSubview(calendarIcon)
         contentView.addSubview(yearLabel)
@@ -139,17 +143,15 @@ class MovieCell: UITableViewCell {
             posterImageView.image = UIImage(named: "posterNotFound")
         }
         
-        titleLabel.text = movie.name
+        titleLabel.text = movie.displayTitle
+        
         if let year = movie.year {
             yearLabel.text = String(year)
         } else {
             yearLabel.text = ""
         }
-        if let duration = movie.movieLength {
-            durationLabel.text = "\(duration) минут"
-        } else {
-            durationLabel.text = ""
-        }
+         
+        movieLengthLabel.text = movie.displayLength
         
         if let genresObjects = movie.genres {
             genres = genresObjects.compactMap {$0.name}
@@ -173,7 +175,7 @@ class MovieCell: UITableViewCell {
     private func setupConstraints() {
         posterImageView.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        durationLabel.translatesAutoresizingMaskIntoConstraints = false
+        movieLengthLabel.translatesAutoresizingMaskIntoConstraints = false
         yearLabel.translatesAutoresizingMaskIntoConstraints = false
         genreCollectionView.translatesAutoresizingMaskIntoConstraints = false
         addFavoriteButton.translatesAutoresizingMaskIntoConstraints = false
@@ -186,14 +188,15 @@ class MovieCell: UITableViewCell {
             
             titleLabel.leadingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: 16),
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -30),
             
             
             timeIcon.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 15),
             timeIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             timeIcon.widthAnchor.constraint(equalToConstant: 16),
             timeIcon.heightAnchor.constraint(equalToConstant: 16),
-            durationLabel.leadingAnchor.constraint(equalTo: timeIcon.trailingAnchor, constant: 4),
-            durationLabel.centerYAnchor.constraint(equalTo: timeIcon.centerYAnchor),
+            movieLengthLabel.leadingAnchor.constraint(equalTo: timeIcon.trailingAnchor, constant: 4),
+            movieLengthLabel.centerYAnchor.constraint(equalTo: timeIcon.centerYAnchor),
             
             calendarIcon.topAnchor.constraint(equalTo: timeIcon.bottomAnchor, constant: 8),
             calendarIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
@@ -255,7 +258,7 @@ extension MovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard genres.indices.contains(indexPath.row) else {
-            print("⚠️ Invalid index: \(indexPath.row), genres count: \(genres.count)")
+            print("Invalid index: \(indexPath.row), genres count: \(genres.count)")
             return createFallbackCell(for: genreCollectionView, at: indexPath)
         }
         
