@@ -90,13 +90,12 @@ final class TopCell: UICollectionViewCell {
             categoryLabel.leadingAnchor.constraint(equalTo: labelBackgroundView.leadingAnchor, constant: 8),
 
             titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
             titleLabel.heightAnchor.constraint(equalToConstant: 15)
         ])
     }
     
-
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     

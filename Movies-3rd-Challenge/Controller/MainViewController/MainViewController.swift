@@ -15,25 +15,23 @@ final class MainViewController: UIViewController {
     private let contentView = UIView()
 
     private lazy var topCollectionView: UICollectionView = {
-        let topLayout = UICollectionViewFlowLayout()
-               topLayout.scrollDirection = .horizontal
-               topLayout.minimumLineSpacing = 16
-               topLayout.sectionInset = .init(top: 0, left: 16, bottom: 0, right: 16)
+        let topLayout = ArcLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: topLayout)
         collectionView.backgroundColor = .systemBackground
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(TopCell.self, forCellWithReuseIdentifier: "TopCell")
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.isPagingEnabled = true
+        collectionView.isPagingEnabled = false
+        collectionView.decelerationRate = .fast
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
     
     private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
-        pageControl.numberOfPages = banners.count
-        pageControl.currentPage = 1
+        pageControl.numberOfPages = 5
+        pageControl.currentPage = 0
         pageControl.pageIndicatorTintColor = .gray
         pageControl.currentPageIndicatorTintColor = UIColor(named: "mainViolet")
         pageControl.isUserInteractionEnabled = false
@@ -176,7 +174,7 @@ final class MainViewController: UIViewController {
     private func setupUI() {
         
         navigationController?.isNavigationBarHidden = true
-        
+
         contentView.addSubview(topCollectionView)
         contentView.addSubview(categoryCollectionView)
         contentView.addSubview(tableView)
@@ -242,7 +240,7 @@ final class MainViewController: UIViewController {
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == topCollectionView {
-            return min(banners.count, 5)
+            return min(banners.count, 10)
         } else {
             return categories.count
         }
@@ -359,8 +357,10 @@ extension MainViewController {
     private func loadBannerMovies() {
         NetworkService.shared.fetchMoviesCaruselHomeScreen(1, 10) { [weak self] movies in
             self?.banners = movies
+            
             DispatchQueue.main.async {
                 self?.topCollectionView.reloadData()
+
             }
         }
     }
