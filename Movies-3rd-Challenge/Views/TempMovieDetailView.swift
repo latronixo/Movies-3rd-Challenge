@@ -9,7 +9,7 @@ import UIKit
 
 class TempMovieDetailView: UIView {
     private let starCount: Int = 5
-    private var stars: [UIImageView] = []
+    var stars: [UIImageView] = []
     
     lazy var imageOfMovie: UIImageView = {
         let imageView = UIImageView()
@@ -23,7 +23,8 @@ class TempMovieDetailView: UIView {
     lazy var titleOfMovie: UILabel = {
         let label = UILabel()
         label.text = "Movie"
-        label.font = .systemFont(ofSize: 24)
+        label.textColor = .label
+        label.font = UIFont(name: "PlusJakartaSans-Bold", size: 24)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -32,7 +33,7 @@ class TempMovieDetailView: UIView {
     lazy var calendarImage: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "calendar")
-        imageView.tintColor = .blue
+        imageView.tintColor = UIColor(named: "iconColor")
         imageView.heightAnchor.constraint(equalToConstant: 16).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 16).isActive = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -41,7 +42,8 @@ class TempMovieDetailView: UIView {
     lazy var dateOfMovie: UILabel = {
         let label = UILabel()
         label.text = "17 Sep 2021"
-        label.font = .systemFont(ofSize: 12)
+        label.font = UIFont(name: "Montserrat-Medium", size: 12)
+        label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -56,7 +58,7 @@ class TempMovieDetailView: UIView {
     lazy var clockImage: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "clock")
-        imageView.tintColor = .blue
+        imageView.tintColor = UIColor(named: "iconColor")
         imageView.heightAnchor.constraint(equalToConstant: 16).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 16).isActive = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -65,7 +67,8 @@ class TempMovieDetailView: UIView {
     lazy var durationOfMovie: UILabel = {
         let label = UILabel()
         label.text = "148 Minutes"
-        label.font = .systemFont(ofSize: 12)
+        label.textColor = .label
+        label.font = UIFont(name: "Montserrat-Medium", size: 12)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -81,7 +84,7 @@ class TempMovieDetailView: UIView {
     lazy var movieImage: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "film")
-        imageView.tintColor = .blue
+        imageView.tintColor = UIColor(named: "iconColor")
         imageView.heightAnchor.constraint(equalToConstant: 16).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 16).isActive = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -89,8 +92,9 @@ class TempMovieDetailView: UIView {
     }()
     lazy var categoryLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12)
+        label.font = UIFont(name: "Montserrat-Medium", size: 12)
         label.text = "Action"
+        label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -131,7 +135,8 @@ class TempMovieDetailView: UIView {
     lazy var storyLine: UILabel = {
         let label = UILabel()
         label.text = "Story Line"
-        label.font = .systemFont(ofSize: 16, weight: .bold)
+        label.textColor = .label
+        label.font = UIFont(name: "PlusJakartaSans-SemiBold", size: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -139,19 +144,59 @@ class TempMovieDetailView: UIView {
     lazy var descriptionOfMovie: UILabel = {
         let label = UILabel()
         label.text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book Show More"
-        label.numberOfLines = 5
+        label.numberOfLines = 3
+        label.font = UIFont(name: "PlusJakartaSans-Medium", size: 14)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = UIColor(named: "discriptionSet")
+        return label
+    }()
+    
+    lazy var showMoreButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Увидеть больше", for: .normal)
+        button.setTitleColor(UIColor(named: "Button"), for: .normal)
+        button.titleLabel?.font = UIFont(name: "PlusJakartaSans-Medium", size: 14)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    lazy var descriptionStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [storyLine, descriptionOfMovie, showMoreButton])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.alignment = .leading
+        stackView.spacing = 10
+        stackView.axis = .vertical
+        return stackView
+    }()
+    //MARK: Collection
+    lazy var layout: UICollectionViewFlowLayout = {
+        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        return layout
+    }()
+    lazy var titelOfActors: UILabel = {
+        let label = UILabel()
+        label.text = "Актеры и прочие"
+        label.textColor = .label
+        label.font = UIFont(name: "PlusJakartaSans-SemiBold", size: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    lazy var descriptionStack: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [storyLine, descriptionOfMovie])
+    lazy var actorsCollectionView: UICollectionView = {
+        let collection: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.translatesAutoresizingMaskIntoConstraints = false
+        return collection
+    }()
+    
+    lazy var actorsStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [titelOfActors, actorsCollectionView])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.alignment = .leading
-        stackView.spacing = 16
+        stackView.spacing = 10
         stackView.axis = .vertical
         return stackView
     }()
+    
     //MARK: Button
     
     lazy var wathchButton: UIButton = {
@@ -177,6 +222,8 @@ class TempMovieDetailView: UIView {
         addSubview(movieStack)
         addSubview(descriptionStack)
         addSubview(wathchButton)
+        addSubview(actorsStack)
+        actorsCollectionView.register(DetailCollectionCell.self, forCellWithReuseIdentifier: "DetailCollectionCell")
     }
     private func setConstraint(){
         NSLayoutConstraint.activate([
@@ -190,11 +237,15 @@ class TempMovieDetailView: UIView {
             
             descriptionStack.topAnchor.constraint(equalTo: movieStack.bottomAnchor, constant: 10),
             descriptionStack.centerXAnchor.constraint(equalTo: centerXAnchor),
-            descriptionStack.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.9),
+            descriptionStack.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.85),
+            
+            actorsStack.topAnchor.constraint(equalTo: descriptionStack.bottomAnchor, constant: 10),
+            actorsStack.centerXAnchor.constraint(equalTo: centerXAnchor),
+            actorsStack.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.85),
             
             wathchButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
-            wathchButton.heightAnchor.constraint(equalToConstant: 56),
-            wathchButton.widthAnchor.constraint(equalToConstant: 181),
+            wathchButton.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.07),
+            wathchButton.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.4),
             wathchButton.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
         
@@ -209,37 +260,6 @@ class TempMovieDetailView: UIView {
             starImage.widthAnchor.constraint(equalToConstant: 16).isActive = true
             self.stars.append(starImage)
             self.starStack.addArrangedSubview(starImage)
-        }
-    }
-    
-    func configure(with movie: Movie) {
-        titleOfMovie.text = movie.displayTitle
-        durationOfMovie.text = movie.displayLength
-        categoryLabel.text = movie.displayGenre
-        descriptionOfMovie.text = movie.description ?? "Нет описания"
-        
-        if let year = movie.year {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy"
-            dateOfMovie.text = "\(year)"
-        }
-
-        if let url = movie.posterURL {
-            DispatchQueue.global().async {
-                if let data = try? Data(contentsOf: url),
-                   let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self.imageOfMovie.image = image
-                    }
-                }
-            }
-        }
-
-        let rating = movie.rating?.kp ?? 0
-        let fiveStarRating = rating / 2.0
-        for (index, star) in stars.enumerated() {
-            star.image = UIImage(systemName: index < Int(round(fiveStarRating)) ? "star.fill" : "star")
-            star.tintColor = .systemYellow
         }
     }
 }
