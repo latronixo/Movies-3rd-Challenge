@@ -12,7 +12,7 @@ final class SearchViewController: UIViewController {
     
     private var searchText: String = ""
     private var selectedGenre: String?
-    private var selectedRating: String?
+    private var selectedRating: Int?
     private var movies: [Movie] = []
     private var isLoading = false
     private var currentPage = 1
@@ -302,21 +302,22 @@ final class SearchViewController: UIViewController {
         
         let filterVC = FilterViewController()
         filterVC.delegate = self
+        filterVC.setInitialFilters(category: selectedGenre, rating: selectedRating)
         
-        // Передаем текущие значения фильтров, если они есть
-        if let genres = selectedGenre, let ratings = selectedRating {
-            filterVC.setInitialFilters(category: genres, rating: Int(ratings))
-        } else {
-            if let genres = selectedGenre {
-                filterVC.setInitialFilters(category: genres, rating: 0)
-            } else {
-                if let ratings = selectedRating {
-                    filterVC.setInitialFilters(category: "", rating: Int(ratings))
-                } else {
-                    filterVC.setInitialFilters(category: "", rating: 0)
-                }
-            }
-        }
+//        // Передаем текущие значения фильтров, если они есть
+//        if let genres = selectedGenre, let ratings = selectedRating {
+//            filterVC.setInitialFilters(category: genres, rating: Int(ratings))
+//        } else {
+//            if let genres = selectedGenre {
+//                filterVC.setInitialFilters(category: genres, rating: 0)
+//            } else {
+//                if let ratings = selectedRating {
+//                    filterVC.setInitialFilters(category: "", rating: Int(ratings))
+//                } else {
+//                    filterVC.setInitialFilters(category: "", rating: 0)
+//                }
+//            }
+//        }
         present(filterVC, animated: true)}
 
 
@@ -346,12 +347,10 @@ final class SearchViewController: UIViewController {
 // MARK: - FilterViewControllerDelegate
 
 extension SearchViewController: FilterViewControllerDelegate {
-    // Вызывается когда пользователь применяет фильтры
+    // Вызывается когда пользователь применяет фильтры в алерте
     func filterViewController(_ controller: FilterViewController, didApplyFilters category: String?, rating: Int?) {
         selectedGenre = category
-        if let ratings = rating {
-            selectedRating = String(ratings)
-        }
+        selectedRating = rating
         updateSelectedFiltersLabel()
     }
 

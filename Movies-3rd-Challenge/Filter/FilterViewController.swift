@@ -43,6 +43,9 @@ class FilterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        filterView.selectedCategory = selectedCategory
+        filterView.selectedRating = selectedRating
+        
         setupViewController()
     }
     

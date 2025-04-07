@@ -41,7 +41,7 @@ class NetworkService {
     }
     
     //поиск по жанрам и рейтингу
-    func fetchMovies(_ currentPage: Int, _ limit: Int, _ genres: String?, _ rating: String?, completion: @escaping ([Movie]) -> Void) {
+    func fetchMovies(_ currentPage: Int, _ limit: Int, _ genres: String?, _ rating: Int?, completion: @escaping ([Movie]) -> Void) {
         
         var parameters: [String: Any] = [
             "page": currentPage,
@@ -62,7 +62,13 @@ class NetworkService {
         
         // Формируем правильный параметр для рейтинга
         if let ratingNotNil = rating {
-            parameters["rating.kp"] = ratingNotNil
+            switch ratingNotNil{
+            case 5: parameters["rating.kp"] = "9-10"
+            case 4: parameters["rating.kp"] = "7-9"
+            case 3: parameters["rating.kp"] = "5-7"
+            case 2: parameters["rating.kp"] = "3-5"
+            default: parameters["rating.kp"] = "1-3"
+            }
         }
         
         let request = AF.request("https://api.kinopoisk.dev/v1.4/movie",
