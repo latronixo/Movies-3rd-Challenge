@@ -168,7 +168,7 @@ class NetworkService {
         if let genre = genres {
             if genre == "другие" {
                 parameters["genres.name"] = ["!боевик", "!приключения", "!детектив", "!фэнтези"]
-            } else if genre != "all" {
+            } else if genre != "Все" {
                 parameters["genres.name"] = genre
             }
         } // если жанр "ALL" то параметр не добавляется = показываются все фильмы без фильтра
