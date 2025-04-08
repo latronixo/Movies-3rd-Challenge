@@ -23,8 +23,8 @@ final class SearchViewController: UIViewController {
     private var searchTimer: Timer?
 
     private let networkManager = NetworkService.shared
-    private let apiKey = Secrets.apiKey
-
+//    private let apiKey = Secrets.apiKey
+    private let apiKey = "60DWKG0-RDJ48BY-M13M9CT-YKZBZKS"
 
     // MARK: - UI Components
     
@@ -247,39 +247,12 @@ final class SearchViewController: UIViewController {
     //нажатие на кнопку с фильтрами - вызов алерта с фильтрами
     @objc private func filterButtonTapped() {
         
-        // Создаем экземпляр контроллера фильтров
         let filterVC = FilterViewController()
         filterVC.delegate = self
-        
-        // Передаем текущие значения фильтров
         filterVC.setInitialFilters(category: selectedGenre, rating: selectedRating)
         
-        // Показываем экран фильтров
         present(filterVC, animated: true)
     }
-
-
-
-
-    // MARK: - Helper Methods
-
-    // Обновляет текст метки с выбранными фильтрами
-//    private func updateSelectedFiltersLabel() {
-//        var filterText = "Выбранные фильтры: "
-//        
-//        if let category = selectedGenre, let rating = selectedRating {
-//            filterText += "категория - \(category), рейтинг - \(rating) звезд"
-//        } else if let category = selectedGenre {
-//            filterText += "категория - \(category)"
-//        } else if let rating = selectedRating {
-//            filterText += "рейтинг - \(rating) звезд"
-//        } else {
-//            filterText += "нет"
-//        }
-//        
-//        //selectedFiltersLabel.text = filterText
-//        present(filterVC, animated: true)
-//    }
 
 }
 
@@ -290,7 +263,9 @@ extension SearchViewController: FilterViewControllerDelegate {
     func filterViewController(_ controller: FilterViewController, didApplyFilters category: String?, rating: Int?) {
         selectedGenre = category
         selectedRating = rating
-        //updateSelectedFiltersLabel()
+        
+        // Обновляем выделение категории в коллекции
+        updateCategorySelectionInCollection()
         
         // Сбрасываем страницу и загружаем фильмы с новыми фильтрами
         currentPage = 1
@@ -303,13 +278,45 @@ extension SearchViewController: FilterViewControllerDelegate {
     func filterViewControllerDidReset(_ controller: FilterViewController) {
         selectedGenre = nil
         selectedRating = nil
-        //updateSelectedFiltersLabel()
+        
+        // Обновляем выделение категории в коллекции (выбираем первую категорию при сбросе)
+        updateCategorySelectionInCollection()
         
         // Сбрасываем страницу и загружаем фильмы без фильтров
         currentPage = 1
         movies.removeAll()
         loadMoviesWithFilters()
         tableView.reloadData()
+    }
+    
+    // Метод для обновления выделения категории в коллекции жанров
+    private func updateCategorySelectionInCollection() {
+        // Полностью перезагружаем коллекцию для корректного обновления всех ячеек
+        // Это наиболее надежный способ обновить выделение
+        categoryCollectionView.reloadData()
+        
+        // После перезагрузки выделяем нужную ячейку
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            var indexPathToSelect: IndexPath
+            
+            if let selectedGenre = self.selectedGenre, let index = self.genresList.firstIndex(of: selectedGenre) {
+                // Выделяем ячейку с выбранной категорией
+                indexPathToSelect = IndexPath(item: index, section: 0)
+            } else {
+                // Выделяем первую ячейку
+                indexPathToSelect = IndexPath(item: 0, section: 0)
+            }
+            
+            // Выделяем ячейку и скроллим, чтобы она была видна
+            self.categoryCollectionView.selectItem(at: indexPathToSelect, animated: true, scrollPosition: .centeredHorizontally)
+            
+            // Также устанавливаем isCellSelected для выбранной ячейки
+            if let cell = self.categoryCollectionView.cellForItem(at: indexPathToSelect) as? CategoryCell {
+                cell.isCellSelected = true
+            }
+        }
     }
 }
 
@@ -450,11 +457,18 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
         cell.configure(title: genresList[indexPath.item])
-        // Устанавливаем выделение для текущей ячейки
-        cell.isCellSelected = indexPath.item == 0 ? true : false
+        
+        // Определяем, должна ли ячейка быть выделена
+        if let selectedGenre = selectedGenre {
+            // Если есть выбранный жанр, проверяем соответствие
+            cell.isCellSelected = genresList[indexPath.item] == selectedGenre
+        } else {
+            // Если нет выбранного жанра, выделяем первую ячейку
+            cell.isCellSelected = indexPath.item == 0
+        }
+        
         return cell
     }
 
@@ -471,27 +485,27 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
         // Получаем выбранную ячейку
         guard let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell else { return }
 
-        // Получаем текст из ячейки
-        selectedGenre = cell.titleLabel.text
-
-        // Снимаем выделение со всех видимых ячеек
+        // Сначала снимаем выделение со всех ячеек
         collectionView.visibleCells.forEach { visibleCell in
             if let categoryCell = visibleCell as? CategoryCell {
                 categoryCell.isCellSelected = false
             }
         }
         
-        // Устанавливаем выделение для текущей ячейки
+        // Выделяем только нажатую ячейку
         cell.isCellSelected = true
         
+        // Получаем текст из ячейки и устанавливаем как выбранный жанр
+        selectedGenre = cell.titleLabel.text
+        
+        // Сбрасываем поиск и загружаем фильмы с новым фильтром
         currentPage = 1
         clearSearch()
         movies.removeAll()
         loadMoviesWithFilters()
         
-        //Перезагружаем таблицу с фильмами
+        // Перезагружаем таблицу с фильмами
         tableView.reloadData()
-
     }
 }
 
