@@ -52,6 +52,17 @@ class AvatarViewController: UIViewController {
         blurView.addGestureRecognizer(tap)
 
         setupLayout()
+        updateLocalizedText()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        addObserverForLocalization()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeObserverForLocalization()
     }
 
     private func setupLayout() {
@@ -120,5 +131,25 @@ class AvatarViewController: UIViewController {
 
     @objc private func dismissSelf() {
         dismiss(animated: true, completion: nil)
+    }
+}
+
+extension AvatarViewController {
+    
+    private func addObserverForLocalization() {
+        NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.updateLocalizedText()
+        }
+    }
+    
+    private func removeObserverForLocalization() {
+        NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
+    }
+    
+    func updateLocalizedText() {
+        titleLabel.text = "Change your picture".localized()
+        takePhotoButton.setTitle("Take a photo".localized(), for: .normal)
+        chooseFileButton.setTitle( "Choose from your file".localized(), for: .normal)
+        deleteButton.setTitle("Delete Photo".localized(), for: .normal)
     }
 }

@@ -15,11 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-//        if let isDarkMode = UserDefaults.standard.value(forKey: "isDarkMode") as? Bool {
-//                if #available(iOS 13.0, *) {
-//                    UIWindow.appearance().overrideUserInterfaceStyle = isDarkMode ? .dark : .light
-//                }
-//            }
+
         return true
     }
 

@@ -138,7 +138,6 @@ final class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-
         
         setupScrollView()
         setupUI()
@@ -149,6 +148,20 @@ final class MainViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(MovieTableViewCell.self, forCellReuseIdentifier: "MovieCell")
+        
+        updateLocalizedText()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        
+        addObserverForLocalization()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeObserverForLocalization()
     }
 
     // MARK: private methods
@@ -172,6 +185,8 @@ final class MainViewController: UIViewController {
     }
     
     private func setupUI() {
+        
+        navigationController?.isNavigationBarHidden = true
         
         contentView.addSubview(topCollectionView)
         contentView.addSubview(categoryCollectionView)
@@ -292,7 +307,10 @@ extension MainViewController: UICollectionViewDelegate {
                 guard let detail = detail else { return }
                 DispatchQueue.main.async {
                     let vc = TempMovieDetailViewController(movie: selectedMovie, detail: detail)
+                    vc.hidesBottomBarWhenPushed = true
                     self?.navigationController?.pushViewController(vc, animated: true)
+                    self?.navigationController?.isNavigationBarHidden = false
+                    self?.navigationItem.backButtonTitle = ""
                 }
             }
         } else {
@@ -344,7 +362,10 @@ extension MainViewController: UITableViewDelegate {
             guard let detail = detail else { return }
             DispatchQueue.main.async {
                 let vc = TempMovieDetailViewController(movie: movie, detail: detail)
+                vc.hidesBottomBarWhenPushed = true
                 self?.navigationController?.pushViewController(vc, animated: true)
+                self?.navigationController?.isNavigationBarHidden = false
+                self?.navigationItem.backButtonTitle = ""
             }
         }
     }
@@ -360,6 +381,12 @@ extension MainViewController {
                 self?.topCollectionView.reloadData()
 
             }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        let indexPath = IndexPath(item: 1, section: 0)
+                        if movies.count > 1 {
+                            self?.topCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        }
+                    }
         }
     }
     
@@ -374,6 +401,25 @@ extension MainViewController {
                 self?.tableView.reloadData()
             }
         }
+    }
+}
+
+extension MainViewController {
+    
+    private func addObserverForLocalization() {
+        NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.updateLocalizedText()
+        }
+    }
+    
+    private func removeObserverForLocalization() {
+        NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
+    }
+    
+    func updateLocalizedText() {
+        categoryLabel.text = "Category".localized()
+        boxOfficeLabel.text = "Box Office".localized()
+        seeAllButton.setTitle("See All".localized(), for: .normal)
     }
 }
 

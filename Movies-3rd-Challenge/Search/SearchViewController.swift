@@ -35,7 +35,8 @@ final class SearchViewController: UIViewController {
         
         // Основное текстовое поле
         let textField = UITextField()
-        textField.placeholder = "Поиск фильмов"
+        textField.placeholder = "Search for movies"
+        textField.tag = 101
         textField.backgroundColor = .white
         textField.layer.borderWidth = 1
         textField.layer.borderColor = #colorLiteral(red: 0.4023004472, green: 0.3941448927, blue: 0.7470854521, alpha: 1)
@@ -156,7 +157,20 @@ final class SearchViewController: UIViewController {
 
         setupUI()
         setupConstraints()
+        
+        updateLocalizedText()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        addObserverForLocalization()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeObserverForLocalization()
+    }
+    
     
     // MARK: - UI Setup
     private func setupUI() {
@@ -536,4 +550,25 @@ extension SearchViewController {
      
      present(alert, animated: true)
      }
+}
+
+extension SearchViewController {
+    
+    private func addObserverForLocalization() {
+        NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.updateLocalizedText()
+        }
+    }
+    
+    private func removeObserverForLocalization() {
+        NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
+    }
+    
+    func updateLocalizedText() {
+        setTitleUpper(navItem: navigationItem, title: "Search".localized())
+        
+        if let textField = searchBar.viewWithTag(101) as? UITextField {
+            textField.placeholder = "Search for movies".localized()
+        }
+    }
 }

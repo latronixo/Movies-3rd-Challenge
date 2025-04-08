@@ -1,0 +1,87 @@
+/* 
+  Localizable.strings
+  Movies-3rd-Challenge
+
+  Created by Anna Melekhina on 07.04.2025.
+  
+*/
+
+
+// MARK: Search, Filter
+
+"Search" = "Поиск";
+"Filter" = "Фильтр";
+"Reset Filters" = "Сбросить";
+"Categories" = "Жанры";
+"All" = "Все";
+"Star Rating" = "Рейтинг";
+"Apply Filters" = "Применить фильтры";
+"Search for movies" = "Поиск по фильмам";
+
+// MARK: Main
+
+"Hello, Name 👋" = "Привет, Name 👋";
+"Category" = "Жанр";
+"Box Office" = "Сейчас в кино";
+"See All" = "Смотреть все";
+
+// MARK: Settings
+
+"Personal Info" = "Личные данные";
+"  Profile" = "  Профиль";
+"Settings" = "Настройки";
+"Profile" = "Профиль";
+"  Change Password" = "  Изменить пароль";
+"  Forgot Password" = "  Забыли пароль";
+"Dark Mode" = "Тёмная тема";
+"Log Out" = "Выйти";
+"  Choose Language" = "  Выбрать язык";
+"Select Language" = "Выбрать язык";
+"Security" = "Безопасность";
+
+// Profile
+
+"First Name" = "Имя";
+"Last Name" = "Фамилия";
+"E-mail" = "Эл. почта";
+"Date of Birth" = "Дата рождения";
+"Gender" = "Пол";
+"Male" = "Мужской";
+"Female" = "Женский";
+"Location/notes" = "Местоположение/заметки";
+
+// Alerts
+"Enter new password" = "Введите новый пароль";
+"New password" = "Новый пароль";
+"Cancel" = "Отмена";
+"Save" = "Сохранить";
+"New password was sent to your email" = "Новый пароль отправлен на вашу почту";
+"Ok" = "Ок";
+"Save Changes" = "Сохранить";
+
+// Avatar
+"Change your picture" = "Изменить фото";
+"Take a photo" = "Сделать фото";
+"Choose from your file" = "Выбрать из файлов";
+"Delete Photo" = "Удалить фото";
+
+// MARK: Favorites
+
+"Favorites" = "Избранное";
+
+// MARK: MovieDetail
+
+"Movie Detail" = "Описание";
+"Minutes" = "минут";
+"Story Line" = "Сюжет";
+"Cast and Crew" = "Актеры и съемочная группа";
+"Watch now" = "Смотреть";
+"Show More" = "Показать больше";
+
+
+// MARK: Recent Watch
+
+"Recent Watch" = "Недавно просмотренные";
+
+// MARK: Onboarding
+

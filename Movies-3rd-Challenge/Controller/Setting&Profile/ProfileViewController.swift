@@ -132,6 +132,18 @@ class ProfileViewController: UIViewController {
         lastNameTextField.delegate = self
         emailTextField.delegate = self
         locationTextView.delegate = self
+        
+        updateLocalizedText()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        addObserverForLocalization()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeObserverForLocalization()
     }
     
     // MARK: - Setup
@@ -259,7 +271,7 @@ class ProfileViewController: UIViewController {
     
     private func makeTextField(placeholder: String) -> UITextField {
         let tf = UITextField()
-        tf.placeholder = placeholder
+        tf.placeholder = placeholder.localized()
         tf.font = UIFont.systemFont(ofSize: 15)
         tf.textColor = .label
         tf.layer.borderColor = UIColor(named: "mainViolet")?.cgColor
@@ -441,5 +453,40 @@ extension ProfileViewController: UITextFieldDelegate, UITextViewDelegate {
             notes = textView.text ?? ""
         }
     }
+}
+
+//MARK: - Localization
+
+extension ProfileViewController {
+private func addObserverForLocalization() {
+    NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+        self?.updateLocalizedText()
+    }
+}
+
+private func removeObserverForLocalization() {
+    NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
+}
+
+@objc func updateLocalizedText() {
+    firstNameLabel.text = "First Name".localized()
+    lastNameLabel.text = "Last Name".localized()
+    emailLabel.text = "E-mail".localized()
+    dobLabel.text = "Date of Birth".localized()
+    genderLabel.text = "Gender".localized()
+    locationLabel.text = "Location".localized()
+    
+    firstNameTextField.placeholder = "First Name".localized()
+    lastNameTextField.placeholder = "Last Name".localized()
+    emailTextField.placeholder = "E-mail".localized()
+    locationTextView.placeholder = "Location".localized()
+    
+    maleButton.setTitle("Male".localized(), for: .normal)
+    femaleButton.setTitle("Female".localized(), for: .normal)
+    
+    saveButton.setTitle("Save Changes".localized(), for: .normal)
+    title = "Profile".localized()
+
+}
 }
 
