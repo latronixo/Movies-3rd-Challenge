@@ -44,12 +44,17 @@ struct Genre: Decodable {
 //модель для получения списка актеров и съемочной группы - для поиска по Id
 struct MovieDetail: Decodable {
     let persons: [Person]?
+    let videos: [Trailer]?
 }
 
 struct Person: Decodable {
     let photo: String?
     let name: String?
     let profession: String?
+}
+
+struct Trailer: Decodable {
+    let url: String?
 }
 
 extension Movie {
