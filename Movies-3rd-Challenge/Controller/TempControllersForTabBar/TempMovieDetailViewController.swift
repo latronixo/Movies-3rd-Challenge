@@ -49,9 +49,9 @@ class TempMovieDetailViewController: UIViewController {
         
         self.navigationItem.titleView = titleLabel
         self.navigationItem.rightBarButtonItem = rightButton
-        self.navigationItem.rightBarButtonItem?.tintColor = .black
+        self.navigationItem.rightBarButtonItem?.tintColor = UIColor(named: "AccentColor")
         self.navigationItem.leftBarButtonItem = backButton
-        self.navigationItem.leftBarButtonItem?.tintColor = .black
+        self.navigationItem.leftBarButtonItem?.tintColor = UIColor(named: "AccentColor")
         self.navigationItem.hidesBackButton = true
         
         configure()
@@ -125,13 +125,13 @@ extension TempMovieDetailViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-            return CGSize(width: 150, height: 40)
+            return CGSize(width: 200, height: 50)
         }
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-            return 10
-        }
+//    func collectionView(_ collectionView: UICollectionView,
+//                        layout collectionViewLayout: UICollectionViewLayout,
+//                        minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+//            return 10
+//        }
     
 }
 extension TempMovieDetailViewController: UICollectionViewDataSource {
