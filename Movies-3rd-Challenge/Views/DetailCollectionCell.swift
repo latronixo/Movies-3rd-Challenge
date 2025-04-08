@@ -19,13 +19,14 @@ class DetailCollectionCell: UICollectionViewCell {
     let nameOfactor: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "PlusJakartaSans-SemiBold", size: 14)
+        label.textColor = UIColor(named: "AccentColor")
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     let professionOfactor: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "PlusJakartaSans-Medium", size: 10)
-        label.textColor = .systemGray
+        label.textColor = UIColor(named: "discriptionSet")
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -72,7 +73,6 @@ class DetailCollectionCell: UICollectionViewCell {
             stackOfView.topAnchor.constraint(equalTo: contentView.topAnchor),
             stackOfView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             stackOfView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            stackOfView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
-        ])
+            stackOfView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)])
     }
 }
