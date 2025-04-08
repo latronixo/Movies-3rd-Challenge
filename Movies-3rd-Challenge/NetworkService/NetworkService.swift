@@ -48,14 +48,20 @@ class NetworkService {
             }
             
             // Обработка ошибки 401 (Unauthorized)
-//            guard let httpResponce = response as? HTTPURLResponse, httpResponce.statusCode == 401 else {
-//                print("Ошибка 401: Истек дневной лимит для вашего API-ключа")
-//                completion([])
-//                return
-//            }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print ("Invalid response")
+                completion([])
+                return
+            }
+            
+            if httpResponse.statusCode == 401 {
+                print("Ошибка 401: Истек суточный лимит для вашего API-ключа")
+                completion([])
+                return
+            }
             
             //Проверяем статус кода
-            guard let httpResponce = response as? HTTPURLResponse, (200...299).contains(httpResponce.statusCode) else {
+            guard (200...299).contains(httpResponse.statusCode) else {
                 print("Invalid response status code")
                 completion([])
                 return
@@ -152,15 +158,20 @@ class NetworkService {
             }
             
             // Обработка ошибки 401 (Unauthorized)
-//            guard let httpResponce = response as? HTTPURLResponse, httpResponce.statusCode == 401 else {
-//                print("Ошибка 401: Истек дневной лимит для вашего API-ключа")
-//                completion([])
-//                return
-//            }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print ("Invalid response")
+                completion([])
+                return
+            }
             
-            // Проверяем статус кода
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
+            if httpResponse.statusCode == 401 {
+                print("Ошибка 401: Истек суточный лимит для вашего API-ключа")
+                completion([])
+                return
+            }
+            
+            //Проверяем статус кода
+            guard (200...299).contains(httpResponse.statusCode) else {
                 print("Invalid response status code")
                 completion([])
                 return
@@ -212,15 +223,20 @@ class NetworkService {
             }
             
             // Обработка ошибки 401 (Unauthorized)
-//            guard let httpResponce = response as? HTTPURLResponse, httpResponce.statusCode == 401 else {
-//                print("Ошибка 401: Истек дневной лимит для вашего API-ключа")
-//                completion(nil)
-//                return
-//            }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print ("Invalid response")
+                completion(nil)
+                return
+            }
             
-            // Проверяем статус кода
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
+            if httpResponse.statusCode == 401 {
+                print("Ошибка 401: Истек суточный лимит для вашего API-ключа")
+                completion(nil)
+                return
+            }
+            
+            //Проверяем статус кода
+            guard (200...299).contains(httpResponse.statusCode) else {
                 print("Invalid response status code")
                 completion(nil)
                 return
@@ -295,14 +311,20 @@ class NetworkService {
             }
             
             // Обработка ошибки 401 (Unauthorized)
-//            guard let httpResponce = response as? HTTPURLResponse, httpResponce.statusCode == 401 else {
-//                print("Ошибка 401: Истек дневной лимит для вашего API-ключа")
-//                completion([])
-//                return
-//            }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print ("Invalid response")
+                completion([])
+                return
+            }
+            
+            if httpResponse.statusCode == 401 {
+                print("Ошибка 401: Истек суточный лимит для вашего API-ключа")
+                completion([])
+                return
+            }
             
             //Проверяем статус кода
-            guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+            guard (200...299).contains(httpResponse.statusCode) else {
                 print("Invalid response status code")
                 completion([])
                 return
@@ -389,14 +411,20 @@ class NetworkService {
             }
             
             // Обработка ошибки 401 (Unauthorized)
-//            guard let httpResponce = response as? HTTPURLResponse, httpResponce.statusCode == 401 else {
-//                print("Ошибка 401: Истек дневной лимит для вашего API-ключа")
-//                completion([])
-//                return
-//            }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print ("Invalid response")
+                completion([])
+                return
+            }
+            
+            if httpResponse.statusCode == 401 {
+                print("Ошибка 401: Истек суточный лимит для вашего API-ключа")
+                completion([])
+                return
+            }
             
             //Проверяем статус кода
-            guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+            guard (200...299).contains(httpResponse.statusCode) else {
                 print("Invalid response status code")
                 completion([])
                 return
