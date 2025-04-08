@@ -137,7 +137,7 @@ class MovieCell: UITableViewCell {
     
     func configure(with movie: Movie) {
         // Загружаем постер
-        if let previewURL = movie.poster?.url, let url = URL(string: previewURL) {
+        if let posterURL = movie.poster?.url, let url = URL(string: posterURL) {
                 posterImageView.kf.setImage(with: url)
         } else {
             posterImageView.image = UIImage(named: "posterNotFound")
@@ -158,16 +158,67 @@ class MovieCell: UITableViewCell {
             genreCollectionView.reloadData()
         }
         
-//        DispatchQueue.main.async {
-//                self.genreCollectionView.collectionViewLayout.invalidateLayout()
-//                self.contentView.layoutIfNeeded()
-//            }
-    }
+        // Обновляем состояние кнопки избранного
+        let isFavorite = RealmManager.shared.isFavorite(movieId: movie.id ?? 0)
+        addFavoriteButton.isSelected = isFavorite
+        addFavoriteButton.tintColor = isFavorite ? UIColor(named: "mainViolet") : .gray
 
+    }
+    
+    // Логика добавления в избранное
     @objc func addFavoriteButtonTapped() {
-        // Логика добавления в избранное
-        addFavoriteButton.isSelected.toggle()
-        addFavoriteButton.tintColor = addFavoriteButton.isSelected ? UIColor(named: "mainViolet") : .gray
+        //блокируем кнопку
+        addFavoriteButton.isUserInteractionEnabled = false
+        
+        // Получаем movie из конфигурации ячейки
+         guard let tableView = self.superview as? UITableView,
+               let indexPath = tableView.indexPath(for: self) else {
+             return
+         }
+        
+        //получаем movie в зависимости от типа контроллера
+        var movie: Movie? = nil
+        
+         // Получаем контроллер, содержащий таблицу
+        if let searchVC = tableView.delegate as? SearchViewController {
+            movie = searchVC.movies[indexPath.row]
+        } else if let favoritesVC = tableView.delegate as? FavoritesViewController {
+            movie = favoritesVC.movies[indexPath.row]
+            
+            //если данная ячейка на экране избранного, то удаляем ее
+            favoritesVC.movies.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        } //else if let recentVC = tableView.delegate as RecentWatchViewController {
+            //раскомментировать, когда экран RecentWatchViewController будет готов
+          //  movie = recentVC.recentMovies[indexPath.row]
+        //}
+        
+        
+        guard let movie = movie, let movieId = movie.id else { return }
+        
+        let shouldAddToFavorites = !RealmManager.shared.isFavorite(movieId: movieId)
+        
+        //анимация кнопки
+        UIView.animate(withDuration: 0.2, animations: {
+            self.addFavoriteButton.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        }) { _ in
+            UIView.animate(withDuration: 0.2) {
+                self.addFavoriteButton.transform = .identity
+            }
+        }
+        
+        //делаем сердце выбранным
+        addFavoriteButton.isSelected = shouldAddToFavorites
+        addFavoriteButton.tintColor = shouldAddToFavorites ? UIColor(named: "mainViolet") : .gray
+        
+        //Работа с Realm в фоне
+        DispatchQueue.main.async {
+            if shouldAddToFavorites {
+                RealmManager.shared.addToFavorites(movie: movie)
+            } else {
+                RealmManager.shared.removeFromFavorites(movieId: movie.id ?? 0)
+            }
+        }
     }
     
     // MARK: - Setup Contraints

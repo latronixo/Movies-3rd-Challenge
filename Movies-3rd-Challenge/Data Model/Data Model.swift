@@ -10,13 +10,14 @@ import RealmSwift
 
 // Класс для избранного
 class Favorites: Object {
+    @Persisted(primaryKey: true) var id: Int = 1    //всегда один объект избранного
     @Persisted var docs = List<MovieRealm>()
     
     convenience init(from model: MovieResponse) {
         self.init()
         docs.append(objectsIn: model.docs.map { MovieRealm(from: $0) })
     }
-}
+ }
 
 // Класс для последнего просмосмотренного
 class RecentWatch: Object {
@@ -48,15 +49,19 @@ class MovieRealm: Object {
         id = model.id ?? 0
         name = model.name
         descriptionKP = model.description
+        
         if let rating = model.rating {
-            self.rating?.assign(from: rating)
+            self.rating = RatingRealm(from: rating) //?.assign(from: rating)
         }
+        
         movieLength = model.movieLength ?? 0
+        
         if let poster = model.poster {
-            self.poster?.assign(from: poster)
+            self.poster = PosterRealm(from: poster) //?.assign(from: poster)
         }
+        
         if let votes = model.votes {
-            self.votes?.assign(from: votes)
+            self.votes = VotesRealm(from: votes) //?.assign(from: votes)
         }
         genres.append(objectsIn: (model.genres ?? []).map { GenreRealm(from: $0) })
         year = model.year ?? 0

@@ -62,8 +62,30 @@ class TempMovieDetailViewController: UIViewController {
 
     }
     
-    @objc func addToFavorite() {
+    @objc func addToFavorite(_ sender: UIBarButtonItem) {
+        //блокируем кнопку
+        sender.isEnabled = false
         
+        
+        guard let movieId = movie.id else {
+            sender.isEnabled = true
+            return
+        }
+        
+        let shouldAddToFavorites = !RealmManager.shared.isFavorite(movieId: movieId)
+        
+        //делаем сердце выбранным
+        sender.isSelected = shouldAddToFavorites
+        sender.tintColor = shouldAddToFavorites ? UIColor(named: "mainViolet") : .gray
+        
+        //Работа с Realm в фоне
+        DispatchQueue.main.async {
+            if shouldAddToFavorites {
+                RealmManager.shared.addToFavorites(movie: self.movie)
+            } else {
+                RealmManager.shared.removeFromFavorites(movieId: self.movie.id ?? 0)
+            }
+        }
     }
             
     @objc func backTapped() {
