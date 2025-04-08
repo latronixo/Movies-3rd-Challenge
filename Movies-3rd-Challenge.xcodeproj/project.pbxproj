@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3EA2DA922DA5B9D90077D0D0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 3EA2DA912DA5B9D90077D0D0 /* FirebaseAuth */; };
+		3EA2DA942DA5B9D90077D0D0 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 3EA2DA932DA5B9D90077D0D0 /* FirebaseFirestore */; };
 		6BDA64242D9C1B03003B6709 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 6BDA64232D9C1B03003B6709 /* Kingfisher */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +43,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				6BDA64242D9C1B03003B6709 /* Kingfisher in Frameworks */,
+				3EA2DA922DA5B9D90077D0D0 /* FirebaseAuth in Frameworks */,
+				3EA2DA942DA5B9D90077D0D0 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +88,8 @@
 			name = "Movies-3rd-Challenge";
 			packageProductDependencies = (
 				6BDA64232D9C1B03003B6709 /* Kingfisher */,
+				3EA2DA912DA5B9D90077D0D0 /* FirebaseAuth */,
+				3EA2DA932DA5B9D90077D0D0 /* FirebaseFirestore */,
 			);
 			productName = "Movies-3rd-Challenge";
 			productReference = 6BB614AE2D96D8B4001A86B8 /* Movies-3rd-Challenge.app */;
@@ -115,6 +121,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				3EA2DA902DA5B9D90077D0D0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6BB614AF2D96D8B4001A86B8 /* Products */;
@@ -360,6 +367,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		3EA2DA902DA5B9D90077D0D0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.11.0;
+			};
+		};
 		6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -371,6 +386,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		3EA2DA912DA5B9D90077D0D0 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3EA2DA902DA5B9D90077D0D0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		3EA2DA932DA5B9D90077D0D0 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3EA2DA902DA5B9D90077D0D0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
 		6BDA64232D9C1B03003B6709 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */;

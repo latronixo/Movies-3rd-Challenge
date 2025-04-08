@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         
-        let auth = true
+        let auth = false
         
         if let theme = UserDefaults.standard.string(forKey: "AppTheme") {
             switch theme {
@@ -28,7 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 window?.overrideUserInterfaceStyle = .unspecified
             }
         }
-        window?.rootViewController = UINavigationController(rootViewController: auth ? TabBarController() : OnboardingViewController())
+        window?.rootViewController = UINavigationController(rootViewController: auth ? TabBarController() : LoginVC())
         window?.makeKeyAndVisible()
         
 //        let movie = Movie(id: 1, name: "фильм",
