@@ -335,7 +335,7 @@ class NetworkService {
         var urlComponents = URLComponents(string: universalSearchMoviesURLString)!
         
         // Создаем массив для query items
-        let queryItems = [
+        var queryItems = [
             URLQueryItem(name: "page", value: String(Int.random(in: 1...3))),
             URLQueryItem(name: "limit", value: String(limit)),
             URLQueryItem(name: "sortField", value: "rating.kp"),
@@ -356,6 +356,17 @@ class NetworkService {
             URLQueryItem(name: "selectFields", value: "year"),
         ]
         
+        if let genre = genres {
+            if genre == "другие" {
+                queryItems.append(URLQueryItem(name: "genres.name", value: "!боевик"))
+                queryItems.append(URLQueryItem(name: "genres.name", value: "!приключения"))
+                queryItems.append(URLQueryItem(name: "genres.name", value: "!детектив"))
+                queryItems.append(URLQueryItem(name: "genres.name", value: "!фэнтези"))
+            } else if genre != "Все" {
+                queryItems.append(URLQueryItem(name: "genres.name", value: genre))
+            }
+        }
+        
         urlComponents.queryItems = queryItems
         
         guard let url = urlComponents.url else {
@@ -365,6 +376,7 @@ class NetworkService {
         
         //Создаем запрос
         var request = URLRequest(url: url)
+        print(url)
         request.httpMethod = "GET"
         request.setValue(apiKey, forHTTPHeaderField: "X-API-KEY")
         

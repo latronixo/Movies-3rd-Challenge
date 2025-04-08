@@ -50,6 +50,17 @@ class FilterViewController: UIViewController {
         filterView.updateSelectedFilters()
         
         setupViewController()
+        updateLocalizedText()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        addObserverForLocalization()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeObserverForLocalization()
     }
     
     // MARK: - Setup
@@ -103,6 +114,23 @@ extension FilterViewController: FilterViewDelegate {
         // Передаем выбранные фильтры обратно в SearchViewController через делегат
         delegate?.filterViewController(self, didApplyFilters: selectedCategory, rating: selectedRating)
         dismiss(animated: true)
+    }
+}
+
+extension FilterViewController {
+    
+    private func addObserverForLocalization() {
+        NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.updateLocalizedText()
+        }
+    }
+    
+    private func removeObserverForLocalization() {
+        NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
+    }
+    
+    func updateLocalizedText() {
+       
     }
 }
 

@@ -28,7 +28,20 @@ class FavoritesViewController: UIViewController {
         setViews()
         setDelegates()
         setupConstraints()
+        
+        updateLocalizedText()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        addObserverForLocalization()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeObserverForLocalization()
+    }
+    
     
     // MARK: - Private Properties
     
@@ -110,3 +123,18 @@ extension FavoritesViewController {
     }
 }
 
+extension FavoritesViewController {
+    private func addObserverForLocalization() {
+        NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.updateLocalizedText()
+        }
+    }
+    
+    private func removeObserverForLocalization() {
+        NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
+    }
+    
+    @objc func updateLocalizedText() {
+        setTitleUpper(navItem: navigationItem, title: "Favorites".localized())
+    }
+}

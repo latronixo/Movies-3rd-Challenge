@@ -57,3 +57,20 @@ extension String {
         return self
     }
 }
+
+struct Languages {
+    static var currentLocale = Locale.current.language.languageCode?.identifier
+}
+
+enum Language: String, CaseIterable {
+    case ru
+    case en
+   
+    var name: String {
+        switch self {
+        case .ru: return "Русский"
+        case .en: return "English"
+        }
+    }
+}
+

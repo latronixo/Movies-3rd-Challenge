@@ -44,7 +44,7 @@ class FilterView: UIView {
     // Заголовок экрана
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Filter"
+        label.text = "Filter".localized()
         label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
         label.textAlignment = .center
         label.textColor = .label
@@ -64,7 +64,7 @@ class FilterView: UIView {
     // Кнопка сброса фильтров
     private let resetButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Reset Filters", for: .normal)
+        button.setTitle("Reset Filters".localized(), for: .normal)
         button.tintColor = UIColor(red: 0.4, green: 0.4, blue: 0.8, alpha: 1.0) // Фиолетовый цвет
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -73,7 +73,7 @@ class FilterView: UIView {
     // Заголовок раздела категорий
     private let categoriesTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Categories"
+        label.text = "Categories".localized()
         label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -83,7 +83,7 @@ class FilterView: UIView {
     // Заголовок раздела рейтингов
     private let ratingTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Star Rating"
+        label.text = "Star Rating".localized()
         label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -133,7 +133,7 @@ class FilterView: UIView {
     // Кнопка применения фильтров
     private let applyButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Apply Filters", for: .normal)
+        button.setTitle("Apply Filters".localized(), for: .normal)
         button.backgroundColor = UIColor(red: 0.4, green: 0.4, blue: 0.8, alpha: 1.0) // Фиолетовый цвет
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)

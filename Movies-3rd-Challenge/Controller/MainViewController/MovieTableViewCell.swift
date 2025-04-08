@@ -77,10 +77,11 @@ class MovieTableViewCell: UITableViewCell {
             
             categoryLabel.leadingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: 16),
             categoryLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            categoryLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40),
             
             titleLabel.leadingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: 16),
             titleLabel.topAnchor.constraint(equalTo: categoryLabel.bottomAnchor, constant: 4),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -30),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40),
 
             heartButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             heartButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
@@ -109,7 +110,8 @@ class MovieTableViewCell: UITableViewCell {
         titleLabel.text = movie.name
         ratingLabel.text = "⭐️ " + NetworkService.shared.formatRatingToFiveScale(movie.rating?.kp)
         timeLabel.text = String(movie.movieLength ?? 100) + " мин."
-        categoryLabel.text = movie.genres?[0].name ?? ""
+        let genreNames = movie.genres?.compactMap { $0.name } ?? []
+            categoryLabel.text = genreNames.joined(separator: ", ")
         loadImage(from: movie.posterURL , into: posterImageView)
     }
     

@@ -59,7 +59,19 @@ class TempMovieDetailViewController: UIViewController {
         
         self.mainView.actorsCollectionView.delegate = self
         self.mainView.actorsCollectionView.dataSource = self
+        
+        updateLocalizedText()
 
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        addObserverForLocalization()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeObserverForLocalization()
     }
     
     @objc func addToFavorite() {
@@ -168,5 +180,30 @@ extension TempMovieDetailViewController: UICollectionViewDataSource {
         }
     }
     
+    
+}
+
+extension TempMovieDetailViewController {
+    private func addObserverForLocalization() {
+        NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.updateLocalizedText()
+        }
+    }
+    
+    private func removeObserverForLocalization() {
+        NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
+    }
+    
+    @objc func updateLocalizedText() {
+        if let label = navigationItem.titleView as? UILabel {
+                label.text = "Movie Detail".localized()
+            }
+
+            mainView.wathchButton.setTitle("Watch now".localized(), for: .normal)
+            mainView.showMoreButton.setTitle(showMore ? "Show Less".localized() : "Show More".localized(), for: .normal)
+
+            mainView.storyLine.text = "Story Line".localized()
+            mainView.titelOfActors.text = "Cast and Crew".localized()
+        }
     
 }

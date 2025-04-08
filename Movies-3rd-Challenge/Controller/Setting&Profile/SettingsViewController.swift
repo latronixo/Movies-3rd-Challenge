@@ -145,7 +145,24 @@ class SettingsViewController: UIViewController {
         button.tintColor = .label
         button.contentHorizontalAlignment = .leading
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(changeLangTapped), for: .touchUpInside)
+ 
+        
+        let systemAction = UIAction(title: "System", image: UIImage(systemName: "globe")) { _ in
+                LanguageManager.shared.setLanguage(Locale.current.language.languageCode?.identifier ?? "en")
+            }
+
+            let englishAction = UIAction(title: "English", image: UIImage(systemName: "flag")) { _ in
+                LanguageManager.shared.setLanguage("en")
+            }
+
+            let russianAction = UIAction(title: "Русский", image: UIImage(systemName: "flag.fill")) { _ in
+                LanguageManager.shared.setLanguage("ru")
+            }
+
+            let menu = UIMenu(title: "Select Language".localized(), children: [systemAction, englishAction, russianAction])
+            button.menu = menu
+            button.showsMenuAsPrimaryAction = true
+        
         return button
     }()
     
@@ -159,8 +176,21 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-//        title = "Settings"
+
         setupUI()
+        setTitleUpper(navItem: navigationItem, title: "Settings")
+        
+        languageDidChange()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        addObserverForLocalization()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeObserverForLocalization()
     }
 
     // MARK: - Setup UI
@@ -262,6 +292,7 @@ class SettingsViewController: UIViewController {
         return result
     }
     
+    // темная-светлая тема
     private func setAppTheme(to style: UIUserInterfaceStyle) {
         let themeString: String
            switch style {
@@ -282,15 +313,18 @@ class SettingsViewController: UIViewController {
     // MARK: - Actions
 
     @objc private func profileButtonTapped() {
-        let profileVC = ProfileViewController()
-        navigationController?.pushViewController(profileVC, animated: false)
+        let vc = ProfileViewController()
+        vc.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(vc, animated: true)
+        navigationController?.isNavigationBarHidden = false
+        navigationItem.backButtonTitle = ""
     }
 
     @objc private func changePasswordButtonTapped() {
-        let alert = UIAlertController(title: "Enter new password", message: nil, preferredStyle: .alert)
+        let alert = UIAlertController(title: "Enter new password".localized(), message: nil, preferredStyle: .alert)
             
             alert.addTextField { textField in
-                textField.placeholder = "New password"
+                textField.placeholder = "New password".localized()
                 textField.isSecureTextEntry = true  //не видно, что вводим, зато секьюрно. Можно показывать ввод
                 textField.autocapitalizationType = .none
                 textField.autocorrectionType = .no
@@ -304,7 +338,7 @@ class SettingsViewController: UIViewController {
                 // сохр в Firebase
             }
             
-            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        let cancelAction = UIAlertAction(title: "Cancel".localized(), style: .cancel)
             
             alert.addAction(cancelAction)
             alert.addAction(saveAction)
@@ -316,7 +350,7 @@ class SettingsViewController: UIViewController {
         //запрос в файрбейз
         let alert = UIAlertController(
             title: nil,
-            message: "New password was sent to your email",
+            message: "New password was sent to your email".localized(),
                 preferredStyle: .alert
             )
             
@@ -338,8 +372,28 @@ class SettingsViewController: UIViewController {
         //fb
     }
     
-    @objc private func changeLangTapped() {
-        //локализация
+        // MARK: Localization methods
+    private func addObserverForLocalization() {
+        NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.languageDidChange()
+        }
+    }
+
+    private func removeObserverForLocalization() {
+        NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
+    }
+    
+    @objc private func languageDidChange() {
+        personalInfoLabel.text = "Personal Info".localized()
+        profileButton.setTitle("  Profile".localized(), for: .normal)
+        securityLabel.text = "Security".localized()
+        changePasswordButton.setTitle("  Change Password".localized(), for: .normal)
+        forgotPasswordButton.setTitle("  Forgot Password".localized(), for: .normal)
+        darkModeLabel.attributedText = makeLabelWithIcon(text: "Dark Mode".localized(), iconName: "square.and.pencil")
+        logoutButton.setTitle("Log Out".localized(), for: .normal)
+        changeLanguage.setTitle("  Choose Language".localized(), for: .normal)
+        setTitleUpper(navItem: navigationItem, title: "Settings".localized())
+
     }
     
 }
