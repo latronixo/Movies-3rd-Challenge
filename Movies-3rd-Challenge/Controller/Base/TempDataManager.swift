@@ -17,10 +17,6 @@ class TempDataManager {
     func addToRecentlyViewed(_ movie: Movie) {
         if !viewedMovies.contains(where: { $0.id == movie.id }) {
             viewedMovies.insert(movie, at: 0)
-            // Ограничиваем количество хранимых фильмов
-            if viewedMovies.count > 20 {
-                viewedMovies.removeLast()
-            }
         }
     }
     

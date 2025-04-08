@@ -7,7 +7,7 @@
 
 import UIKit
 
-class BaseMovieListController: UIViewController {
+class MovieListController: UIViewController {
 
     // MARK: - UI
        let tableView: UITableView = {
@@ -38,7 +38,7 @@ class BaseMovieListController: UIViewController {
         }
     
     // MARK: - Methods to override
-        func loadData() {
+        func loadData(category: String = "Все") {
             fatalError("Must be overridden")
         }
     
@@ -98,7 +98,7 @@ class BaseMovieListController: UIViewController {
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
 
-extension BaseMovieListController: UITableViewDataSource, UITableViewDelegate {
+extension MovieListController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return movies.count
     }
@@ -126,5 +126,3 @@ extension BaseMovieListController: UITableViewDataSource, UITableViewDelegate {
         }
     }
 }
-
-// MARK: - Setup Constraints

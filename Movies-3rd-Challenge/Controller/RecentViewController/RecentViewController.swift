@@ -1,6 +1,17 @@
 import UIKit
 
-class RecentViewController: BaseMovieListController {
+class RecentViewController: MovieListController {
+    
+    private var selectedCategoryIndex: Int = 0
+    
+    private lazy var categoriesContainer:  UIView = {
+        let container = UIView()
+        container.backgroundColor = .clear
+        container.clipsToBounds = false
+        container.isUserInteractionEnabled = true
+        container.translatesAutoresizingMaskIntoConstraints = false
+        return container
+    }()
     
     private lazy var categoryCollectionView: UICollectionView = {
         let catLayout = UICollectionViewFlowLayout()
@@ -17,7 +28,7 @@ class RecentViewController: BaseMovieListController {
         return collectionView
     }()
     
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -27,7 +38,7 @@ class RecentViewController: BaseMovieListController {
         setupConstraints()
     }
     
-    override func loadData() {
+    override func loadData(category: String = "Все") {
         //movies = TempDataManager.shared.getFavorites()
         movies = [movie1, movie1, movie1, movie1]
         tableView.reloadData()
@@ -44,16 +55,22 @@ class RecentViewController: BaseMovieListController {
         //            // Фильтрация списка
         //        }
         
-        view.addSubview(categoryCollectionView)
-        view.bringSubviewToFront(categoryCollectionView)
+        view.addSubview(categoriesContainer)
+        categoriesContainer.addSubview(categoryCollectionView)
+        view.bringSubviewToFront(categoriesContainer)
     }
     
     override func setupConstraints() {
         NSLayoutConstraint.activate([
-            categoryCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            categoriesContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            categoriesContainer.heightAnchor.constraint(equalToConstant: 60),
+            categoriesContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            categoriesContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            categoryCollectionView.topAnchor.constraint(equalTo: categoriesContainer.safeAreaLayoutGuide.topAnchor),
             categoryCollectionView.heightAnchor.constraint(equalToConstant: 40),
-            categoryCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            categoryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            categoryCollectionView.leadingAnchor.constraint(equalTo: categoriesContainer.leadingAnchor),
+            categoryCollectionView.trailingAnchor.constraint(equalTo: categoriesContainer.trailingAnchor),
             
             tableView.topAnchor.constraint(equalTo: categoryCollectionView.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -73,14 +90,27 @@ extension RecentViewController: UICollectionViewDelegate, UICollectionViewDataSo
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
         cell.configure(title: categories[indexPath.item])
+        cell.isCellSelected = (indexPath.item == selectedCategoryIndex)
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedCategoryIndex = indexPath.item
+        collectionView.reloadData()
+        
+        let selectedCategory = categories[indexPath.item]
+        loadData(category: selectedCategory)
+    }
 }
+
+
+
 extension RecentViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
         let title = categories[indexPath.item]
-        let width = title.size(withAttributes: [.font: UIFont.systemFont(ofSize: 16)]).width + 20
-        return CGSize(width: width, height: 40)
+        let width = (title as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: 14)]).width + 32
+        return CGSize(width: width, height: 32)
     }
 }
