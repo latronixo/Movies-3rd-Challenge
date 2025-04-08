@@ -39,22 +39,22 @@ class RecentViewController: MovieListController {
     }
     
     override func loadData(category: String = "Все") {
-        //movies = TempDataManager.shared.getFavorites()
-        movies = [movie1, movie1, movie1, movie1]
+        let allMovies = TempDataManager.shared.getFavorites()
+            
+        if category == "Все" {
+            movies = allMovies
+        } else {
+            movies = allMovies.filter { movie in
+                guard let genres = movie.genres else { return false }
+                return genres.contains { $0.name?.lowercased() == category.lowercased() }
+            }
+        }
+        
         tableView.reloadData()
         categoryCollectionView.reloadData()
     }
     
     private func setupCategoryFilter() {
-        //        categoryFilterView.onCategorySelected = { [weak self] category in
-        //            self?.filterMovies(by: category)
-        //        }
-        //        view.addSubview(categoryFilterView)
-        //
-        //        private func filterMovies(by category: String) {
-        //            // Фильтрация списка
-        //        }
-        
         view.addSubview(categoriesContainer)
         categoriesContainer.addSubview(categoryCollectionView)
         view.bringSubviewToFront(categoriesContainer)
