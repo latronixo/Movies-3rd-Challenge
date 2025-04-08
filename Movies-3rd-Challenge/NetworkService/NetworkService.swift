@@ -397,7 +397,6 @@ class NetworkService {
         
         //Создаем запрос
         var request = URLRequest(url: url)
-        print(url)
         request.httpMethod = "GET"
         request.setValue(apiKey, forHTTPHeaderField: "X-API-KEY")
         
