@@ -12,6 +12,7 @@ class MovieCell: UITableViewCell {
     
     // MARK: - Properties
     
+    private var currentMovie: Movie?
     private var genres: [String] = []
     static let identifier = "MovieCell"
 
@@ -96,12 +97,12 @@ class MovieCell: UITableViewCell {
         return imageView
     }()
 
-    private lazy var addFavoriteButton: UIButton = {
+    private lazy var favoriteButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(systemName: "heart"), for: .normal)
         button.setImage(UIImage(systemName: "heart.fill"), for: .selected)
         button.tintColor = #colorLiteral(red: 0.7796905637, green: 0.8036449552, blue: 0.824585855, alpha: 1)
-        button.addTarget(self, action: #selector(addFavoriteButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(favoriteButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -125,7 +126,7 @@ class MovieCell: UITableViewCell {
         contentView.addSubview(filmIcon)
         contentView.addSubview(genreCollectionView)
         
-        contentView.addSubview(addFavoriteButton)
+        contentView.addSubview(favoriteButton)
         
         setupConstraints()
     }
@@ -137,6 +138,8 @@ class MovieCell: UITableViewCell {
     
     func configure(with movie: Movie) {
         // Загружаем постер
+        self.currentMovie = movie
+        
         if let previewURL = movie.poster?.url, let url = URL(string: previewURL) {
                 posterImageView.kf.setImage(with: url)
         } else {
@@ -162,68 +165,26 @@ class MovieCell: UITableViewCell {
 //                self.genreCollectionView.collectionViewLayout.invalidateLayout()
 //                self.contentView.layoutIfNeeded()
 //            }
-    }
-
-    @objc func addFavoriteButtonTapped() {
-        // Логика добавления в избранное
-        addFavoriteButton.isSelected.toggle()
-        addFavoriteButton.tintColor = addFavoriteButton.isSelected ? UIColor(named: "mainViolet") : .gray
+        updateFavoriteButton()
     }
     
-    // MARK: - Setup Contraints
+    private func updateFavoriteButton() {
+            guard let movie = currentMovie else { return }
+            let isFavorite = TempDataManager.shared.isFavorite(movie)
+            favoriteButton.isSelected = isFavorite
+            favoriteButton.tintColor = isFavorite ? UIColor(named: "mainViolet") : .gray
+        }
     
-    private func setupConstraints() {
-        posterImageView.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        movieLengthLabel.translatesAutoresizingMaskIntoConstraints = false
-        yearLabel.translatesAutoresizingMaskIntoConstraints = false
-        genreCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        addFavoriteButton.translatesAutoresizingMaskIntoConstraints = false
+    @objc private func favoriteButtonTapped() {
+        guard let movie = currentMovie else { return }
         
-        NSLayoutConstraint.activate([
-            posterImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            posterImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            posterImageView.widthAnchor.constraint(equalToConstant: 120),
-            posterImageView.heightAnchor.constraint(equalToConstant: 160),
-            
-            titleLabel.leadingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: 16),
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -30),
-            
-            
-            timeIcon.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 15),
-            timeIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            timeIcon.widthAnchor.constraint(equalToConstant: 16),
-            timeIcon.heightAnchor.constraint(equalToConstant: 16),
-            movieLengthLabel.leadingAnchor.constraint(equalTo: timeIcon.trailingAnchor, constant: 4),
-            movieLengthLabel.centerYAnchor.constraint(equalTo: timeIcon.centerYAnchor),
-            
-            calendarIcon.topAnchor.constraint(equalTo: timeIcon.bottomAnchor, constant: 8),
-            calendarIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            calendarIcon.widthAnchor.constraint(equalToConstant: 16),
-            calendarIcon.heightAnchor.constraint(equalToConstant: 16),
-            yearLabel.leadingAnchor.constraint(equalTo: calendarIcon.trailingAnchor, constant: 4),
-            yearLabel.centerYAnchor.constraint(equalTo: calendarIcon.centerYAnchor),
-            
-            
-            filmIcon.topAnchor.constraint(equalTo: calendarIcon.bottomAnchor, constant: 8),
-            filmIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            filmIcon.widthAnchor.constraint(equalToConstant: 16),
-            filmIcon.heightAnchor.constraint(equalToConstant: 16),
-            
-            genreCollectionView.centerYAnchor.constraint(equalTo: filmIcon.centerYAnchor),
-            genreCollectionView.leadingAnchor.constraint(equalTo: filmIcon.trailingAnchor, constant: 4),
-            genreCollectionView.trailingAnchor.constraint(equalTo: addFavoriteButton.leadingAnchor, constant: -8),
-            genreCollectionView.heightAnchor.constraint(equalToConstant: 24),
-            
-            
-            addFavoriteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            addFavoriteButton.topAnchor.constraint(equalTo: contentView.topAnchor),
-            addFavoriteButton.widthAnchor.constraint(equalToConstant: 27),
-            addFavoriteButton.heightAnchor.constraint(equalToConstant: 27)
-        ])
+        if TempDataManager.shared.isFavorite(movie) {
+            TempDataManager.shared.removeFromFavorites(movie)
+        } else {
+            TempDataManager.shared.addToFavorites(movie)
+        }
+        updateFavoriteButton()
     }
-
     
 }
 
@@ -296,5 +257,61 @@ extension MovieCell: UICollectionViewDelegateFlowLayout {
         let genre = genres[indexPath.row]
         let width = genre.size(withAttributes: [.font: UIFont.systemFont(ofSize: 10)]).width + 20
         return CGSize(width: width, height: 24)
+    }
+}
+
+// MARK: - Setup Contraints
+
+extension MovieCell {
+    private func setupConstraints() {
+        posterImageView.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        movieLengthLabel.translatesAutoresizingMaskIntoConstraints = false
+        yearLabel.translatesAutoresizingMaskIntoConstraints = false
+        genreCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        favoriteButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            posterImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            posterImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            posterImageView.widthAnchor.constraint(equalToConstant: 120),
+            posterImageView.heightAnchor.constraint(equalToConstant: 160),
+            
+            titleLabel.leadingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: 16),
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -30),
+            
+            
+            timeIcon.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 15),
+            timeIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            timeIcon.widthAnchor.constraint(equalToConstant: 16),
+            timeIcon.heightAnchor.constraint(equalToConstant: 16),
+            movieLengthLabel.leadingAnchor.constraint(equalTo: timeIcon.trailingAnchor, constant: 4),
+            movieLengthLabel.centerYAnchor.constraint(equalTo: timeIcon.centerYAnchor),
+            
+            calendarIcon.topAnchor.constraint(equalTo: timeIcon.bottomAnchor, constant: 8),
+            calendarIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            calendarIcon.widthAnchor.constraint(equalToConstant: 16),
+            calendarIcon.heightAnchor.constraint(equalToConstant: 16),
+            yearLabel.leadingAnchor.constraint(equalTo: calendarIcon.trailingAnchor, constant: 4),
+            yearLabel.centerYAnchor.constraint(equalTo: calendarIcon.centerYAnchor),
+            
+            
+            filmIcon.topAnchor.constraint(equalTo: calendarIcon.bottomAnchor, constant: 8),
+            filmIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            filmIcon.widthAnchor.constraint(equalToConstant: 16),
+            filmIcon.heightAnchor.constraint(equalToConstant: 16),
+            
+            genreCollectionView.centerYAnchor.constraint(equalTo: filmIcon.centerYAnchor),
+            genreCollectionView.leadingAnchor.constraint(equalTo: filmIcon.trailingAnchor, constant: 4),
+            genreCollectionView.trailingAnchor.constraint(equalTo: favoriteButton.leadingAnchor, constant: -8),
+            genreCollectionView.heightAnchor.constraint(equalToConstant: 24),
+            
+            
+            favoriteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            favoriteButton.topAnchor.constraint(equalTo: contentView.topAnchor),
+            favoriteButton.widthAnchor.constraint(equalToConstant: 27),
+            favoriteButton.heightAnchor.constraint(equalToConstant: 27)
+        ])
     }
 }
