@@ -8,13 +8,26 @@
 import Foundation
 import RealmSwift
 
-// Класс для хранения списка фильмов
-class MovieResponseRealm: Object {
+// Класс для избранного
+class Favorites: Object {
     @Persisted var docs = List<MovieRealm>()
     
     convenience init(from model: MovieResponse) {
         self.init()
         docs.append(objectsIn: model.docs.map { MovieRealm(from: $0) })
+    }
+}
+
+// Класс для последнего просмосмотренного
+class RecentWatch: Object {
+    @Persisted var docs = List<MovieRealm>()
+    @Persisted var watchDate = Date()
+    
+    
+    convenience init(from model: MovieResponse) {
+        self.init()
+        docs.append(objectsIn: model.docs.map { MovieRealm(from: $0) })
+        watchDate = Date()
     }
 }
 
