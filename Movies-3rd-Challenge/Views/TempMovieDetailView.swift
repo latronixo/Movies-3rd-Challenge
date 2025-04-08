@@ -11,10 +11,25 @@ class TempMovieDetailView: UIView {
     private let starCount: Int = 5
     var stars: [UIImageView] = []
     
+    // MARK: - Scroll View Setup
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    private lazy var contentView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    // MARK: - UI Elements
     lazy var imageOfMovie: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Movie")
         imageView.layer.cornerRadius = 16
+        imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -29,7 +44,7 @@ class TempMovieDetailView: UIView {
         return label
     }()
     
-    //MARK: calendarStack
+    // MARK: - Calendar Stack
     lazy var calendarImage: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "calendar")
@@ -39,6 +54,7 @@ class TempMovieDetailView: UIView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
+    
     lazy var dateOfMovie: UILabel = {
         let label = UILabel()
         label.text = "17 Sep 2021"
@@ -47,6 +63,7 @@ class TempMovieDetailView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
     lazy var stackOfDate: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [calendarImage, dateOfMovie])
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -54,7 +71,8 @@ class TempMovieDetailView: UIView {
         stackView.axis = .horizontal
         return stackView
     }()
-    //MARK: DurationStack
+    
+    // MARK: - Duration Stack
     lazy var clockImage: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "clock")
@@ -64,6 +82,7 @@ class TempMovieDetailView: UIView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
+    
     lazy var durationOfMovie: UILabel = {
         let label = UILabel()
         label.text = "148 Minutes"
@@ -80,7 +99,8 @@ class TempMovieDetailView: UIView {
         stackView.axis = .horizontal
         return stackView
     }()
-    //MARK: CategoryStack
+    
+    // MARK: - Category Stack
     lazy var movieImage: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "film")
@@ -90,6 +110,7 @@ class TempMovieDetailView: UIView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
+    
     lazy var categoryLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "Montserrat-Medium", size: 12)
@@ -98,6 +119,7 @@ class TempMovieDetailView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
     lazy var stackOfCategory: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [movieImage, categoryLabel])
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -105,7 +127,8 @@ class TempMovieDetailView: UIView {
         stackView.axis = .horizontal
         return stackView
     }()
-    //MARK: StackForMiniElemets
+    
+    // MARK: - Info Stack
     lazy var stackInfoMovie: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [stackOfDate, stackOfDuration, stackOfCategory])
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -113,7 +136,8 @@ class TempMovieDetailView: UIView {
         stackView.spacing = 24
         return stackView
     }()
-    //MARK: Stars
+    
+    // MARK: - Stars
     lazy var starStack: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -131,7 +155,7 @@ class TempMovieDetailView: UIView {
         return stackView
     }()
     
-    //MARK: DescriptionStack
+    // MARK: - Description Stack
     lazy var storyLine: UILabel = {
         let label = UILabel()
         label.text = "Story Line"
@@ -160,19 +184,6 @@ class TempMovieDetailView: UIView {
         return button
     }()
     
-    lazy var descriptionStack: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [storyLine, descriptionOfMovie, showMoreButton])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.alignment = .leading
-        stackView.spacing = 10
-        stackView.axis = .vertical
-        return stackView
-    }()
-    //MARK: Collection
-    lazy var layout: UICollectionViewFlowLayout = {
-        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        return layout
-    }()
     lazy var titelOfActors: UILabel = {
         let label = UILabel()
         label.text = "Актеры и прочие"
@@ -182,14 +193,8 @@ class TempMovieDetailView: UIView {
         return label
     }()
     
-    lazy var actorsCollectionView: UICollectionView = {
-        let collection: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collection.translatesAutoresizingMaskIntoConstraints = false
-        return collection
-    }()
-    
-    lazy var actorsStack: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [titelOfActors, actorsCollectionView])
+    lazy var descriptionStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [storyLine, descriptionOfMovie, showMoreButton, titelOfActors])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.alignment = .leading
         stackView.spacing = 10
@@ -197,8 +202,22 @@ class TempMovieDetailView: UIView {
         return stackView
     }()
     
-    //MARK: Button
+    // MARK: - Collection
+    lazy var layout: UICollectionViewFlowLayout = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: 150, height: 50)
+        return layout
+    }()
     
+    lazy var actorsCollectionView: UICollectionView = {
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.translatesAutoresizingMaskIntoConstraints = false
+        collection.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        return collection
+    }()
+    
+    // MARK: - Button
     lazy var wathchButton: UIButton = {
         let button = UIButton()
         button.setTitle("Watch Now", for: .normal)
@@ -209,50 +228,79 @@ class TempMovieDetailView: UIView {
         return button
     }()
     
-    
+    // MARK: - Initialization
     init() {
         super.init(frame: .zero)
         makeStars()
-        setView()
-        setConstraint()
+        setupViews()
+        setupConstraints()
     }
     
-    private func setView(){
-        addSubview(imageOfMovie)
-        addSubview(movieStack)
-        addSubview(descriptionStack)
-        addSubview(wathchButton)
-        addSubview(actorsStack)
-        actorsCollectionView.register(DetailCollectionCell.self, forCellWithReuseIdentifier: "DetailCollectionCell")
-    }
-    private func setConstraint(){
-        NSLayoutConstraint.activate([
-            imageOfMovie.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            imageOfMovie.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.35),
-            imageOfMovie.centerXAnchor.constraint(equalTo: centerXAnchor),
-            
-            movieStack.topAnchor.constraint(equalTo: imageOfMovie.bottomAnchor, constant: -20),
-            movieStack.widthAnchor.constraint(equalTo: widthAnchor),
-            movieStack.centerXAnchor.constraint(equalTo: centerXAnchor),
-            
-            descriptionStack.topAnchor.constraint(equalTo: movieStack.bottomAnchor, constant: 10),
-            descriptionStack.centerXAnchor.constraint(equalTo: centerXAnchor),
-            descriptionStack.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.85),
-            
-            actorsStack.topAnchor.constraint(equalTo: descriptionStack.bottomAnchor, constant: 10),
-            actorsStack.centerXAnchor.constraint(equalTo: centerXAnchor),
-            actorsStack.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.85),
-            
-            wathchButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
-            wathchButton.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.07),
-            wathchButton.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.4),
-            wathchButton.centerXAnchor.constraint(equalTo: centerXAnchor)
-        ])
-        
-    }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Setup Methods
+    private func setupViews() {
+        // Добавляем scrollView и contentView
+        addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        // Добавляем все элементы в contentView
+        contentView.addSubview(imageOfMovie)
+        contentView.addSubview(movieStack)
+        contentView.addSubview(descriptionStack)
+        contentView.addSubview(actorsCollectionView)
+        contentView.addSubview(wathchButton)
+        
+        actorsCollectionView.register(DetailCollectionCell.self, forCellWithReuseIdentifier: "DetailCollectionCell")
+    }
+    
+    private func setupConstraints() {
+        // Констрейнты для scrollView
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+        
+        // Констрейнты для contentView
+        NSLayoutConstraint.activate([
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
+        ])
+        
+        // Констрейнты для остальных элементов
+        NSLayoutConstraint.activate([
+            imageOfMovie.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
+            imageOfMovie.heightAnchor.constraint(equalToConstant: 200),
+            imageOfMovie.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            imageOfMovie.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.8),
+            
+            movieStack.topAnchor.constraint(equalTo: imageOfMovie.bottomAnchor, constant: 20),
+            movieStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            movieStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            
+            descriptionStack.topAnchor.constraint(equalTo: movieStack.bottomAnchor, constant: 20),
+            descriptionStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            descriptionStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            
+            actorsCollectionView.topAnchor.constraint(equalTo: descriptionStack.bottomAnchor, constant: 20),
+            actorsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            actorsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            
+            wathchButton.topAnchor.constraint(equalTo: actorsCollectionView.bottomAnchor, constant: 30),
+            wathchButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            wathchButton.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.6),
+            wathchButton.heightAnchor.constraint(equalToConstant: 50),
+            wathchButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30)
+        ])
+    }
+    
     private func makeStars() {
         for _ in 0 ..< self.starCount {
             let starImage = UIImageView(image: UIImage(systemName: "star"))
