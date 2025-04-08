@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Alamofire
 
 final class SearchViewController: UIViewController {
     
@@ -25,6 +24,7 @@ final class SearchViewController: UIViewController {
 
     private let networkManager = NetworkService.shared
     private let apiKey = Secrets.apiKey
+
 
     // MARK: - UI Components
     
@@ -247,12 +247,39 @@ final class SearchViewController: UIViewController {
     //нажатие на кнопку с фильтрами - вызов алерта с фильтрами
     @objc private func filterButtonTapped() {
         
+        // Создаем экземпляр контроллера фильтров
         let filterVC = FilterViewController()
         filterVC.delegate = self
+        
+        // Передаем текущие значения фильтров
         filterVC.setInitialFilters(category: selectedGenre, rating: selectedRating)
         
+        // Показываем экран фильтров
         present(filterVC, animated: true)
     }
+
+
+
+
+    // MARK: - Helper Methods
+
+    // Обновляет текст метки с выбранными фильтрами
+//    private func updateSelectedFiltersLabel() {
+//        var filterText = "Выбранные фильтры: "
+//        
+//        if let category = selectedGenre, let rating = selectedRating {
+//            filterText += "категория - \(category), рейтинг - \(rating) звезд"
+//        } else if let category = selectedGenre {
+//            filterText += "категория - \(category)"
+//        } else if let rating = selectedRating {
+//            filterText += "рейтинг - \(rating) звезд"
+//        } else {
+//            filterText += "нет"
+//        }
+//        
+//        //selectedFiltersLabel.text = filterText
+//        present(filterVC, animated: true)
+//    }
 
 }
 
@@ -263,12 +290,26 @@ extension SearchViewController: FilterViewControllerDelegate {
     func filterViewController(_ controller: FilterViewController, didApplyFilters category: String?, rating: Int?) {
         selectedGenre = category
         selectedRating = rating
+        //updateSelectedFiltersLabel()
+        
+        // Сбрасываем страницу и загружаем фильмы с новыми фильтрами
+        currentPage = 1
+        movies.removeAll()
+        loadMoviesWithFilters()
+        tableView.reloadData()
     }
 
     // Вызывается когда пользователь сбрасывает фильтры
     func filterViewControllerDidReset(_ controller: FilterViewController) {
         selectedGenre = nil
         selectedRating = nil
+        //updateSelectedFiltersLabel()
+        
+        // Сбрасываем страницу и загружаем фильмы без фильтров
+        currentPage = 1
+        movies.removeAll()
+        loadMoviesWithFilters()
+        tableView.reloadData()
     }
 }
 

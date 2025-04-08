@@ -173,8 +173,6 @@ final class MainViewController: UIViewController {
     
     private func setupUI() {
         
-        navigationController?.isNavigationBarHidden = true
-
         contentView.addSubview(topCollectionView)
         contentView.addSubview(categoryCollectionView)
         contentView.addSubview(tableView)
