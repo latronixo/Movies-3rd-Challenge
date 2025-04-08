@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6B9F12D12DA4FD98008AC21B /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 6B9F12D02DA4FD98008AC21B /* RealmSwift */; };
 		6BDA64242D9C1B03003B6709 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 6BDA64232D9C1B03003B6709 /* Kingfisher */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B9F12D12DA4FD98008AC21B /* RealmSwift in Frameworks */,
 				6BDA64242D9C1B03003B6709 /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -84,6 +86,7 @@
 			name = "Movies-3rd-Challenge";
 			packageProductDependencies = (
 				6BDA64232D9C1B03003B6709 /* Kingfisher */,
+				6B9F12D02DA4FD98008AC21B /* RealmSwift */,
 			);
 			productName = "Movies-3rd-Challenge";
 			productReference = 6BB614AE2D96D8B4001A86B8 /* Movies-3rd-Challenge.app */;
@@ -115,6 +118,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				6B9F12CF2DA4FD98008AC21B /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6BB614AF2D96D8B4001A86B8 /* Products */;
@@ -360,6 +364,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		6B9F12CF2DA4FD98008AC21B /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -371,6 +383,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		6B9F12D02DA4FD98008AC21B /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6B9F12CF2DA4FD98008AC21B /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
 		6BDA64232D9C1B03003B6709 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */;
