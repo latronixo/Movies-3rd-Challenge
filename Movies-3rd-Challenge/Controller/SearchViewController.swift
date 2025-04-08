@@ -12,7 +12,7 @@ final class SearchViewController: UIViewController {
     private var searchText: String = ""
     private var selectedGenre: String?
     private var selectedRating: Int?
-    private var movies: [Movie] = []
+    var movies: [Movie] = []
     private var isLoading = false
     private var currentPage = 1
     private let limit = 10
@@ -337,6 +337,7 @@ extension SearchViewController: FilterViewControllerDelegate {
 
 
 // MARK: - UITableViewDataSource
+//делегаты для таблицы с фильмами
 extension SearchViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return movies.count
@@ -463,7 +464,7 @@ extension SearchViewController: UITextFieldDelegate {
 }
 
 // MARK: - UICollectionViewDataSource
-
+//Делагаты для коллекции жанров
 extension SearchViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

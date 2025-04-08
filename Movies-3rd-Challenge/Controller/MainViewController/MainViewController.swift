@@ -132,7 +132,7 @@ final class MainViewController: UIViewController {
     
     private var username = "Name"
     private var banners: [Movie] = []   // верхняя карусель
-    private var movies: [Movie] = [] // бокс офис
+    var movies: [Movie] = [] // бокс офис
     private var genres: String = "комедия"
 
     override func viewDidLoad() {
