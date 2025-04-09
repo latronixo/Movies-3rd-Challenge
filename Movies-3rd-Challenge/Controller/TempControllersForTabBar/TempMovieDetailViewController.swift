@@ -72,7 +72,7 @@ class TempMovieDetailViewController: UIViewController {
             return
         }
         
-        let shouldAddToFavorites = !RealmManager.shared.isFavorite(movieId: movieId)
+        let shouldAddToFavorites = !RealmManager.shared.isFavorite(userId: "defaultUser", movieId: movieId)
         
         //делаем сердце выбранным
         sender.isSelected = shouldAddToFavorites
@@ -81,9 +81,9 @@ class TempMovieDetailViewController: UIViewController {
         //Работа с Realm в фоне
         DispatchQueue.main.async {
             if shouldAddToFavorites {
-                RealmManager.shared.addToFavorites(movie: self.movie)
+                RealmManager.shared.addToFavorites(userId: "defaultUser", movie: self.movie)
             } else {
-                RealmManager.shared.removeFromFavorites(movieId: self.movie.id ?? 0)
+                RealmManager.shared.removeFromFavorites(userId: "defaultUser", movieId: self.movie.id ?? 0)
             }
         }
     }

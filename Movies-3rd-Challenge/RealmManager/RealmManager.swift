@@ -8,6 +8,14 @@
 import Foundation
 import RealmSwift
 
+class CurrentUser {
+    static var currentUserId: String?
+    
+    func getUserId() -> String? {
+        return CurrentUser.currentUserId
+    }
+}
+
 class RealmManager {
     
     static let shared = RealmManager()
@@ -85,6 +93,12 @@ class RealmManager {
         return favorites.docs.map { $0.toModel() }
     }
 
+    // Проверить, является ли фильм избранным для пользователя
+    func isFavorite(userId: String, movieId: Int) -> Bool {
+        guard let user = getUser(id: userId), let favorites = user.favorites else { return false }
+        return favorites.docs.contains(where: { $0.movieId == movieId })
+    }
+    
     // MARK: - Recent Watch Management
     
     // Добавить фильм в историю просмотров пользователя

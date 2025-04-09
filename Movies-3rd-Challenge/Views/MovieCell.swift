@@ -167,8 +167,8 @@ class MovieCell: UITableViewCell {
 //            }
         //updateFavoriteButton()
 
-            // Обновляем состояние кнопки избранного
-        let isFavorite = RealmManager.shared.isFavorite(movieId: movie.id ?? 0)
+        // Обновляем состояние кнопки избранного
+        let isFavorite = RealmManager.shared.isFavorite(userId: "defaultUser", movieId: movie.id ?? 0)
         addFavoriteButton.isSelected = isFavorite
         addFavoriteButton.tintColor = isFavorite ? UIColor(named: "mainViolet") : .gray
 
@@ -205,7 +205,7 @@ class MovieCell: UITableViewCell {
         
         guard let movie = movie, let movieId = movie.id else { return }
         
-        let shouldAddToFavorites = !RealmManager.shared.isFavorite(movieId: movieId)
+        let shouldAddToFavorites = !RealmManager.shared.isFavorite(userId: "defaultUser", movieId: movieId)
         
         //анимация кнопки
         UIView.animate(withDuration: 0.2, animations: {
@@ -223,9 +223,9 @@ class MovieCell: UITableViewCell {
         //Работа с Realm в фоне
         DispatchQueue.main.async {
             if shouldAddToFavorites {
-                RealmManager.shared.addToFavorites(movie: movie)
+                RealmManager.shared.addToFavorites(userId: "defaultUser", movie: movie)
             } else {
-                RealmManager.shared.removeFromFavorites(movieId: movie.id ?? 0)
+                RealmManager.shared.removeFromFavorites(userId: "defaultUser", movieId: movie.id ?? 0)
             }
         }
     }
