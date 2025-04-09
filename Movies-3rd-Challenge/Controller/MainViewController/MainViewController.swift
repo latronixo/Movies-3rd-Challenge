@@ -152,7 +152,7 @@ final class MainViewController: UIViewController {
 #warning("не забыть подставить сюда имя и аватар из FB / из экрана Сеттингс через Notification")
     private var username = "Name"
     private var banners: [Movie] = []   // верхняя карусель
-    private var movies: [Movie] = [] // бокс офис
+     var movies: [Movie] = [] // бокс офис
     
     private var genres: [GenreItem] = [] // жанры берем из массива с локализацикей
     private var selectedGenreIndex = 0
