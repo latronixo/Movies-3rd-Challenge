@@ -67,7 +67,7 @@ extension Movie {
 
 //модель для получения списка актеров и съемочной группы - для поиска по Id
 struct MovieDetail: Decodable {
-    			
+    let id: Int?
     let persons: [Person]?
     let videos: Videos?
 }

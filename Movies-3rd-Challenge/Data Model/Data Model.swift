@@ -23,7 +23,7 @@ class Favorites: Object {
     @Persisted(primaryKey: true) var id: Int = 1    //всегда один объект избранного
     @Persisted var docs = List<MovieRealm>()        // Список фильмов в избранном
     
-    @Persisted(originProperty: "favorites") var user: LinkingObjects<Users>
+    @Persisted var user: Users?
     
     convenience init(from model: MovieResponse) {
         self.init()
@@ -37,7 +37,7 @@ class RecentWatch: Object {
     @Persisted var watchDate = Date()           // Дата последнего просмотра
     
     //Связь с пользователем
-    @Persisted(originProperty: "recentWatch") var user: LinkingObjects<Users>
+    @Persisted var user: Users?
     
     convenience init(from model: MovieResponse) {
         self.init()
@@ -172,11 +172,11 @@ class MovieDetailRealm: Object {
     @Persisted var persons = List<PersonRealm>()
     @Persisted var videos = List<VideosRealm>()
     
-    @Persisted(originProperty: "movie") var movie: LinkingObjects<MovieRealm>
+    @Persisted var movie: MovieRealm?
 
     convenience init(from model: MovieDetail) {
         self.init()
-        movieId = model.movieId
+        movieId = model.id
         persons.append(objectsIn: (model.persons ?? []).map { PersonRealm(from: $0) } )
         if let videos = model.videos {
             self.videos.append(VideosRealm(from: videos))

@@ -15,7 +15,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-
+        
+        //если требуется миграция - БД realm удаляем
+//        Realm.Configuration.defaultConfiguration = Realm.Configuration(
+//            deleteRealmIfMigrationNeeded: true // Только для разработки!
+//        )
+        
         do {
             //инициализируем Realm
             let _ = try Realm()
