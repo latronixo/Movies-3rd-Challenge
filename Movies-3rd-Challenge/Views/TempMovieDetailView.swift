@@ -186,7 +186,7 @@ class TempMovieDetailView: UIView {
     
     lazy var titelOfActors: UILabel = {
         let label = UILabel()
-        label.text = "Актеры и прочие"
+        label.text = "Cast and Crew"
         label.textColor = .label
         label.font = UIFont(name: "PlusJakartaSans-SemiBold", size: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -214,6 +214,8 @@ class TempMovieDetailView: UIView {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        collection.showsVerticalScrollIndicator = false 
+        collection.showsHorizontalScrollIndicator = false
         return collection
     }()
     
@@ -242,11 +244,8 @@ class TempMovieDetailView: UIView {
     
     // MARK: - Setup Methods
     private func setupViews() {
-        // Добавляем scrollView и contentView
         addSubview(scrollView)
         scrollView.addSubview(contentView)
-        
-        // Добавляем все элементы в contentView
         contentView.addSubview(imageOfMovie)
         contentView.addSubview(movieStack)
         contentView.addSubview(descriptionStack)

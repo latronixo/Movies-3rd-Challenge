@@ -37,7 +37,7 @@ class TempMovieDetailViewController: UIViewController {
         
         let titleLabel = UILabel()
         titleLabel.attributedText = NSAttributedString(
-            string: "Детали",
+            string: "Movie Detail",
             attributes: [
                 .font: UIFont(name: "PlusJakartaSans-Bold", size: 26) ?? .systemFont(ofSize: 26)])
         

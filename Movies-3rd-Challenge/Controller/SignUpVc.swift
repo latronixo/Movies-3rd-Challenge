@@ -29,6 +29,8 @@ class SignUpVc: UIViewController {
         mainView.backgroundColor = .systemBackground
         mainView.loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
         mainView.signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
+        mainView.eyeButton.addTarget(self, action: #selector(showPass), for: .touchUpInside)
+        mainView.secondEyeButton.addTarget(self, action: #selector(showPass), for: .touchUpInside)
     }
     @objc func loginButtonTapped() {
         navigationController?.popViewController(animated: true)
@@ -69,6 +71,19 @@ class SignUpVc: UIViewController {
         })
         present(alert, animated: true)
     }
+    //MARK: EyeButtons
     
+    @objc func showPass(selector: UIButton) {
+        var textField: UITextField?
+        if selector == self.mainView.eyeButton as UIButton {
+            textField = self.mainView.passwordTextField
+        } else {
+            textField = self.mainView.confirmPasswordTextField
+        }
+        guard let field = textField else { return }
+        field.isSecureTextEntry.toggle()
+        let imageName = field.isSecureTextEntry ? "eye.slash" : "eye"
+        selector.setImage(UIImage(systemName: imageName), for: .normal)
+    }
     
 }

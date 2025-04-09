@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import GoogleSignIn
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -16,7 +17,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         
-        let auth = UserDefaults.standard.bool(forKey: "isAuth")
+//        let auth = UserDefaults.standard.bool(forKey: "isAuth")
+        let auth = true
         
         if let theme = UserDefaults.standard.string(forKey: "AppTheme") {
             switch theme {
@@ -31,23 +33,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = UINavigationController(rootViewController: auth ? TabBarController() : LoginVC())
         window?.makeKeyAndVisible()
         
-//        let movie = Movie(id: 1, name: "фильм",
-//                          description: "Очень Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book Show More фильм",
-//                          rating: Rating(kp: 9.0),
-//                          movieLength: 1,
-//                          poster: Poster(url: "ass"),
-//                          votes: Votes(kp: 1),
-//                          genres: [],
-//                          year: 2024)
-//        let detail = MovieDetail(persons: [])
-//               let movieDetailVC = TempMovieDetailViewController(movie: movie, detail: detail)
-//               let navigationController = UINavigationController(rootViewController: movieDetailVC)
-//               
-//               // Настройка UIWindow
-//               let window = UIWindow(windowScene: windowScene)
-//               window.rootViewController = navigationController
-//               self.window = window
-//               window.makeKeyAndVisible()
+    }
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let url = URLContexts.first?.url else { return }
+        GIDSignIn.sharedInstance.handle(url)
     }
 //    func sceneDidBecomeActive(_ scene: UIScene) {
 //        if let theme = UserDefaults.standard.string(forKey: "AppTheme") {

@@ -81,9 +81,17 @@ class SignUpView: UIView {
         textField.borderStyle = .roundedRect
         textField.layer.cornerRadius = 24
         textField.clipsToBounds = true
+        textField.isSecureTextEntry = true
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.heightAnchor.constraint(equalToConstant: 52).isActive = true
         return textField
+    }()
+    lazy var eyeButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+        button.tintColor = UIColor(named: "discriptionSet")
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     lazy var confirmPasswordLabel: UILabel = {
         let label = UILabel()
@@ -93,6 +101,13 @@ class SignUpView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    lazy var secondEyeButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+        button.tintColor = UIColor(named: "discriptionSet")
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
     lazy var confirmPasswordTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Confirm Password"
@@ -100,6 +115,7 @@ class SignUpView: UIView {
         textField.borderStyle = .roundedRect
         textField.layer.cornerRadius = 24
         textField.clipsToBounds = true
+        textField.isSecureTextEntry = true
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.heightAnchor.constraint(equalToConstant: 52).isActive = true
         return textField
@@ -155,6 +171,11 @@ class SignUpView: UIView {
     }
     
     func setView(){
+        passwordTextField.rightView = eyeButton
+        passwordTextField.rightViewMode = .always
+        confirmPasswordTextField.rightView = secondEyeButton
+        confirmPasswordTextField.rightViewMode = .always
+        
         addSubview(textFieldsStackView)
         addSubview(signUpButton)
         addSubview(alreadyStackView)
