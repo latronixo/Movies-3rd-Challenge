@@ -8,6 +8,8 @@
 import UIKit
 import RealmSwift
 import CoreData
+import FirebaseCore
+import GoogleSignIn
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -28,10 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Error initialising new realm, \(error)")
         }
 
-        var user = RealmManager.shared.createUser(username: "Валентин")
-        CurrentUser.currentUserId = "defaultUser"
         
-        //CurrentUser.currentUserId = RealmManager.shared.getUser(id: <#T##String#>)
         
 //        if let isDarkMode = UserDefaults.standard.value(forKey: "isDarkMode") as? Bool {
 //                if #available(iOS 13.0, *) {

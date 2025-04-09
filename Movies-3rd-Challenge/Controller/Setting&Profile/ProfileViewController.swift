@@ -454,6 +454,25 @@ extension ProfileViewController: UITextFieldDelegate, UITextViewDelegate {
         }
     }
 }
+//Импортрровать import FirebaseAuth
+//import GoogleSignIn
+//import FirebaseCore
+
+//Получение данных в зависимости от метода // "app" / "google"
+//UserDefaults.standard.set("google", forKey: "method")
+
+//app
+//UserDefaults.standard.set(name, forKey: "firstName")
+//UserDefaults.standard.set(lastName, forKey: "lastName")
+//UserDefaults.standard.set(email, forKey: "email")
+
+//google
+//if let user = Auth.auth().currentUser {
+//    print("Имя: \(user.displayName ?? "N/A")")
+//    print("Email: \(user.email ?? "N/A")")
+//    print("Фото: \(user.photoURL?.absoluteString ?? "N/A")")
+//}
+
 
 //MARK: - Localization
 
