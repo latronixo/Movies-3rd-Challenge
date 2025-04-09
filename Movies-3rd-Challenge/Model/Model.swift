@@ -41,22 +41,6 @@ struct Genre: Decodable {
     let name: String?
 }
 
-//модель для получения списка актеров и съемочной группы - для поиска по Id
-struct MovieDetail: Decodable {
-    let persons: [Person]?
-    let videos: [Trailer]?
-}
-
-struct Person: Decodable {
-    let photo: String?
-    let name: String?
-    let profession: String?
-}
-
-struct Trailer: Decodable {
-    let url: String?
-}
-
 extension Movie {
     var displayTitle: String {
         return name ?? "Без названия"
@@ -77,6 +61,33 @@ extension Movie {
 
     var posterURL: URL? {
         guard let url = poster?.url else { return nil }
+        return URL(string: url)
+    }
+}
+
+//модель для получения списка актеров и съемочной группы - для поиска по Id
+struct MovieDetail: Decodable {
+    let persons: [Person]?
+    let videos: Videos?
+}
+
+struct Person: Decodable {
+    let photo: String?
+    let name: String?
+    let profession: String?
+}
+
+struct Videos: Decodable {
+    let trailers: [Trailer]?
+}
+
+struct Trailer: Decodable {
+    let url: String?
+}
+
+extension MovieDetail {
+    var trailerURL: URL? {
+        guard let url = videos?.trailers?.first?.url else { return nil }
         return URL(string: url)
     }
 }
