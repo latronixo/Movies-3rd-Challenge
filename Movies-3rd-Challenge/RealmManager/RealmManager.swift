@@ -67,7 +67,7 @@ class RealmManager {
         do {
             try realm.write {
                 if let favorites = realm.objects(Favorites.self).first {
-                    if let index = favorites.docs.firstIndex(where: { $0.id == movieId }) {
+                    if let index = favorites.docs.firstIndex(where: { $0.movieId == movieId }) {
                         favorites.docs.remove(at: index)
                     }
                 }
@@ -80,7 +80,7 @@ class RealmManager {
     /// Проверить, есть ли фильм в избранном
     func isFavorite(movieId: Int) -> Bool {
         guard let favorites = realm.objects(Favorites.self).first else { return false }
-        return favorites.docs.contains(where: { $0.id == movieId })
+        return favorites.docs.contains(where: { $0.movieId == movieId })
     }
     
     /// Получить все избранные фильмы
