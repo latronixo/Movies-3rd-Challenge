@@ -69,7 +69,7 @@ final class TabBarController: UITabBarController {
                 $1.tabBarItem.selectedImage = UIImage(named: dataSource[$0].iconName)?.withTintColor(#colorLiteral(red: 0.3195238709, green: 0.3043658733, blue: 0.7124469876, alpha: 1))
             }
             
-            $1.tabBarItem.imageInsets = UIEdgeInsets(top: 5, left: .zero, bottom: -5, right: .zero)
+            $1.tabBarItem.imageInsets = UIEdgeInsets(top: 15, left: .zero, bottom: -15, right: .zero)
             $1.tabBarItem.tag = $0
         }
         
@@ -90,9 +90,13 @@ final class TabBarController: UITabBarController {
         
         
         UITabBar.appearance().standardAppearance = appearance
-
         
-        
+        tabBar.layer.shadowColor = UIColor.clear.cgColor
+        tabBar.layer.shadowOpacity = 0
+        tabBar.layer.shadowOffset = .zero
+        tabBar.layer.borderWidth = 0
+        tabBar.layer.borderColor = UIColor.clear.cgColor
+        tabBar.clipsToBounds = true 
     }
     
     //создаем для каждой вкладки свой NavigationController (они будут работать внутри своих вкладок), в качестве корневого вьюконтроллера нужно установить тот, который будет открываться по умолчанию

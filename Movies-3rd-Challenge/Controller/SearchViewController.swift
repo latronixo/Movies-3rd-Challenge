@@ -23,8 +23,8 @@ final class SearchViewController: UIViewController {
     private var searchTimer: Timer?
 
     private let networkManager = NetworkService.shared
-//    private let apiKey = Secrets.apiKey
-    private let apiKey = "60DWKG0-RDJ48BY-M13M9CT-YKZBZKS"
+    private let apiKey = Secrets.apiKey
+//    private let apiKey = "60DWKG0-RDJ48BY-M13M9CT-YKZBZKS"
 
     // MARK: - UI Components
     
@@ -106,7 +106,7 @@ final class SearchViewController: UIViewController {
         self.searchTextField = textField
         return container
     }()
-    // Добавьте эти свойства в класс
+    
     private weak var searchTextField: UITextField!
     private weak var clearButton: UIButton!
     
@@ -143,6 +143,14 @@ final class SearchViewController: UIViewController {
         return tableView
     }()
     
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .gray
+        indicator.hidesWhenStopped = true
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
+    }()
+    
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -176,6 +184,7 @@ final class SearchViewController: UIViewController {
         view.addSubview(searchBar)
         view.addSubview(categoryCollectionView)
         view.addSubview(tableView)
+        view.addSubview(activityIndicator)
         
     }
     
@@ -204,7 +213,9 @@ final class SearchViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: categoryCollectionView.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: tableView.centerYAnchor)
         ])
     }
     
@@ -218,11 +229,11 @@ final class SearchViewController: UIViewController {
     private func loadMoviesByName() {
         guard !isLoading else { return }
         isLoading = true
-        
+        activityIndicator.startAnimating()
         networkManager.fetchMovies(currentPage, searchText) { [weak self] newMovies in
-            
-            DispatchQueue.main.async {
                 
+            DispatchQueue.main.async {
+                self?.activityIndicator.stopAnimating()
                 if self?.currentPage == 1 {
                     self?.movies = newMovies
                 } else {
@@ -239,11 +250,11 @@ final class SearchViewController: UIViewController {
     private func loadMoviesWithFilters() {
         guard !isLoading else { return }
         isLoading = true
-        
+        activityIndicator.startAnimating()
         networkManager.fetchMovies(currentPage, selectedGenre, selectedRating) { [weak self] newMovies in
                 
                 DispatchQueue.main.async {
-                    
+                    self?.activityIndicator.stopAnimating()
                     if self?.currentPage == 1 {
                         self?.movies = newMovies
                     } else {
@@ -307,12 +318,13 @@ extension SearchViewController: FilterViewControllerDelegate {
     private func updateCategorySelectionInCollection() {
         // Полностью перезагружаем коллекцию для корректного обновления всех ячеек
         // Это наиболее надежный способ обновить выделение
+        activityIndicator.startAnimating()
         categoryCollectionView.reloadData()
         
         // После перезагрузки выделяем нужную ячейку
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            
+            self.activityIndicator.stopAnimating()
             var indexPathToSelect: IndexPath
             
             if let selectedGenre = self.selectedGenre, let index = self.genresList.firstIndex(of: selectedGenre) {
@@ -374,10 +386,11 @@ extension SearchViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedMovie = movies[indexPath.item]
         guard let id = selectedMovie.id else { return }
-        
+        activityIndicator.startAnimating()
         NetworkService.shared.fetchMovieDetail(id: id) { [weak self] detail in
             guard let detail = detail else { return }
             DispatchQueue.main.async {
+                self?.activityIndicator.stopAnimating()
                 let vc = TempMovieDetailViewController(movie: selectedMovie, detail: detail)
                 self?.navigationController?.pushViewController(vc, animated: true)
             }
