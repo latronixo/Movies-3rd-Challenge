@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         
-        let auth = false
+        let auth = UserDefaults.standard.bool(forKey: "isAuth")
         
         if let theme = UserDefaults.standard.string(forKey: "AppTheme") {
             switch theme {

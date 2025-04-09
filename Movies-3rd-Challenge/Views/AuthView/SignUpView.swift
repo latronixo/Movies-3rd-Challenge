@@ -142,13 +142,9 @@ class SignUpView: UIView {
     lazy var alreadyStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [alredyHaveAccountLabel, loginButton])
         stackView.axis = .horizontal
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-    lazy var buttonsStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [signUpButton, alreadyStackView])
-        stackView.axis = .vertical
-        stackView.spacing = 16
+        stackView.spacing = 5
+        stackView.alignment = .center
+        stackView.distribution = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -160,18 +156,25 @@ class SignUpView: UIView {
     
     func setView(){
         addSubview(textFieldsStackView)
-        addSubview(buttonsStackView)
+        addSubview(signUpButton)
+        addSubview(alreadyStackView)
         
     }
     func setConstraint(){
         NSLayoutConstraint.activate([
-            buttonsStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -30),
-            buttonsStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            buttonsStackView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.8),
+            alreadyStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -30),
+            alreadyStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            alreadyStackView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.6),
+            
+            signUpButton.bottomAnchor.constraint(equalTo: alreadyStackView.topAnchor, constant: -30),
+            signUpButton.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.8),
+            signUpButton.centerXAnchor.constraint(equalTo: centerXAnchor),
             
             textFieldsStackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             textFieldsStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
             textFieldsStackView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.8)
+            
+            
         ])
         
         
