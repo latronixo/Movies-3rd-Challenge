@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 
-// Модель пользователя
+// MARK: - Класс пользователя
 class Users: Object {
     @Persisted(primaryKey: true) var userId: String = UUID().uuidString  // уникальный идентификатор пользователя
     @Persisted var username: String = "defaultName"  // имя пользователя
@@ -18,7 +18,8 @@ class Users: Object {
     @Persisted var recentWatch: RecentWatch?  // Связь с историей просмотров
 }
 
-// Класс для избранного
+// MARK: - Класс для избранного
+
 class Favorites: Object {
     @Persisted(primaryKey: true) var id: Int = 1    //всегда один объект избранного
     @Persisted var docs = List<MovieRealm>()        // Список фильмов в избранном
@@ -31,7 +32,8 @@ class Favorites: Object {
     }
  }
 
-// Класс для последнего просмосмотренного
+// MARK: - Класс для последнего просмосмотренного
+
 class RecentWatch: Object {
     @Persisted var docs = List<MovieRealm>()    // Список просмотренных фильмов
     @Persisted var watchDate = Date()           // Дата последнего просмотра
@@ -46,7 +48,8 @@ class RecentWatch: Object {
     }
 }
 
-// Основной класс для фильма
+// MARK: - Основной класс для фильма
+
 class MovieRealm: Object {
     @Persisted(primaryKey: true) var movieId: Int = 0
     @Persisted var name: String?
@@ -98,7 +101,7 @@ class MovieRealm: Object {
     }
 }
 
-// Класс для рейтинга
+// подкласс для рейтинга
 class RatingRealm: EmbeddedObject {
     @Persisted var kp: Double? = 0.0
     
@@ -116,7 +119,7 @@ class RatingRealm: EmbeddedObject {
     }
 }
 
-// Класс для постера
+// подкласс для постера
 class PosterRealm: EmbeddedObject {
     @Persisted var url: String?
     
@@ -134,7 +137,7 @@ class PosterRealm: EmbeddedObject {
     }
 }
 
-// Класс для голосов
+// подкласс для голосов
 class VotesRealm: EmbeddedObject {
     @Persisted var kp: Int = 0
     
@@ -152,7 +155,7 @@ class VotesRealm: EmbeddedObject {
     }
 }
 
-// Класс для жанра
+// подкласс для жанра
 class GenreRealm: EmbeddedObject {
     @Persisted var name: String?
     
@@ -166,7 +169,8 @@ class GenreRealm: EmbeddedObject {
     }
 }
 
-//Класс для MovieDetail
+// MARK: - Класс для MovieDetail
+// (для списка актеров и трейлера)
 class MovieDetailRealm: Object {
     @Persisted var movieId: Int? = 0
     @Persisted var persons = List<PersonRealm>()
@@ -185,7 +189,7 @@ class MovieDetailRealm: Object {
 }
 
 
-// Класс для актеров и съемочной группы
+// подкласс для актеров и съемочной группы
 class PersonRealm: EmbeddedObject {
     @Persisted var photo: String?
     @Persisted var name: String?
@@ -203,7 +207,7 @@ class PersonRealm: EmbeddedObject {
     }
 }
 
-// Класс для трейлера
+// подкласс для трейлера
 class VideosRealm: EmbeddedObject {
     @Persisted var trailers = List<TrailerRealm>()
     
@@ -218,7 +222,7 @@ class VideosRealm: EmbeddedObject {
     }
 }
 
-// Класс для видео трейлера
+// подкласс для видео трейлера
 class TrailerRealm: EmbeddedObject {
     @Persisted var url: String?
     
