@@ -15,7 +15,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-
+        
+        //если требуется миграция - БД realm удаляем
+//        Realm.Configuration.defaultConfiguration = Realm.Configuration(
+//            deleteRealmIfMigrationNeeded: true // Только для разработки!
+//        )
+        
         do {
             //инициализируем Realm
             let _ = try Realm()
@@ -23,6 +28,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Error initialising new realm, \(error)")
         }
 
+        var user = RealmManager.shared.createUser(username: "Валентин")
+        CurrentUser.currentUserId = "defaultUser"
+        
+        //CurrentUser.currentUserId = RealmManager.shared.getUser(id: <#T##String#>)
+        
 //        if let isDarkMode = UserDefaults.standard.value(forKey: "isDarkMode") as? Bool {
 //                if #available(iOS 13.0, *) {
 //                    UIWindow.appearance().overrideUserInterfaceStyle = isDarkMode ? .dark : .light

@@ -12,7 +12,8 @@ struct MovieResponse: Decodable {
     let docs: [Movie]
 }
 
-//модель для поиска по названию
+// MARK: - единая модель фильма
+
 struct Movie: Decodable {
     let id: Int?
     let name: String?
@@ -65,8 +66,10 @@ extension Movie {
     }
 }
 
-//модель для получения списка актеров и съемочной группы - для поиска по Id
+// MARK: - модель для получения списка актеров и съемочной группы
+// (для поиска по Id)
 struct MovieDetail: Decodable {
+    let id: Int?
     let persons: [Person]?
     let videos: Videos?
 }

@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 class FavoritesViewController: UIViewController {
     
     var movies: [Movie] = []
@@ -33,7 +34,7 @@ class FavoritesViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        movies = RealmManager.shared.getAllFavorites()
+        movies = RealmManager.shared.getAllFavorites(userId: "defaultUser")
         tableView.reloadData()
     }
     
