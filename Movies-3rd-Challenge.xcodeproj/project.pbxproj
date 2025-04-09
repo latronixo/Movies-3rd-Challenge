@@ -11,6 +11,7 @@
 		3E987F122DA69026000776B5 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3E987F112DA69026000776B5 /* GoogleSignInSwift */; };
 		3EA2DA922DA5B9D90077D0D0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 3EA2DA912DA5B9D90077D0D0 /* FirebaseAuth */; };
 		3EA2DA942DA5B9D90077D0D0 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 3EA2DA932DA5B9D90077D0D0 /* FirebaseFirestore */; };
+		6B10044C2DA6C8DC0092F3CF /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 6B10044B2DA6C8DC0092F3CF /* RealmSwift */; };
 		6BDA64242D9C1B03003B6709 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 6BDA64232D9C1B03003B6709 /* Kingfisher */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B10044C2DA6C8DC0092F3CF /* RealmSwift in Frameworks */,
 				3E987F122DA69026000776B5 /* GoogleSignInSwift in Frameworks */,
 				6BDA64242D9C1B03003B6709 /* Kingfisher in Frameworks */,
 				3E987F102DA69026000776B5 /* GoogleSignIn in Frameworks */,
@@ -96,6 +98,7 @@
 				3EA2DA932DA5B9D90077D0D0 /* FirebaseFirestore */,
 				3E987F0F2DA69026000776B5 /* GoogleSignIn */,
 				3E987F112DA69026000776B5 /* GoogleSignInSwift */,
+				6B10044B2DA6C8DC0092F3CF /* RealmSwift */,
 			);
 			productName = "Movies-3rd-Challenge";
 			productReference = 6BB614AE2D96D8B4001A86B8 /* Movies-3rd-Challenge.app */;
@@ -130,6 +133,7 @@
 				6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				3EA2DA902DA5B9D90077D0D0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				3E987F0E2DA69026000776B5 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				6B10044A2DA6C8DC0092F3CF /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6BB614AF2D96D8B4001A86B8 /* Products */;
@@ -391,6 +395,14 @@
 				minimumVersion = 11.11.0;
 			};
 		};
+		6B10044A2DA6C8DC0092F3CF /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -421,6 +433,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3EA2DA902DA5B9D90077D0D0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		6B10044B2DA6C8DC0092F3CF /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6B10044A2DA6C8DC0092F3CF /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
 		};
 		6BDA64232D9C1B03003B6709 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
