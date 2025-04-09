@@ -9,10 +9,11 @@ import Foundation
 import RealmSwift
 
 // Модель пользователя
-class User: Object {
-    @Persisted(primaryKey: true) var id: String = UUID().uuidString  // уникальный идентификатор пользователя
+class Users: Object {
+    @Persisted(primaryKey: true) var userId: String = UUID().uuidString  // уникальный идентификатор пользователя
     @Persisted var username: String = "defaultName"  // имя пользователя
     @Persisted var email: String = "default@email.com"  // имя пользователя
+    
     @Persisted var favorites: Favorites?  // Связь с избранным
     @Persisted var recentWatch: RecentWatch?  // Связь с историей просмотров
 }
@@ -22,7 +23,7 @@ class Favorites: Object {
     @Persisted(primaryKey: true) var id: Int = 1    //всегда один объект избранного
     @Persisted var docs = List<MovieRealm>()        // Список фильмов в избранном
     
-    @Persisted(originProperty: "favorites") var user: LinkingObjects<User>
+    @Persisted(originProperty: "favorites") var user: LinkingObjects<Users>
     
     convenience init(from model: MovieResponse) {
         self.init()
@@ -36,7 +37,7 @@ class RecentWatch: Object {
     @Persisted var watchDate = Date()           // Дата последнего просмотра
     
     //Связь с пользователем
-    @Persisted(originProperty: "recentWatch") var user: LinkingObjects<User>
+    @Persisted(originProperty: "recentWatch") var user: LinkingObjects<Users>
     
     convenience init(from model: MovieResponse) {
         self.init()
@@ -47,7 +48,7 @@ class RecentWatch: Object {
 
 // Основной класс для фильма
 class MovieRealm: Object {
-    @Persisted(primaryKey: true) var id: Int = 0
+    @Persisted(primaryKey: true) var movieId: Int = 0
     @Persisted var name: String?
     @Persisted var descriptionKP: String?
     @Persisted var rating: RatingRealm?
@@ -57,24 +58,26 @@ class MovieRealm: Object {
     @Persisted var genres = List<GenreRealm>()
     @Persisted var year: Int = 0
     
+    @Persisted var movieDetail: MovieDetailRealm?    // Связь с таблицей MovieDetail
+    
     convenience init(from model: Movie) {
         self.init()
-        id = model.id ?? 0
+        movieId = model.id ?? 0
         name = model.name
         descriptionKP = model.description
         
         if let rating = model.rating {
-            self.rating = RatingRealm(from: rating) //?.assign(from: rating)
+            self.rating = RatingRealm(from: rating)
         }
         
         movieLength = model.movieLength ?? 0
         
         if let poster = model.poster {
-            self.poster = PosterRealm(from: poster) //?.assign(from: poster)
+            self.poster = PosterRealm(from: poster)
         }
         
         if let votes = model.votes {
-            self.votes = VotesRealm(from: votes) //?.assign(from: votes)
+            self.votes = VotesRealm(from: votes)
         }
         genres.append(objectsIn: (model.genres ?? []).map { GenreRealm(from: $0) })
         year = model.year ?? 0
@@ -82,7 +85,7 @@ class MovieRealm: Object {
     
     func toModel() -> Movie {
         return Movie(
-            id: id,
+            id: movieId,
             name: name,
             description: descriptionKP,
             rating: rating?.toModel(),
@@ -160,5 +163,75 @@ class GenreRealm: EmbeddedObject {
     
     func toModel() -> Genre {
         return Genre(name: name)
+    }
+}
+
+//Класс для MovieDetail
+class MovieDetailRealm: Object {
+    @Persisted var movieId: Int? = 0
+    @Persisted var persons = List<PersonRealm>()
+    @Persisted var videos = List<VideosRealm>()
+    
+    @Persisted(originProperty: "movie") var movie: LinkingObjects<MovieRealm>
+
+    convenience init(from model: MovieDetail) {
+        self.init()
+        movieId = model.movieId
+        persons.append(objectsIn: (model.persons ?? []).map { PersonRealm(from: $0) } )
+        if let videos = model.videos {
+            self.videos.append(VideosRealm(from: videos))
+        }
+    }
+}
+
+
+// Класс для актеров и съемочной группы
+class PersonRealm: EmbeddedObject {
+    @Persisted var photo: String?
+    @Persisted var name: String?
+    @Persisted var profession: String?
+    
+    convenience init(from model: Person) {
+        self.init()
+        photo = model.photo
+        name = model.name
+        profession = model.profession
+    }
+    
+    func toModel() -> Person {
+        return Person(photo: photo, name: name, profession: profession)
+    }
+}
+
+// Класс для трейлера
+class VideosRealm: EmbeddedObject {
+    @Persisted var trailers = List<TrailerRealm>()
+    
+    convenience init(from model: Videos) {
+        self.init()
+        
+        trailers.append(objectsIn: (model.trailers ?? []).map { TrailerRealm(from: $0) } )
+    }
+    
+    func toModel() -> Videos {
+        return Videos(trailers: trailers.map { $0.toModel() } )
+    }
+}
+
+// Класс для видео трейлера
+class TrailerRealm: EmbeddedObject {
+    @Persisted var url: String?
+    
+    convenience init(from model: Trailer) {
+        self.init()
+        url = model.url
+    }
+    
+    func toModel() -> Trailer {
+        return Trailer(url: url)
+    }
+    
+    func assign(from model: Trailer) {
+        url = model.url
     }
 }
