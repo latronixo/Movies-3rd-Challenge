@@ -82,12 +82,13 @@ final class TopCell: UICollectionViewCell {
             gradient.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             
             labelBackgroundView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            labelBackgroundView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40),
+            labelBackgroundView.trailingAnchor.constraint(equalTo: categoryLabel.trailingAnchor, constant: 10),
             labelBackgroundView.bottomAnchor.constraint(equalTo: titleLabel.topAnchor, constant: -10),
             labelBackgroundView.heightAnchor.constraint(equalToConstant: 20),
             
             categoryLabel.topAnchor.constraint(equalTo: labelBackgroundView.topAnchor, constant: 2),
-            categoryLabel.leadingAnchor.constraint(equalTo: labelBackgroundView.leadingAnchor, constant: 8),
+            categoryLabel.leadingAnchor.constraint(equalTo: labelBackgroundView.leadingAnchor, constant: 10),
+            categoryLabel.bottomAnchor.constraint(equalTo: labelBackgroundView.bottomAnchor, constant: -2),
 
             titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),

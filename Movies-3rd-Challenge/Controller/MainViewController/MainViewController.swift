@@ -65,7 +65,7 @@ final class MainViewController: UIViewController {
     }()
 
     private lazy var headerStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [avatarImageView, greetingLabel])
+        let stack = UIStackView(arrangedSubviews: [avatarImageView, greetingStack])
         stack.axis = .horizontal
         stack.spacing = 12
         stack.alignment = .center
@@ -90,10 +90,29 @@ final class MainViewController: UIViewController {
 
     private lazy var greetingLabel: UILabel = {
         let label = UILabel()
-        label.text = "Hello, \(username) 👋"
+        label.text = "👋 Hello, " + username
         label.font = .systemFont(ofSize: 18, weight: .medium)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+    
+    private lazy var sloganLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Only streaming movie lovers"
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = .secondaryLabel
+        label.numberOfLines = 1
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private lazy var greetingStack: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [greetingLabel, sloganLabel])
+        stack.axis = .vertical
+        stack.spacing = 4
+        stack.alignment = .leading
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
     }()
 
     private lazy var categoryLabel: UILabel = {
@@ -130,14 +149,19 @@ final class MainViewController: UIViewController {
         return indicator
     }()
     
+#warning("не забыть подставить сюда имя и аватар из FB / из экрана Сеттингс через Notification")
     private var username = "Name"
     private var banners: [Movie] = []   // верхняя карусель
-    var movies: [Movie] = [] // бокс офис
-    private var genres: String = "комедия"
-
+     var movies: [Movie] = [] // бокс офис
+    
+    private var genres: [GenreItem] = [] // жанры берем из массива с локализацикей
+    private var selectedGenreIndex = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        
+        genres = GenreProvider.genres(for: LanguageManager.shared.currentLanguage)
         
         setupScrollView()
         setupUI()
@@ -255,7 +279,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         if collectionView == topCollectionView {
             return min(banners.count, 10)
         } else {
-            return categories.count
+            return genres.count
         }
     }
 
@@ -271,7 +295,8 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
                 return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
-            cell.configure(title: categories[indexPath.item])
+            let genre = genres[indexPath.item]
+            cell.configure(title: genre.displayName)
             return cell
         }
     }
@@ -288,8 +313,9 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         if collectionView == topCollectionView {
             return CGSize(width: 200, height: 280)
         } else {
-            let title = categories[indexPath.item]
+            let title = genres[indexPath.item].displayName
             let width = (title as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: 14)]).width + 32
+
             return CGSize(width: width, height: 32)
         }
     }
@@ -316,18 +342,17 @@ extension MainViewController: UICollectionViewDelegate {
         } else {
             // Для CategoryCell
             for i in 0..<categories.count {
-                let index = IndexPath(item: i, section: 0)
-                if let cell = collectionView.cellForItem(at: index) as? CategoryCell {
-                    cell.isCellSelected = false
+                    let index = IndexPath(item: i, section: 0)
+                    if let cell = collectionView.cellForItem(at: index) as? CategoryCell {
+                        cell.isCellSelected = (index == indexPath)
+                    }
                 }
                 
-                if let selectedCell = collectionView.cellForItem(at: indexPath) as? CategoryCell {
-                    selectedCell.isCellSelected = true
-                    let category = categories[indexPath.item]
-                    genres = category
-                    loadBoxOfficeMovies(category: genres)
-                }
-            }
+                // Обновляем выбранную категорию и делаем запрос
+                let selectedCategory = genres[indexPath.item]
+                let genre = selectedCategory.queryValue
+                loadBoxOfficeMovies(category: genre)
+            
         }
     }
 }
@@ -341,7 +366,12 @@ extension MainViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard indexPath.row < movies.count else {
+                return UITableViewCell()
+            }
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell", for: indexPath) as! MovieTableViewCell
+        
         let movie = movies[indexPath.row]
         cell.configure(movie: movie)
 
@@ -420,6 +450,10 @@ extension MainViewController {
         categoryLabel.text = "Category".localized()
         boxOfficeLabel.text = "Box Office".localized()
         seeAllButton.setTitle("See All".localized(), for: .normal)
+        sloganLabel.text = "Streaming for movie lovers".localized()
+        greetingLabel.text = "👋 Hello, ".localized() + username
+        genres = GenreProvider.genres(for: LanguageManager.shared.currentLanguage)
+        categoryCollectionView.reloadData()
     }
 }
 

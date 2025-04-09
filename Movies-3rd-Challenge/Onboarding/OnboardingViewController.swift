@@ -15,11 +15,13 @@ final class OnboardingViewController: UIViewController {
     private let onboardingView = OnboardingView()
     
     // Массив слайдов с данными для отображения (изображение, заголовок, описание)
-    private let slides: [(image: String, title: String, description: String)] = [
-        ("FirstSlide", "Watch your favorite movie easily", "Discover the world of high-quality video content and enjoy it with us. Find your movie."),
-        ("SecondSlide", "Watch on any Device", "Stream on your phone, tablet, laptop, and TV without paying more."),
-        ("TomCruse", "Download and Go", "Save your data, watch offline on a plane,train, or rocket."),
+    private let slideKeys: [(image: String, titleKey: String, descriptionKey: String)] = [
+        ("FirstSlide", "Slide1Title", "Slide1Description"),
+        ("SecondSlide", "Slide2Title", "Slide2Description"),
+        ("TomCruse", "Slide3Title", "Slide3Description")
     ]
+    
+    private var slides: [(image: String, title: String, description: String)] = []
     
     // Коллекция для отображения слайдов онбординга
     private lazy var collectionView: UICollectionView = {
@@ -55,12 +57,15 @@ final class OnboardingViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
+        addObserverForLocalization()
+        updateLocalizedText()
     }
     
     // Показываем таб-бар после завершения онбординга
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         tabBarController?.tabBar.isHidden = false
+        removeObserverForLocalization()
     }
     
     // Устанавливаем пользовательское представление
@@ -175,3 +180,25 @@ extension OnboardingViewController: UICollectionViewDelegate, UICollectionViewDa
         startButtonTapped()
     }
 }
+
+extension OnboardingViewController {
+    private func addObserverForLocalization() {
+        NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.updateLocalizedText()
+        }
+    }
+
+    private func removeObserverForLocalization() {
+        NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
+    }
+
+    @objc func updateLocalizedText() {
+        slides = slideKeys.map { (image, titleKey, descriptionKey) in
+            (
+                image: image,
+                title: titleKey.localized(),
+                description: descriptionKey.localized()
+            )
+        }
+        collectionView.reloadData()
+    }}

@@ -23,6 +23,7 @@
 "Category" = "Category";
 "Box Office" = "Box Office";
 "See All" = "See All";
+"Streaming for movie lovers" = "Streaming for movie lovers";
 
 // MARK: Settings
 
@@ -75,3 +76,17 @@
 "Show More" = "Show More";
 
 "Recent Watch" = "Recent Watch";
+
+// MARK: Onboarding 
+"Slide1Title" = "Watch your favorite movie easily";
+"Slide1Description" = "Discover the world of high-quality video content and enjoy it with us. Find your movie.";
+
+"Slide2Title" = "Watch on any Device";
+"Slide2Description" = "Stream on your phone, tablet, laptop, and TV without paying more.";
+
+"Slide3Title" = "Download and Go";
+"Slide3Description" = "Save your data, watch offline on a plane, train, or rocket.";
+
+"Continue" = "Continue";
+"Start" = "Start";
+
