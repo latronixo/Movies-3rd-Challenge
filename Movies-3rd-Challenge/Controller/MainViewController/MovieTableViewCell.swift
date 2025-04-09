@@ -45,6 +45,15 @@ class MovieTableViewCell: UITableViewCell {
            return button
        }()
     
+    private let votesLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.textColor = .gray
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -52,6 +61,7 @@ class MovieTableViewCell: UITableViewCell {
         contentView.addSubview(timeLabel)
         contentView.addSubview(timeIcon)
         contentView.addSubview(heartButton)
+        contentView.addSubview(votesLabel)
         
         posterImageView.contentMode = .scaleAspectFill
         posterImageView.clipsToBounds = true
@@ -82,14 +92,17 @@ class MovieTableViewCell: UITableViewCell {
             titleLabel.leadingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: 16),
             titleLabel.topAnchor.constraint(equalTo: categoryLabel.bottomAnchor, constant: 4),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40),
-
+            
+            votesLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            votesLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
+            ratingLabel.trailingAnchor.constraint(equalTo: votesLabel.leadingAnchor, constant: -1),
+            ratingLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
             heartButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            heartButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            heartButton.bottomAnchor.constraint(equalTo: ratingLabel.topAnchor, constant: 1),
             heartButton.widthAnchor.constraint(equalToConstant: 24),
             heartButton.heightAnchor.constraint(equalToConstant: 24),
-            
-            ratingLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            ratingLabel.topAnchor.constraint(equalTo: heartButton.bottomAnchor, constant: 4),
             
             timeIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             timeIcon.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
@@ -97,7 +110,9 @@ class MovieTableViewCell: UITableViewCell {
             timeIcon.heightAnchor.constraint(equalToConstant: 14),
             
             timeLabel.leadingAnchor.constraint(equalTo: timeIcon.trailingAnchor, constant: 4),
-            timeLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4)
+            timeLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
+            
+            
         ])
         
         heartButton.addTarget(self, action: #selector(toggleHeart), for: .touchUpInside)
@@ -110,6 +125,13 @@ class MovieTableViewCell: UITableViewCell {
         titleLabel.text = movie.name
         ratingLabel.text = "⭐️ " + NetworkService.shared.formatRatingToFiveScale(movie.rating?.kp)
         timeLabel.text = String(movie.movieLength ?? 100) + " мин."
+        
+        if let votes = movie.votes?.kp {
+            votesLabel.text = "(\(votes))"
+        } else {
+            votesLabel.text = nil
+        }
+        
         let genreNames = movie.genres?.compactMap { $0.name } ?? []
             categoryLabel.text = genreNames.joined(separator: ", ")
         loadImage(from: movie.posterURL , into: posterImageView)
@@ -121,24 +143,12 @@ class MovieTableViewCell: UITableViewCell {
        }
     
     func loadImage(from url: URL?, into imageView: UIImageView) {
-        guard let url = url else {
-                DispatchQueue.main.async {
-                    imageView.image = UIImage(named: "gradientPoster")
-                }
-                return
-            }
-            
-            DispatchQueue.global().async {
-                if let data = try? Data(contentsOf: url),
-                   let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        imageView.image = image
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        imageView.image = UIImage(named: "gradientPoster")
-                    }
-                }
-            }
+        let placeholder = UIImage(named: "gradientPoster")
+
+        if let url = url {
+            imageView.kf.setImage(with: url, placeholder: placeholder)
+        } else {
+            imageView.image = placeholder
+        }
     }
 }

@@ -229,9 +229,9 @@ final class OnboardingCell: UICollectionViewCell {
         }
         
         if isLastCell {
-            actionButton.setTitle("Start", for: .normal)
+            actionButton.setTitle("Start".localized(), for: .normal)
         } else {
-            actionButton.setTitle("Continue", for: .normal)
+            actionButton.setTitle("Continue".localized(), for: .normal)
         }
     }
     

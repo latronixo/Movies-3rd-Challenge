@@ -170,7 +170,15 @@ class SettingsViewController: UIViewController {
     private lazy var lastName = "Lexian"
     private lazy var login = "@" + userName + "999" //непонятно откуда брать, можно первую часть от почты
     private var newPassword: String?
-
+    
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.textColor = .label
+        label.text = "Settings"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
@@ -178,7 +186,6 @@ class SettingsViewController: UIViewController {
         view.backgroundColor = .systemBackground
 
         setupUI()
-        setTitleUpper(navItem: navigationItem, title: "Settings")
         
         languageDidChange()
     }
@@ -209,11 +216,15 @@ class SettingsViewController: UIViewController {
             darkModeSwitch,
             logoutButton,
             profileChevronImageView,
-            changeLanguage
+            changeLanguage,
+            titleLabel
         ]
         elements.forEach { view.addSubview($0) }
 
         NSLayoutConstraint.activate([
+            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            titleLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            
             profileImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             profileImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             profileImageView.widthAnchor.constraint(equalToConstant: 70),
@@ -392,8 +403,7 @@ class SettingsViewController: UIViewController {
         darkModeLabel.attributedText = makeLabelWithIcon(text: "Dark Mode".localized(), iconName: "square.and.pencil")
         logoutButton.setTitle("Log Out".localized(), for: .normal)
         changeLanguage.setTitle("  Choose Language".localized(), for: .normal)
-        setTitleUpper(navItem: navigationItem, title: "Settings".localized())
-
+        titleLabel.text = "Settings".localized()
     }
     
 }
