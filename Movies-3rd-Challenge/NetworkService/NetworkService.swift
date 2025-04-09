@@ -13,7 +13,8 @@ class NetworkService {
     
     private let session: URLSession = .shared
     
-    //поиск по названию
+    // MARK: - поиск по названию
+    
     func fetchMovies(_ currentPage: Int, _ searchText: String, completion: @escaping ([Movie]) -> Void) {
         
         // Создаем базовые компоненты URL
@@ -86,7 +87,8 @@ class NetworkService {
         }.resume()
     }
     
-    //поиск по жанрам и рейтингу
+    // MARK: - поиск по жанрам и рейтингу
+    
     func fetchMovies(_ currentPage: Int, _ genres: String?, _ rating: Int?, completion: @escaping ([Movie]) -> Void) {
         // Создаем базовые компоненты URL
         var urlComponents = URLComponents(string: universalSearchMoviesURLString)
@@ -196,7 +198,9 @@ class NetworkService {
         }.resume()
     }
     
-    //поиск по id для получения массива актеров и съемочной группы
+    // MARK: - поиск по id
+    //(для получения массива актеров и съемочной группы)
+    
     func fetchMovieDetail(id: Int, completion: @escaping (MovieDetail?) -> Void) {
         
         //Для поиска по id нельзя установить параметр notNullFields или задать список требуемых полей
@@ -261,7 +265,8 @@ class NetworkService {
         }.resume()
     }
     
-    //наполнение для карусели главного экрана
+    // MARK: - наполнение для карусели главного экрана
+    
     func fetchMoviesCaruselHomeScreen(_ currentPage: Int, _ limit: Int, completion: @escaping ([Movie]) -> Void) {
         
         //Создаем базовые компоненты URL
@@ -349,7 +354,8 @@ class NetworkService {
         }.resume()
     }
     
-    //наполнение для Box Office главного экрана
+    // MARK: - наполнение для Box Office главного экрана
+    
     func fetchMoviesBoxOfficeHomeScreen(_ currentPage: Int, _ limit: Int, _ genres: String?, completion: @escaping ([Movie]) -> Void) {
         
         //Создаем базовые компоненты URL

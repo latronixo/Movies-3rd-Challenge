@@ -8,10 +8,21 @@
 import Foundation
 import RealmSwift
 
+// Модель пользователя
+class User: Object {
+    @Persisted(primaryKey: true) var id: String = UUID().uuidString  // уникальный идентификатор пользователя
+    @Persisted var username: String = "defaultName"  // имя пользователя
+    @Persisted var email: String = "default@email.com"  // имя пользователя
+    @Persisted var favorites: Favorites?  // Связь с избранным
+    @Persisted var recentWatch: RecentWatch?  // Связь с историей просмотров
+}
+
 // Класс для избранного
 class Favorites: Object {
     @Persisted(primaryKey: true) var id: Int = 1    //всегда один объект избранного
-    @Persisted var docs = List<MovieRealm>()
+    @Persisted var docs = List<MovieRealm>()        // Список фильмов в избранном
+    
+    @Persisted(originProperty: "favorites") var user: LinkingObjects<User>
     
     convenience init(from model: MovieResponse) {
         self.init()
@@ -21,9 +32,11 @@ class Favorites: Object {
 
 // Класс для последнего просмосмотренного
 class RecentWatch: Object {
-    @Persisted var docs = List<MovieRealm>()
-    @Persisted var watchDate = Date()
+    @Persisted var docs = List<MovieRealm>()    // Список просмотренных фильмов
+    @Persisted var watchDate = Date()           // Дата последнего просмотра
     
+    //Связь с пользователем
+    @Persisted(originProperty: "recentWatch") var user: LinkingObjects<User>
     
     convenience init(from model: MovieResponse) {
         self.init()
