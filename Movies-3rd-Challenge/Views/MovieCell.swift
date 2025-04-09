@@ -12,7 +12,7 @@ class MovieCell: UITableViewCell {
     
     // MARK: - Properties
     
-    private var currentMovie: Movie?
+    private var movie: Movie?
     private var genres: [String] = []
     static let identifier = "MovieCell"
 
@@ -97,12 +97,12 @@ class MovieCell: UITableViewCell {
         return imageView
     }()
 
-    private lazy var favoriteButton: UIButton = {
+    private lazy var addFavoriteButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(systemName: "heart"), for: .normal)
         button.setImage(UIImage(systemName: "heart.fill"), for: .selected)
         button.tintColor = #colorLiteral(red: 0.7796905637, green: 0.8036449552, blue: 0.824585855, alpha: 1)
-        button.addTarget(self, action: #selector(favoriteButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(addFavoriteButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -126,7 +126,7 @@ class MovieCell: UITableViewCell {
         contentView.addSubview(filmIcon)
         contentView.addSubview(genreCollectionView)
         
-        contentView.addSubview(favoriteButton)
+        contentView.addSubview(addFavoriteButton)
         
         setupConstraints()
     }
@@ -138,13 +138,9 @@ class MovieCell: UITableViewCell {
     
     func configure(with movie: Movie) {
         // Загружаем постер
-<<<<<<<< HEAD:Movies-3rd-Challenge/Controller/Base/MovieCell.swift
-        self.currentMovie = movie
+        self.movie = movie
         
-        if let previewURL = movie.poster?.url, let url = URL(string: previewURL) {
-========
         if let posterURL = movie.poster?.url, let url = URL(string: posterURL) {
->>>>>>>> features/latronixo1/realm:Movies-3rd-Challenge/Views/MovieCellWithFavorite.swift
                 posterImageView.kf.setImage(with: url)
         } else {
             posterImageView.image = UIImage(named: "posterNotFound")
@@ -165,14 +161,13 @@ class MovieCell: UITableViewCell {
             genreCollectionView.reloadData()
         }
         
-<<<<<<<< HEAD:Movies-3rd-Challenge/Controller/Base/MovieCell.swift
 //        DispatchQueue.main.async {
 //                self.genreCollectionView.collectionViewLayout.invalidateLayout()
 //                self.contentView.layoutIfNeeded()
 //            }
-        updateFavoriteButton()
-========
-        // Обновляем состояние кнопки избранного
+        //updateFavoriteButton()
+
+            // Обновляем состояние кнопки избранного
         let isFavorite = RealmManager.shared.isFavorite(movieId: movie.id ?? 0)
         addFavoriteButton.isSelected = isFavorite
         addFavoriteButton.tintColor = isFavorite ? UIColor(named: "mainViolet") : .gray
@@ -233,26 +228,25 @@ class MovieCell: UITableViewCell {
                 RealmManager.shared.removeFromFavorites(movieId: movie.id ?? 0)
             }
         }
->>>>>>>> features/latronixo1/realm:Movies-3rd-Challenge/Views/MovieCellWithFavorite.swift
     }
     
-    private func updateFavoriteButton() {
-            guard let movie = currentMovie else { return }
-            let isFavorite = TempDataManager.shared.isFavorite(movie)
-            favoriteButton.isSelected = isFavorite
-            favoriteButton.tintColor = isFavorite ? UIColor(named: "mainViolet") : .gray
-        }
-    
-    @objc private func favoriteButtonTapped() {
-        guard let movie = currentMovie else { return }
-        
-        if TempDataManager.shared.isFavorite(movie) {
-            TempDataManager.shared.removeFromFavorites(movie)
-        } else {
-            TempDataManager.shared.addToFavorites(movie)
-        }
-        updateFavoriteButton()
-    }
+//    private func updateFavoriteButton() {
+//            guard let movie = movie else { return }
+//            let isFavorite = TempDataManager.shared.isFavorite(movie)
+//            addFavoriteButton.isSelected = isFavorite
+//            addFavoriteButton.tintColor = isFavorite ? UIColor(named: "mainViolet") : .gray
+//        }
+//    
+//    @objc private func favoriteButtonTapped() {
+//        guard let movie = movie else { return }
+//        
+//        if TempDataManager.shared.isFavorite(movie) {
+//            TempDataManager.shared.removeFromFavorites(movie)
+//        } else {
+//            TempDataManager.shared.addToFavorites(movie)
+//        }
+//        updateFavoriteButton()
+//    }
     
 }
 
@@ -337,7 +331,7 @@ extension MovieCell {
         movieLengthLabel.translatesAutoresizingMaskIntoConstraints = false
         yearLabel.translatesAutoresizingMaskIntoConstraints = false
         genreCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        favoriteButton.translatesAutoresizingMaskIntoConstraints = false
+        addFavoriteButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             posterImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -372,14 +366,14 @@ extension MovieCell {
             
             genreCollectionView.centerYAnchor.constraint(equalTo: filmIcon.centerYAnchor),
             genreCollectionView.leadingAnchor.constraint(equalTo: filmIcon.trailingAnchor, constant: 4),
-            genreCollectionView.trailingAnchor.constraint(equalTo: favoriteButton.leadingAnchor, constant: -8),
+            genreCollectionView.trailingAnchor.constraint(equalTo: addFavoriteButton.leadingAnchor, constant: -8),
             genreCollectionView.heightAnchor.constraint(equalToConstant: 24),
             
             
-            favoriteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            favoriteButton.topAnchor.constraint(equalTo: contentView.topAnchor),
-            favoriteButton.widthAnchor.constraint(equalToConstant: 27),
-            favoriteButton.heightAnchor.constraint(equalToConstant: 27)
+            addFavoriteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            addFavoriteButton.topAnchor.constraint(equalTo: contentView.topAnchor),
+            addFavoriteButton.widthAnchor.constraint(equalToConstant: 27),
+            addFavoriteButton.heightAnchor.constraint(equalToConstant: 27)
         ])
     }
 }
