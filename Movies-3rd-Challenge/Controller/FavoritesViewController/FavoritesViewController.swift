@@ -8,6 +8,8 @@
 import UIKit
 
 class FavoritesViewController: UIViewController {
+    
+    var movies: [Movie] = []
 
     // MARK: - UI
     
@@ -28,26 +30,12 @@ class FavoritesViewController: UIViewController {
         setViews()
         setDelegates()
         setupConstraints()
-        
-        updateLocalizedText()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        addObserverForLocalization()
+        movies = RealmManager.shared.getAllFavorites()
+        tableView.reloadData()
     }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        removeObserverForLocalization()
-    }
-    
-    
-    // MARK: - Private Properties
-    
-    private let movie1 = Movie(id: 1, name: "Luck", description: "wow", rating: Rating(kp: 3.5), movieLength: 146, poster: nil, votes: Votes(kp: 4), genres: [Genre(name: "Драма"), Genre(name: "Документальный"), Genre(name: "Полнометражный")], year: 1999)
-    
-    private lazy var favorites: [Movie] = [movie1, movie1, movie1, movie1, movie1, movie1,]
     
     // MARK: - Set Views
     
@@ -84,20 +72,20 @@ class FavoritesViewController: UIViewController {
 
 extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return favorites.count
+        return movies.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: MovieCell.identifier, for: indexPath) as? MovieCell else { fatalError() }
         
-        let favoriteMovie = favorites[indexPath.row]
+        let favoriteMovie = movies[indexPath.row]
         cell.selectionStyle = .none
         cell.configure(with: favoriteMovie)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedMovie = favorites[indexPath.item]
+        let selectedMovie = movies[indexPath.item]
         guard let id = selectedMovie.id else { return }
         
         NetworkService.shared.fetchMovieDetail(id: id) { [weak self] detail in
@@ -123,18 +111,3 @@ extension FavoritesViewController {
     }
 }
 
-extension FavoritesViewController {
-    private func addObserverForLocalization() {
-        NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
-            self?.updateLocalizedText()
-        }
-    }
-    
-    private func removeObserverForLocalization() {
-        NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
-    }
-    
-    @objc func updateLocalizedText() {
-        setTitleUpper(navItem: navigationItem, title: "Favorites".localized())
-    }
-}

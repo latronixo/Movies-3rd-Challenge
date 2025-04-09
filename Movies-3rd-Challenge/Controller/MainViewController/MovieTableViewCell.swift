@@ -135,12 +135,57 @@ class MovieTableViewCell: UITableViewCell {
         let genreNames = movie.genres?.compactMap { $0.name } ?? []
             categoryLabel.text = genreNames.joined(separator: ", ")
         loadImage(from: movie.posterURL , into: posterImageView)
+        
+        // Обновляем состояние кнопки избранного
+        let isInFavorite = RealmManager.shared.isFavorite(movieId: movie.id ?? 0)
+        heartButton.isSelected = isInFavorite
+        heartButton.tintColor = isInFavorite ? UIColor(named: "mainViolet") : .gray
+
     }
     
+    private var isHeartButtonActionInProgress = false
+    
     @objc private func toggleHeart() {
-        heartButton.isSelected.toggle()
-        heartButton.tintColor = heartButton.isSelected ? UIColor(named: "mainViolet") : .gray
-       }
+        heartButton.isUserInteractionEnabled = false
+        
+        // Получаем movie из конфигурации ячейки
+         guard let tableView = self.superview as? UITableView,
+               let indexPath = tableView.indexPath(for: self),
+               let mainVC = tableView.delegate as? MainViewController,
+               indexPath.row < mainVC.movies.count else {
+             heartButton.isUserInteractionEnabled = true
+             return
+         }
+        
+        //получаем movie контролера
+        let movie = mainVC.movies[indexPath.row]
+        
+        let shouldAddToFavorites = !RealmManager.shared.isFavorite(movieId: movie.id ?? 0)
+        
+        // Анимация кнопки
+        UIView.animate(withDuration: 0.2, animations: {
+            self.heartButton.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+        }) { _ in
+            UIView.animate(withDuration: 0.2) {
+                self.heartButton.transform = .identity
+            }
+        }
+        
+        // Обновляем UI сразу
+        heartButton.isSelected = shouldAddToFavorites
+        heartButton.tintColor = shouldAddToFavorites ? UIColor(named: "mainViolet") : .gray
+        
+        // Работа с Realm в фоне
+        DispatchQueue.main.async {
+            if shouldAddToFavorites {
+                RealmManager.shared.addToFavorites(movie: movie)
+            } else {
+                RealmManager.shared.removeFromFavorites(movieId: movie.id ?? 0)
+            }
+            
+            self.heartButton.isUserInteractionEnabled = true
+        }
+    }
     
     func loadImage(from url: URL?, into imageView: UIImageView) {
         let placeholder = UIImage(named: "gradientPoster")

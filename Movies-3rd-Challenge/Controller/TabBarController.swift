@@ -51,7 +51,7 @@ final class TabBarController: UITabBarController {
         self.viewControllers = dataSource.map{
             switch $0 {
             case .search: return self.wrappedInNavigationController(with: SearchViewController(), title: $0.title)
-            case .recentWatch: return self.wrappedInNavigationController(with: TempRecentWatchViewController(), title: $0.title)
+            case .recentWatch: return self.wrappedInNavigationController(with: RecentViewController(), title: $0.title)
             case .home: return self.wrappedInNavigationController(with: MainViewController(), title: $0.title)
             case .wishlist: return self.wrappedInNavigationController(with: FavoritesViewController(), title: $0.title)
             case .settings: return self.wrappedInNavigationController(with: SettingsViewController(), title: $0.title)

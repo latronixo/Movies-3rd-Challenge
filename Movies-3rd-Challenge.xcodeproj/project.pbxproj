@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6B9F12D12DA4FD98008AC21B /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 6B9F12D02DA4FD98008AC21B /* RealmSwift */; };
 		6BDA64242D9C1B03003B6709 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 6BDA64232D9C1B03003B6709 /* Kingfisher */; };
-		6BDA64272D9C2081003B6709 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6BDA64262D9C2081003B6709 /* Alamofire */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,8 +41,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B9F12D12DA4FD98008AC21B /* RealmSwift in Frameworks */,
 				6BDA64242D9C1B03003B6709 /* Kingfisher in Frameworks */,
-				6BDA64272D9C2081003B6709 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,7 +86,7 @@
 			name = "Movies-3rd-Challenge";
 			packageProductDependencies = (
 				6BDA64232D9C1B03003B6709 /* Kingfisher */,
-				6BDA64262D9C2081003B6709 /* Alamofire */,
+				6B9F12D02DA4FD98008AC21B /* RealmSwift */,
 			);
 			productName = "Movies-3rd-Challenge";
 			productReference = 6BB614AE2D96D8B4001A86B8 /* Movies-3rd-Challenge.app */;
@@ -119,7 +119,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */,
-				6BDA64252D9C2081003B6709 /* XCRemoteSwiftPackageReference "alamofire" */,
+				6B9F12CF2DA4FD98008AC21B /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6BB614AF2D96D8B4001A86B8 /* Products */;
@@ -159,7 +159,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z4PKJ57KTJ;
+				DEVELOPMENT_TEAM = 9CHP2BD6F3;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Movies-3rd-Challenge/Info.plist";
@@ -194,7 +194,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z4PKJ57KTJ;
+				DEVELOPMENT_TEAM = 9CHP2BD6F3;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Movies-3rd-Challenge/Info.plist";
@@ -227,7 +227,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -291,7 +290,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -367,6 +365,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		6B9F12CF2DA4FD98008AC21B /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -375,26 +381,18 @@
 				minimumVersion = 8.3.1;
 			};
 		};
-		6BDA64252D9C2081003B6709 /* XCRemoteSwiftPackageReference "alamofire" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/alamofire/alamofire";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.10.2;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		6B9F12D02DA4FD98008AC21B /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6B9F12CF2DA4FD98008AC21B /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
 		6BDA64232D9C1B03003B6709 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
-		};
-		6BDA64262D9C2081003B6709 /* Alamofire */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6BDA64252D9C2081003B6709 /* XCRemoteSwiftPackageReference "alamofire" */;
-			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
