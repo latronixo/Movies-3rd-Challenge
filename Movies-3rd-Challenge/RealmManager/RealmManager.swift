@@ -7,14 +7,7 @@
 
 import Foundation
 import RealmSwift
-
-class CurrentUser {
-    static var currentUserId: String?
-    
-    func getUserId() -> String? {
-        return CurrentUser.currentUserId
-    }
-}
+import FirebaseAuth
 
 class RealmManager {
     
@@ -31,25 +24,26 @@ class RealmManager {
 
     // MARK: - User Management
     
-    /// Создание или получение пользователя по ID
-    func getUser(id: String) -> Users? {
-        return realm.objects(Users.self).filter("id == %@", id).first
-    }
-    
-    /// Создание нового пользователя
-    func createUser(username: String) -> Users {
-        let user = Users()
-        user.username = username
-        
-        do {
-            try realm.write {
-                realm.add(user)
-            }
-        } catch {
-            print("Error creating user: \(error)")
+    func getCurrentUserRealm() -> UserRealm? {
+        guard let firebaseUser = Auth.auth().currentUser else {
+            return nil
         }
         
-        return user
+        if let existingUser = realm.object(ofType: UserRealm.self, forPrimaryKey: firebaseUser.uid) {
+            return existingUser
+        } else {
+            // Создаем нового пользователя если не найден
+            let newUser = UserRealm(firebaseUserId: firebaseUser.uid)
+            do {
+                try realm.write {
+                    realm.add(newUser)
+                }
+                return newUser
+            } catch {
+                print("Error creating user in Realm: \(error)")
+                return nil
+            }
+        }
     }
 
     // MARK: - Favorites Management
@@ -57,11 +51,11 @@ class RealmManager {
     // Добавить фильм в избранное пользователя
     func addToFavorites(userId: String, movie: Movie) {
         do {
-            guard let user = getUser(id: userId) else { return }
-            
+            guard let user = getCurrentUserRealm() else { return }
+                    
             try realm.write {
                 if user.favorites == nil {
-                    user.favorites = Favorites()
+                    user.favorites = FavoriteRealm()
                 }
                 
                 let movieRealm = MovieRealm(from: movie)
@@ -74,12 +68,12 @@ class RealmManager {
     
     // Удалить фильм из избранного пользователя
     func removeFromFavorites(userId: String, movieId: Int) {
+        guard let user = getCurrentUserRealm() else { return }
+                
         do {
-            guard let user = getUser(id: userId), let favorites = user.favorites else { return }
-            
             try realm.write {
-                if let index = favorites.docs.firstIndex(where: { $0.movieId == movieId }) {
-                    favorites.docs.remove(at: index)
+                if let index = user.favorites?.docs.firstIndex(where: { $0.movieId == movieId }) {
+                                    user.favorites?.docs.remove(at: index)
                 }
             }
         } catch {
@@ -89,14 +83,17 @@ class RealmManager {
     
     // Получить все избранные фильмы пользователя
     func getAllFavorites(userId: String) -> [Movie] {
-        guard let user = getUser(id: userId), let favorites = user.favorites else { return [] }
+        guard let user = getCurrentUserRealm(), let favorites = user.favorites else {
+                    return []
+                }
         return favorites.docs.map { $0.toModel() }
     }
 
     // Проверить, является ли фильм избранным для пользователя
     func isFavorite(userId: String, movieId: Int) -> Bool {
-        guard let user = getUser(id: userId), let favorites = user.favorites else { return false }
-        return favorites.docs.contains(where: { $0.movieId == movieId })
+        guard let user = getCurrentUserRealm() else { return false }
+                
+        return user.favorites?.docs.contains(where: { $0.movieId == movieId }) ?? false
     }
     
     // MARK: - Recent Watch Management
@@ -104,11 +101,11 @@ class RealmManager {
     // Добавить фильм в историю просмотров пользователя
     func addToRecentWatch(userId: String, movie: Movie) {
         do {
-            guard let user = getUser(id: userId) else { return }
-            
+            guard let user = getCurrentUserRealm() else { return }
+                    
             try realm.write {
                 if user.recentWatch == nil {
-                    user.recentWatch = RecentWatch()
+                    user.recentWatch = RecentWatchRealm()
                 }
                 
                 let movieRealm = MovieRealm(from: movie)
@@ -122,21 +119,23 @@ class RealmManager {
     
     // Получить последние просмотренные фильмы пользователя
     func getRecentWatchedMovies(userId: String, limit: Int = 10) -> [Movie] {
-        guard let user = getUser(id: userId), let recentWatch = user.recentWatch else { return [] }
-        return recentWatch.docs.prefix(limit).map { $0.toModel() }
+        guard let user = getCurrentUserRealm(), let recentWatch = user.recentWatch else {
+            return []
+        }
+        return recentWatch.docs.sorted(byKeyPath: "watchDate", ascending: false).map { $0.toModel() }
     }
     
     // Очистить историю просмотров пользователя
-    func clearRecentWatchHistory(userId: String) {
-        do {
-            guard let user = getUser(id: userId), let recentWatch = user.recentWatch else { return }
-            
-            try realm.write {
-                realm.delete(recentWatch.docs)
-            }
-        } catch {
-            print("Error clearing recent watch history: \(error)")
-        }
-    }
+//    func clearRecentWatchHistory(userId: String) {
+//        do {
+//            guard let user = getUser(id: userId), let recentWatch = user.recentWatch else { return }
+//            
+//            try realm.write {
+//                realm.delete(recentWatch.docs)
+//            }
+//        } catch {
+//            print("Error clearing recent watch history: \(error)")
+//        }
+//    }
 }
 

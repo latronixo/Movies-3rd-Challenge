@@ -9,22 +9,26 @@ import Foundation
 import RealmSwift
 
 // MARK: - Класс пользователя
-class Users: Object {
-    @Persisted(primaryKey: true) var userId: String = UUID().uuidString  // уникальный идентификатор пользователя
-    @Persisted var username: String = "defaultName"  // имя пользователя
-    @Persisted var email: String = "default@email.com"  // имя пользователя
+class UserRealm: Object {
+    @Persisted(primaryKey: true) var firebaseUserId: String
+    @Persisted var favorites: FavoriteRealm?        // Связь с избранным
+    @Persisted var recentWatch: RecentWatchRealm?   // Связь с историей просмотров
     
-    @Persisted var favorites: Favorites?  // Связь с избранным
-    @Persisted var recentWatch: RecentWatch?  // Связь с историей просмотров
+    convenience init(firebaseUserId: String) {
+        self.init()
+        self.firebaseUserId = firebaseUserId
+        self.favorites = FavoriteRealm()
+        self.recentWatch = RecentWatchRealm()
+    }
 }
 
 // MARK: - Класс для избранного
 
-class Favorites: Object {
+class FavoriteRealm: Object {
     @Persisted(primaryKey: true) var id: Int = 1    //всегда один объект избранного
     @Persisted var docs = List<MovieRealm>()        // Список фильмов в избранном
     
-    @Persisted var user: Users?
+    @Persisted var user: UserRealm?
     
     convenience init(from model: MovieResponse) {
         self.init()
@@ -34,12 +38,12 @@ class Favorites: Object {
 
 // MARK: - Класс для последнего просмосмотренного
 
-class RecentWatch: Object {
+class RecentWatchRealm: Object {
     @Persisted var docs = List<MovieRealm>()    // Список просмотренных фильмов
     @Persisted var watchDate = Date()           // Дата последнего просмотра
     
     //Связь с пользователем
-    @Persisted var user: Users?
+    @Persisted var user: UserRealm?
     
     convenience init(from model: MovieResponse) {
         self.init()
