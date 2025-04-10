@@ -61,7 +61,7 @@ class TempMovieDetailViewController: UIViewController {
         self.mainView.actorsCollectionView.dataSource = self
 
         updateLocalizedText()
-        RealmManager.shared.addToRecentWatch(movie: movie)
+        self.mainView.wathchButton.addTarget(self, action: #selector(watchNowTapped), for: .touchUpInside)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -104,7 +104,9 @@ class TempMovieDetailViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
     @objc func watchNowTapped() {
+        RealmManager.shared.addToRecentWatch(movie: movie)
     }
+    
     func configure() {
         let movie = self.movie
         mainView.titleOfMovie.text = movie.displayTitle
