@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         FirebaseApp.configure()
 
-        //если требуется миграция - БД realm удаляем
+        //если требуется миграция - удаляем текущий файл БД realm, и создаем новый
         Realm.Configuration.defaultConfiguration = Realm.Configuration(
             deleteRealmIfMigrationNeeded: true // Только для разработки!
         )

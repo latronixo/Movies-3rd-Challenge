@@ -61,6 +61,7 @@ class TempMovieDetailViewController: UIViewController {
         self.mainView.actorsCollectionView.dataSource = self
 
         updateLocalizedText()
+        RealmManager.shared.addToRecentWatch(movie: movie)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -83,7 +84,7 @@ class TempMovieDetailViewController: UIViewController {
             return
         }
         
-        let shouldAddToFavorites = !RealmManager.shared.isFavorite(userId: "defaultUser", movieId: movieId)
+        let shouldAddToFavorites = !RealmManager.shared.isFavorite(movieId: movieId)
         
         //делаем сердце выбранным
         sender.isSelected = shouldAddToFavorites
@@ -92,9 +93,9 @@ class TempMovieDetailViewController: UIViewController {
         //Работа с Realm в фоне
         DispatchQueue.main.async {
             if shouldAddToFavorites {
-                RealmManager.shared.addToFavorites(userId: "defaultUser", movie: self.movie)
+                RealmManager.shared.addToFavorites(movie: self.movie)
             } else {
-                RealmManager.shared.removeFromFavorites(userId: "defaultUser", movieId: self.movie.id ?? 0)
+                RealmManager.shared.removeFromFavorites(movieId: self.movie.id ?? 0)
             }
         }
     }
@@ -103,7 +104,6 @@ class TempMovieDetailViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
     @objc func watchNowTapped() {
-        
     }
     func configure() {
         let movie = self.movie

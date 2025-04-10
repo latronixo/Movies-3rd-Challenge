@@ -161,14 +161,8 @@ class MovieCell: UITableViewCell {
             genreCollectionView.reloadData()
         }
         
-//        DispatchQueue.main.async {
-//                self.genreCollectionView.collectionViewLayout.invalidateLayout()
-//                self.contentView.layoutIfNeeded()
-//            }
-        //updateFavoriteButton()
-
         // Обновляем состояние кнопки избранного
-        let isFavorite = RealmManager.shared.isFavorite(userId: "defaultUser", movieId: movie.id ?? 0)
+        let isFavorite = RealmManager.shared.isFavorite(movieId: movie.id ?? 0)
         addFavoriteButton.isSelected = isFavorite
         addFavoriteButton.tintColor = isFavorite ? UIColor(named: "mainViolet") : .gray
 
@@ -197,15 +191,14 @@ class MovieCell: UITableViewCell {
             //если данная ячейка на экране избранного, то удаляем ее
             favoritesVC.movies.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
-        } //else if let recentVC = tableView.delegate as RecentWatchViewController {
-            //раскомментировать, когда экран RecentWatchViewController будет готов
-          //  movie = recentVC.recentMovies[indexPath.row]
-        //}
+        } else if let recentVC = tableView.delegate as? MovieListController {
+            movie = recentVC.movies[indexPath.row]
+        }
         
         
         guard let movie = movie, let movieId = movie.id else { return }
         
-        let shouldAddToFavorites = !RealmManager.shared.isFavorite(userId: "defaultUser", movieId: movieId)
+        let shouldAddToFavorites = !RealmManager.shared.isFavorite(movieId: movieId)
         
         //анимация кнопки
         UIView.animate(withDuration: 0.2, animations: {
@@ -223,9 +216,9 @@ class MovieCell: UITableViewCell {
         //Работа с Realm в фоне
         DispatchQueue.main.async {
             if shouldAddToFavorites {
-                RealmManager.shared.addToFavorites(userId: "defaultUser", movie: movie)
+                RealmManager.shared.addToFavorites(movie: movie)
             } else {
-                RealmManager.shared.removeFromFavorites(userId: "defaultUser", movieId: movie.id ?? 0)
+                RealmManager.shared.removeFromFavorites(movieId: movie.id ?? 0)
             }
         }
     }
