@@ -93,6 +93,7 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
             guard let detail = detail else { return }
             DispatchQueue.main.async {
                 let vc = TempMovieDetailViewController(movie: selectedMovie, detail: detail)
+                vc.hidesBottomBarWhenPushed = true  //скрываем таббар
                 self?.navigationController?.pushViewController(vc, animated: true)
             }
         }
