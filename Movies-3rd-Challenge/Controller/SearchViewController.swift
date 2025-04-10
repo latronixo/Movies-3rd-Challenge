@@ -16,7 +16,6 @@ final class SearchViewController: UIViewController {
     private var isLoading = false
     private var currentPage = 1
     private let limit = 10
-    private var currentRequestID = UUID()
 
     private let genresList = Constants.genres
 
@@ -249,59 +248,25 @@ final class SearchViewController: UIViewController {
     }
     
     private func loadMoviesWithFilters() {
-        
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(performLoadRequest), object: nil)
-           perform(#selector(performLoadRequest), with: nil, afterDelay: 0.3)
-       }
-
-       @objc private func performLoadRequest() {
-           let requestID = UUID()
-           self.currentRequestID = requestID
-           
-           if isLoading {
-               networkManager.cancelCurrentRequest()
-           }
-           
-           guard !isLoading else { return }
-           isLoading = true
-           activityIndicator.startAnimating()
-           
-           if currentPage == 1 {
-               movies = []
-               tableView.reloadData()
-           }
-           
-           networkManager.fetchMovies(currentPage, selectedGenre, selectedRating) { [weak self] newMovies in
-                   
-               //guard let self = self else { return }
-               
-               guard let self = self, self.currentRequestID == requestID else {
-                   print("Отброшен устаревший запрос")
-                   return
-               }
-               
-               DispatchQueue.main.async {
-
-                   self.activityIndicator.stopAnimating()
-                   self.isLoading = false
-                   if self.currentPage == 1 {
-                       self.movies = newMovies
-                   } else {
-                       self.movies.append(contentsOf: newMovies)
-                   }
-                   
-                   UIView.transition(with: self.tableView,
-                                     duration: 0.3,
-                                     options: .transitionCrossDissolve,
-                                     animations: {
-                       self.tableView.reloadData()
-                   })
-               }
-               
-           }
-       }
-    
-    
+        guard !isLoading else { return }
+        isLoading = true
+        activityIndicator.startAnimating()
+        networkManager.fetchMovies(currentPage, selectedGenre, selectedRating) { [weak self] newMovies in
+                
+                DispatchQueue.main.async {
+                    self?.activityIndicator.stopAnimating()
+                    if self?.currentPage == 1 {
+                        self?.movies = newMovies
+                    } else {
+                        self?.movies.append(contentsOf: newMovies)
+                    }
+                    
+                    self?.isLoading = false
+                    
+                    self?.tableView.reloadData()
+                }
+            }
+    }
     
     // MARK: - Genre Button Actions
     //нажатие на кнопку с фильтрами - вызов алерта с фильтрами
@@ -353,13 +318,13 @@ extension SearchViewController: FilterViewControllerDelegate {
     private func updateCategorySelectionInCollection() {
         // Полностью перезагружаем коллекцию для корректного обновления всех ячеек
         // Это наиболее надежный способ обновить выделение
+        activityIndicator.startAnimating()
         categoryCollectionView.reloadData()
-        guard !isLoading else { return }
-        isLoading = true
         
         // После перезагрузки выделяем нужную ячейку
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
+            self.activityIndicator.stopAnimating()
             var indexPathToSelect: IndexPath
             
             if let selectedGenre = self.selectedGenre, let index = self.genresList.firstIndex(of: selectedGenre) {
@@ -421,9 +386,7 @@ extension SearchViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedMovie = movies[indexPath.item]
         guard let id = selectedMovie.id else { return }
-        
         activityIndicator.startAnimating()
-        
         NetworkService.shared.fetchMovieDetail(id: id) { [weak self] detail in
             guard let detail = detail else { return }
             DispatchQueue.main.async {
