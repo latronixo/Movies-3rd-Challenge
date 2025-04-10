@@ -17,7 +17,8 @@ final class SearchViewController: UIViewController {
     private var currentPage = 1
     private let limit = 10
 
-    private let genresList = Constants.genres
+    private var genresList: [GenreItem] = GenreProvider.genres(for: LanguageManager.shared.currentLanguage)
+
 
     // Таймер для задержки поиска
     private var searchTimer: Timer?
@@ -257,6 +258,7 @@ final class SearchViewController: UIViewController {
         ])
     }
     
+        //загружаем фильмы при переходе из БоксОфис
     func updateWithBoxOffice(movies: [Movie]) {
         self.movies = movies
         self.tableView.reloadData()
@@ -397,13 +399,12 @@ extension SearchViewController: FilterViewControllerDelegate {
             
             var indexPathToSelect: IndexPath
             
-            if let selectedGenre = self.selectedGenre, let index = self.genresList.firstIndex(of: selectedGenre) {
-                // Выделяем ячейку с выбранной категорией
-                indexPathToSelect = IndexPath(item: index, section: 0)
-            } else {
-                // Выделяем первую ячейку
-                indexPathToSelect = IndexPath(item: 0, section: 0)
-            }
+            if let selectedGenre = self.selectedGenre,
+                       let index = self.genresList.firstIndex(where: { $0.queryValue == selectedGenre }) {
+                        indexPathToSelect = IndexPath(item: index, section: 0)
+                    } else {
+                        indexPathToSelect = IndexPath(item: 0, section: 0)
+                    }
             
             // Выделяем ячейку и скроллим, чтобы она была видна
             self.categoryCollectionView.selectItem(at: indexPathToSelect, animated: true, scrollPosition: .centeredHorizontally)
@@ -561,20 +562,27 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as? CategoryCell else {
-            return UICollectionViewCell()
-        }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
         
-        let genre = genresList[indexPath.item]
-        cell.configure(title: genre)
-        cell.isCellSelected = selectedGenre == genre
+        let genreItem = genresList[indexPath.item]
+        cell.configure(title: genreItem.displayName)
+        
+        if let selectedGenre = selectedGenre {
+            // Сравниваем queryValue, потому что selectedGenre — это значение, отправляемое в API (на русском)
+            cell.isCellSelected = genreItem.queryValue == selectedGenre
+        } else {
+            cell.isCellSelected = indexPath.item == 0
+        }
         
         return cell
     }
+
+  
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedGenre = genresList[indexPath.item]
-        
+        let genreItem = genresList[indexPath.item]
+
         // Обновляем состояние всех видимых ячеек
         collectionView.visibleCells.forEach { cell in
             if let categoryCell = cell as? CategoryCell {
@@ -587,7 +595,7 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
             selectedCell.isCellSelected = true
         }
         
-        self.selectedGenre = selectedGenre
+        self.selectedGenre = genreItem.queryValue
         loadMoviesWithFilters()
     }
 }
@@ -595,10 +603,10 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
 // MARK: - UICollectionViewDelegateFlowLayout
 extension SearchViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let genre = genresList[indexPath.item]
+        let title = genresList[indexPath.item].displayName
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .medium)
-        label.text = genre
+        label.text = title
         
         let width = label.intrinsicContentSize.width + 32 // Добавляем отступы
         return CGSize(width: max(width, 60), height: 32)
@@ -652,11 +660,15 @@ extension SearchViewController {
     }
     
     func updateLocalizedText() {
+        
         setTitleUpper(navItem: navigationItem, title: "Search".localized())
         
         if let textField = searchBar.viewWithTag(101) as? UITextField {
             textField.placeholder = "Search for movies".localized()
         }
+        
+        genresList = GenreProvider.genres(for: LanguageManager.shared.currentLanguage)
+        categoryCollectionView.reloadData()
     }
 }
 
