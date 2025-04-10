@@ -149,17 +149,22 @@ class RealmManager {
                     realm.add(movieRealm)
                 }
                 
-                //создаем новую запись в истории
-                let watchedItem = RecentWatchItemRealm(movie: movieRealm)
-                
-                //добавляем в начало списка
-                user.recentWatch?.items.insert(watchedItem, at: 0)
-                
-                //ограничиваем историю
-                if let count = user.recentWatch?.items.count, count > 10 {
-                    user.recentWatch?.items.removeLast()
+                // Проверяем, есть ли этот фильм уже в истории
+                if let existingItem = user.recentWatch?.items.first(where: { $0.movie?.movieId == movie.id }) {
+                    // Обновляем дату последнего просмотра
+                    existingItem.watchDate = Date()
+                } else {
+                    //создаем новую запись в истории
+                    let watchedItem = RecentWatchItemRealm(movie: movieRealm)
+                    
+                    //добавляем в начало списка
+                    user.recentWatch?.items.insert(watchedItem, at: 0)
+                    
+                    //ограничиваем историю
+                    if let count = user.recentWatch?.items.count, count > 10 {
+                        user.recentWatch?.items.removeLast()
+                    }
                 }
-           
             }
         } catch {
             print("Error adding to recent watch: \(error)")
