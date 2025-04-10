@@ -50,7 +50,7 @@ class FavoriteRealm: Object {
     }
 }
 
-// MARK: - Класс для последнего просмосмотренного
+// MARK: - Классы для последнего просмосмотренного
 
 class RecentWatchRealm: Object {
     @Persisted var items = List <RecentWatchItemRealm>()    //Список просмотренных фильмов с датами
