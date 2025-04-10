@@ -163,6 +163,7 @@ final class SearchViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         addObserverForLocalization()
+        tableView.reloadData()
     }
     
     override func viewWillDisappear(_ animated: Bool) {

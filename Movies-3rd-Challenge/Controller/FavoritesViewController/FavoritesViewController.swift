@@ -34,7 +34,7 @@ class FavoritesViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        movies = RealmManager.shared.getAllFavorites(userId: "defaultUser")
+        movies = RealmManager.shared.getAllFavorites()
         tableView.reloadData()
     }
     

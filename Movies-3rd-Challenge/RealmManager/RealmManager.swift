@@ -49,17 +49,28 @@ class RealmManager {
     // MARK: - Favorites Management
     
     // Добавить фильм в избранное пользователя
-    func addToFavorites(userId: String, movie: Movie) {
+    func addToFavorites(movie: Movie) {
         do {
             guard let user = getCurrentUserRealm() else { return }
                     
             try realm.write {
+                //если у пользователя нет таблицы избранного, то создаем ее
                 if user.favorites == nil {
                     user.favorites = FavoriteRealm()
                 }
                 
-                let movieRealm = MovieRealm(from: movie)
-                user.favorites?.docs.append(movieRealm)
+                // Проверяем, есть ли уже такой фильм в Realm
+                if let existingMovie = realm.object(ofType: MovieRealm.self, forPrimaryKey: movie.id ?? 0) {
+                    // Если фильм уже существует, добавляем ссылку на него
+                    if !user.favorites!.docs.contains(existingMovie) {
+                        user.favorites?.docs.append(existingMovie)
+                    }
+                } else {
+                    // Если фильма нет в Realm, создаем новый
+                    let movieRealm = MovieRealm(from: movie)
+                    realm.add(movieRealm)
+                    user.favorites?.docs.append(movieRealm)
+                }
             }
         } catch {
             print("Error adding to favorites: \(error)")
@@ -67,7 +78,7 @@ class RealmManager {
     }
     
     // Удалить фильм из избранного пользователя
-    func removeFromFavorites(userId: String, movieId: Int) {
+    func removeFromFavorites(movieId: Int) {
         guard let user = getCurrentUserRealm() else { return }
                 
         do {
@@ -82,7 +93,7 @@ class RealmManager {
     }
     
     // Получить все избранные фильмы пользователя
-    func getAllFavorites(userId: String) -> [Movie] {
+    func getAllFavorites() -> [Movie] {
         guard let user = getCurrentUserRealm(), let favorites = user.favorites else {
                     return []
                 }
@@ -90,7 +101,7 @@ class RealmManager {
     }
 
     // Проверить, является ли фильм избранным для пользователя
-    func isFavorite(userId: String, movieId: Int) -> Bool {
+    func isFavorite(movieId: Int) -> Bool {
         guard let user = getCurrentUserRealm() else { return false }
                 
         return user.favorites?.docs.contains(where: { $0.movieId == movieId }) ?? false
@@ -99,18 +110,31 @@ class RealmManager {
     // MARK: - Recent Watch Management
     
     // Добавить фильм в историю просмотров пользователя
-    func addToRecentWatch(userId: String, movie: Movie) {
+    func addToRecentWatch(movie: Movie) {
+        guard let user = getCurrentUserRealm() else { return }
+        
         do {
-            guard let user = getCurrentUserRealm() else { return }
-                    
             try realm.write {
-                if user.recentWatch == nil {
-                    user.recentWatch = RecentWatchRealm()
+                //Создаем или находим фильм в Realm
+                let movieRealm: MovieRealm
+                if let existing = realm.object(ofType: MovieRealm.self, forPrimaryKey: movie.id ?? 0) {
+                    movieRealm = existing
+                } else {
+                    movieRealm = MovieRealm(from: movie)
+                    realm.add(movieRealm)
                 }
                 
-                let movieRealm = MovieRealm(from: movie)
-                user.recentWatch?.docs.append(movieRealm)
-                user.recentWatch?.watchDate = Date()  // Обновляем дату последнего просмотра
+                //создаем новую запись в истории
+                let watchedItem = RecentWatchItemRealm(movie: movieRealm)
+                
+                //добавляем в начало списка
+                user.recentWatch?.items.insert(watchedItem, at: 0)
+                
+                //ограничиваем историю
+                if let count = user.recentWatch?.items.count, count > 10 {
+                    user.recentWatch?.items.removeLast()
+                }
+           
             }
         } catch {
             print("Error adding to recent watch: \(error)")
@@ -118,11 +142,14 @@ class RealmManager {
     }
     
     // Получить последние просмотренные фильмы пользователя
-    func getRecentWatchedMovies(userId: String, limit: Int = 10) -> [Movie] {
+    func getRecentWatchedMovies(limit: Int = 10) -> [Movie] {
         guard let user = getCurrentUserRealm(), let recentWatch = user.recentWatch else {
             return []
         }
-        return recentWatch.docs.sorted(byKeyPath: "watchDate", ascending: false).map { $0.toModel() }
+        return recentWatch.items.sorted(byKeyPath: "watchDate", ascending: false).compactMap {
+            guard let movie = $0.movie?.toModel() else { return nil }
+            return movie
+        }
     }
     
     // Очистить историю просмотров пользователя
