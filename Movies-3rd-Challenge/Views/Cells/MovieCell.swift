@@ -195,7 +195,6 @@ class MovieCell: UITableViewCell {
             movie = recentVC.movies[indexPath.row]
         }
         
-        
         guard let movie = movie, let movieId = movie.id else { return }
         
         let shouldAddToFavorites = !RealmManager.shared.isFavorite(movieId: movieId)
@@ -222,25 +221,7 @@ class MovieCell: UITableViewCell {
             }
         }
     }
-    
-//    private func updateFavoriteButton() {
-//            guard let movie = movie else { return }
-//            let isFavorite = TempDataManager.shared.isFavorite(movie)
-//            addFavoriteButton.isSelected = isFavorite
-//            addFavoriteButton.tintColor = isFavorite ? UIColor(named: "mainViolet") : .gray
-//        }
-//    
-//    @objc private func favoriteButtonTapped() {
-//        guard let movie = movie else { return }
-//        
-//        if TempDataManager.shared.isFavorite(movie) {
-//            TempDataManager.shared.removeFromFavorites(movie)
-//        } else {
-//            TempDataManager.shared.addToFavorites(movie)
-//        }
-//        updateFavoriteButton()
-//    }
-    
+
 }
 
 // MARK: - MovieCell Improvements

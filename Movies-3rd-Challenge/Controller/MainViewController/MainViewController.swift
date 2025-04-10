@@ -8,6 +8,9 @@
 import UIKit
 
 final class MainViewController: UIViewController {
+    
+    //флаг для исключения повторного открытия MovieDetail
+    private var isNavigatingToDetail = false
 
     //MARK: ui elements
     
@@ -149,7 +152,7 @@ final class MainViewController: UIViewController {
         return indicator
     }()
     
-#warning("не забыть подставить сюда имя и аватар из FB / из экрана Сеттингс через Notification")
+//#warning("не забыть подставить сюда имя и аватар из FB / из экрана Сеттингс через Notification")
     private var username = "Name"
     private var banners: [Movie] = []   // верхняя карусель
      var movies: [Movie] = [] // бокс офис
@@ -326,17 +329,27 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
 extension MainViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == topCollectionView {
+            guard !isNavigatingToDetail else { return } // Если переход уже выполняется, игнорируем повторное нажатие
+            isNavigatingToDetail = true                 // Устанавливаем флаг
+
             let selectedMovie = banners[indexPath.item]
-            guard let id = selectedMovie.id else { return }
+            guard let id = selectedMovie.id else {
+                isNavigatingToDetail = false // Сбрасываем флаг при ошибке
+                return
+            }
             
             NetworkService.shared.fetchMovieDetail(id: id) { [weak self] detail in
-                guard let detail = detail else { return }
+                guard let detail = detail else {
+                    self?.isNavigatingToDetail = false // Сбрасываем флаг при ошибке
+                    return
+                }
                 DispatchQueue.main.async {
                     let vc = TempMovieDetailViewController(movie: selectedMovie, detail: detail)
                     vc.hidesBottomBarWhenPushed = true
                     self?.navigationController?.pushViewController(vc, animated: true)
                     self?.navigationController?.isNavigationBarHidden = false
                     self?.navigationItem.backButtonTitle = ""
+                    self?.isNavigatingToDetail = false // Сбрасываем флаг после завершения перехода
                 }
             }
         } else {
@@ -385,17 +398,27 @@ extension MainViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard !isNavigatingToDetail else { return } // Если переход уже выполняется, игнорируем повторное нажатие
+        isNavigatingToDetail = true                 // Устанавливаем флаг
+
         let movie = movies[indexPath.row]
-        guard let id = movie.id else { return }
+        guard let id = movie.id else {
+            isNavigatingToDetail = false // Сбрасываем флаг при ошибке
+            return
+        }
         
         NetworkService.shared.fetchMovieDetail(id: id) { [weak self] detail in
-            guard let detail = detail else { return }
+            guard let detail = detail else {
+                self?.isNavigatingToDetail = false // Сбрасываем флаг при ошибке
+                return
+            }
             DispatchQueue.main.async {
                 let vc = TempMovieDetailViewController(movie: movie, detail: detail)
                 vc.hidesBottomBarWhenPushed = true
                 self?.navigationController?.pushViewController(vc, animated: true)
                 self?.navigationController?.isNavigationBarHidden = false
                 self?.navigationItem.backButtonTitle = ""
+                self?.isNavigatingToDetail = false // Сбрасываем флаг после завершения перехода
             }
         }
     }
