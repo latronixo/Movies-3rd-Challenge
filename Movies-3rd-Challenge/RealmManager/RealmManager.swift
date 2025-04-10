@@ -93,7 +93,7 @@ class RealmManager {
     }
     
     // Получить все избранные фильмы пользователя
-    func getAllFavorites(userId: String) -> [Movie] {
+    func getAllFavorites() -> [Movie] {
         guard let user = getCurrentUserRealm(), let favorites = user.favorites else {
                     return []
                 }
