@@ -139,17 +139,13 @@ class TempMovieDetailViewController: UIViewController {
     
     @objc func showMoreTapped() {
         self.showMore.toggle()
-        if self.showMore == true {
-            mainView.descriptionOfMovie.numberOfLines = 0
-            mainView.showMoreButton.setTitle("Show Less", for: .normal)
-            updateLocalizedText()
-
-        } else {
-            mainView.descriptionOfMovie.numberOfLines = 3
-            mainView.showMoreButton.setTitle("Show More", for: .normal)
-            updateLocalizedText()
-
-        }
+        if self.showMore {
+              mainView.descriptionOfMovie.numberOfLines = 0
+          } else {
+              mainView.descriptionOfMovie.numberOfLines = 3
+          }
+          let title = self.showMore ? "Show Less".localized() : "Show More".localized()
+          mainView.showMoreButton.setTitle(title, for: .normal)
         
     }
     
@@ -229,6 +225,10 @@ extension TempMovieDetailViewController {
 
             mainView.storyLine.text = "Story Line".localized()
             mainView.titelOfActors.text = "Cast and Crew".localized()
+        
+        let showMoreTitle = showMore ? "Show Less".localized() : "Show More".localized()
+            mainView.showMoreButton.setTitle(showMoreTitle, for: .normal)
+        
         }
 
 }
