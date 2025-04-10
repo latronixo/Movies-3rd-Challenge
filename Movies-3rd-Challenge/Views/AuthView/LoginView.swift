@@ -30,7 +30,7 @@ class LoginView: UIView {
     }()
     lazy var passwordLabel: UILabel = {
         let label = UILabel()
-        label.text = "Пароль"
+        label.text = "Password"
         label.font = UIFont(name: "PlusJakartaSans-Medium", size: 14)
         label.textColor = UIColor(named: "discriptionSet")
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -38,7 +38,7 @@ class LoginView: UIView {
     }()
     lazy var passwordTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Пароль"
+        textField.placeholder = "Password"
         textField.backgroundColor = UIColor(named: "logColor")
         textField.borderStyle = .roundedRect
         textField.layer.cornerRadius = 24
@@ -66,7 +66,7 @@ class LoginView: UIView {
     }()
     lazy var switchLabel: UILabel = {
         let switchLabel = UILabel()
-        switchLabel.text = "Запомнить меня"
+        switchLabel.text = "Remember me"
         switchLabel.font = UIFont(name: "PlusJakartaSans-Medium", size: 14)
         switchLabel.textColor = UIColor(named: "discriptionSet")
         switchLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -74,7 +74,7 @@ class LoginView: UIView {
     }()
     lazy var forgetPasswordButton: UIButton = {
         let forgetPasswordButton = UIButton()
-        forgetPasswordButton.setTitle("Забыл пароль?", for: .normal)
+        forgetPasswordButton.setTitle("Forgot Password?", for: .normal)
         forgetPasswordButton.setTitleColor(UIColor(named: "switch"), for: .normal)
         forgetPasswordButton.titleLabel?.font = UIFont(name: "PlusJakartaSans-Medium", size: 14)
         forgetPasswordButton.translatesAutoresizingMaskIntoConstraints = false
@@ -154,7 +154,7 @@ class LoginView: UIView {
     //MARK: SIGN UP
     lazy var signupLabel: UILabel = {
         let signupLabel = UILabel()
-        signupLabel.text = "Нет аккаунта?"
+        signupLabel.text = "Don't have an account?"
         signupLabel.font = UIFont(name: "PlusJakartaSans-Medium", size: 14)
         signupLabel.translatesAutoresizingMaskIntoConstraints = false
         return signupLabel

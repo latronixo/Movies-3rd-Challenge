@@ -60,7 +60,18 @@ class TempMovieDetailViewController: UIViewController {
         self.mainView.actorsCollectionView.delegate = self
         self.mainView.actorsCollectionView.dataSource = self
 
+        updateLocalizedText()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            addObserverForLocalization()
+        }
+
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            removeObserverForLocalization()
+        }
     
     @objc func addToFavorite(_ sender: UIBarButtonItem) {
         //блокируем кнопку
@@ -130,10 +141,14 @@ class TempMovieDetailViewController: UIViewController {
         self.showMore.toggle()
         if self.showMore == true {
             mainView.descriptionOfMovie.numberOfLines = 0
-            mainView.showMoreButton.setTitle("Скрыть", for: .normal)
+            mainView.showMoreButton.setTitle("Show Less", for: .normal)
+            updateLocalizedText()
+
         } else {
             mainView.descriptionOfMovie.numberOfLines = 3
-            mainView.showMoreButton.setTitle("Показать", for: .normal)
+            mainView.showMoreButton.setTitle("Show More", for: .normal)
+            updateLocalizedText()
+
         }
         
     }
@@ -191,4 +206,29 @@ extension TempMovieDetailViewController: UICollectionViewDataSource {
     }
     
     
+}
+
+extension TempMovieDetailViewController {
+    private func addObserverForLocalization() {
+        NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.updateLocalizedText()
+        }
+    }
+
+    private func removeObserverForLocalization() {
+        NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
+    }
+
+    @objc func updateLocalizedText() {
+        if let label = navigationItem.titleView as? UILabel {
+                label.text = "Movie Detail".localized()
+            }
+
+            mainView.wathchButton.setTitle("Watch Now".localized(), for: .normal)
+            
+
+            mainView.storyLine.text = "Story Line".localized()
+            mainView.titelOfActors.text = "Cast and Crew".localized()
+        }
+
 }

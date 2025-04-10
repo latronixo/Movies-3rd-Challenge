@@ -11,7 +11,7 @@ import UIKit
 class SignUpView: UIView {
     lazy var firstNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Firs tName"
+        label.text = "First Name"
         label.font = UIFont(name: "PlusJakartaSans-Medium", size: 14)
         label.textColor = UIColor(named: "discriptionSet")
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -144,7 +144,7 @@ class SignUpView: UIView {
     }()
     lazy var alredyHaveAccountLabel: UILabel = {
         let label = UILabel()
-        label.text = "Alredy have an account?"
+        label.text = "Already have an account?"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
