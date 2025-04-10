@@ -76,10 +76,23 @@ class MovieTableViewCell: UITableViewCell {
 
         ratingLabel.textColor = .systemYellow
         ratingLabel.font = .systemFont(ofSize: 14)
+        ratingLabel.adjustsFontSizeToFitWidth = true
         contentView.addSubview(ratingLabel)
         ratingLabel.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
+            votesLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            votesLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
+            ratingLabel.trailingAnchor.constraint(equalTo: votesLabel.leadingAnchor, constant: -1),
+            ratingLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            ratingLabel.widthAnchor.constraint(equalToConstant: 40),
+            
+            heartButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            heartButton.bottomAnchor.constraint(equalTo: ratingLabel.topAnchor, constant: 1),
+            heartButton.widthAnchor.constraint(equalToConstant: 24),
+            heartButton.heightAnchor.constraint(equalToConstant: 24),
+            
             posterImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             posterImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             posterImageView.widthAnchor.constraint(equalToConstant: 80),
@@ -91,19 +104,8 @@ class MovieTableViewCell: UITableViewCell {
             
             titleLabel.leadingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: 16),
             titleLabel.topAnchor.constraint(equalTo: categoryLabel.bottomAnchor, constant: 4),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40),
-            
-            votesLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            votesLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            
-            ratingLabel.trailingAnchor.constraint(equalTo: votesLabel.leadingAnchor, constant: -1),
-            ratingLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            
-            heartButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            heartButton.bottomAnchor.constraint(equalTo: ratingLabel.topAnchor, constant: 1),
-            heartButton.widthAnchor.constraint(equalToConstant: 24),
-            heartButton.heightAnchor.constraint(equalToConstant: 24),
-            
+            titleLabel.trailingAnchor.constraint(equalTo: ratingLabel.leadingAnchor, constant: -10),
+
             timeIcon.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             timeIcon.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
             timeIcon.widthAnchor.constraint(equalToConstant: 14),
@@ -124,10 +126,13 @@ class MovieTableViewCell: UITableViewCell {
     func configure(movie: Movie) {
         titleLabel.text = movie.name
         ratingLabel.text = "⭐️ " + NetworkService.shared.formatRatingToFiveScale(movie.rating?.kp)
-        timeLabel.text = String(movie.movieLength ?? 100) + " мин."
-        
+        if let length = movie.movieLength, length != 0 {
+            timeLabel.text = "\(length) мин."
+        } else {
+            timeLabel.text = "сериал"
+        }
         if let votes = movie.votes?.kp {
-            votesLabel.text = "(\(votes))"
+            votesLabel.text = "(\(formatVotes(votes)))"
         } else {
             votesLabel.text = nil
         }
@@ -187,13 +192,21 @@ class MovieTableViewCell: UITableViewCell {
         }
     }
     
-    func loadImage(from url: URL?, into imageView: UIImageView) {
+    private func loadImage(from url: URL?, into imageView: UIImageView) {
         let placeholder = UIImage(named: "gradientPoster")
 
         if let url = url {
             imageView.kf.setImage(with: url, placeholder: placeholder)
         } else {
             imageView.image = placeholder
+        }
+    }
+    
+    private func formatVotes(_ votes: Int) -> String {
+        if votes >= 1000 {
+            return "\(votes / 1000)k"
+        } else {
+            return "\(votes)"
         }
     }
 }

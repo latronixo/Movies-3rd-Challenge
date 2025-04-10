@@ -31,7 +31,20 @@ class SignUpVc: UIViewController {
         mainView.signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
         mainView.eyeButton.addTarget(self, action: #selector(showPass), for: .touchUpInside)
         mainView.secondEyeButton.addTarget(self, action: #selector(showPass), for: .touchUpInside)
-    }
+    
+    updateLocalizedText()
+}
+
+override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            addObserverForLocalization()
+        }
+
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            removeObserverForLocalization()
+        }
+
     @objc func loginButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
@@ -86,4 +99,43 @@ class SignUpVc: UIViewController {
         selector.setImage(UIImage(systemName: imageName), for: .normal)
     }
     
+}
+
+extension SignUpVc {
+    private func addObserverForLocalization() {
+        NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.updateLocalizedText()
+        }
+    }
+    
+    private func removeObserverForLocalization() {
+        NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
+    }
+    
+    func updateLocalizedText() {
+        mainView.firstNameLabel.text = "First Name".localized()
+        mainView.firstNameTextField.placeholder = "First Name".localized()
+
+        mainView.lastNameLabel.text = "Last Name".localized()
+        mainView.lastNameTextField.placeholder = "Last Name".localized()
+
+        mainView.emailLabel.text = "Email".localized()
+        mainView.emailTextField.placeholder = "Email".localized()
+
+        mainView.passwordLabel.text = "Password".localized()
+        mainView.passwordTextField.placeholder = "Password".localized()
+
+        mainView.confirmPasswordLabel.text = "Confirm Password".localized()
+        mainView.confirmPasswordTextField.placeholder = "Confirm Password".localized()
+
+        mainView.signUpButton.setTitle("Sign Up".localized(), for: .normal)
+
+        mainView.alredyHaveAccountLabel.text = "Already have an account?".localized()
+        mainView.loginButton.setTitle("Login".localized(), for: .normal)
+        
+        if let label = navigationItem.titleView as? UILabel {
+                label.text = "Sign Up".localized()
+            }
+    }
+
 }

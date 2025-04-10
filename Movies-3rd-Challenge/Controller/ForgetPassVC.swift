@@ -29,7 +29,19 @@ class ForgetPassVC: UIViewController {
                 .font: UIFont(name: "PlusJakartaSans-Bold", size: 26) ?? .systemFont(ofSize: 26)])
         self.navigationItem.titleView = titleLabel
         self.mainView.submit.addTarget(self, action: #selector(sendPasswordReset), for: .touchUpInside)
+        
+        updateLocalizedText()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            addObserverForLocalization()
+        }
+
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            removeObserverForLocalization()
+        }
     
     @objc func sendPasswordReset() {
         guard let email = mainView.emailTextField.text?.trimmingCharacters(in: .whitespaces).lowercased(),
@@ -83,4 +95,27 @@ class ForgetPassVC: UIViewController {
         })
         present(alert, animated: true)
     }
+}
+
+extension ForgetPassVC {
+    private func addObserverForLocalization() {
+        NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.updateLocalizedText()
+        }
+    }
+
+    private func removeObserverForLocalization() {
+        NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
+    }
+
+    @objc func updateLocalizedText() {
+        mainView.emailLabel.text = "Email".localized()
+        mainView.emailTextField.placeholder = "Email".localized()
+        mainView.submit.setTitle("Submit".localized(), for: .normal)
+        
+        if let label = navigationItem.titleView as? UILabel {
+                label.text = "Forgot your password?".localized()
+            }
+        }
+
 }

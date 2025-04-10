@@ -21,14 +21,16 @@ final class CategoryCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        bgView.backgroundColor = UIColor.systemGray6
+        bgView.backgroundColor = .systemBackground
+        bgView.layer.borderColor = UIColor(named: "greyCell")?.withAlphaComponent(0.25).cgColor
+        bgView.layer.borderWidth = 1
         bgView.layer.cornerRadius = 16
         contentView.addSubview(bgView)
         bgView.translatesAutoresizingMaskIntoConstraints = false
 
         titleLabel.font = .systemFont(ofSize: 14)
         titleLabel.textAlignment = .center
-        titleLabel.textColor = .label
+        titleLabel.textColor = UIColor(named:"greyLabel")
         bgView.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
@@ -52,10 +54,12 @@ final class CategoryCell: UICollectionViewCell {
     private func updateCellState() {
         if isCellSelected {
             bgView.backgroundColor = UIColor(named: "mainViolet")
+            bgView.layer.borderColor = UIColor(named: "mainViolet")?.cgColor
             titleLabel.textColor = UIColor.white
         } else {
-            bgView.backgroundColor = UIColor.systemGray6
-            titleLabel.textColor = .black
+            bgView.backgroundColor = .systemBackground
+            bgView.layer.borderColor = UIColor(named: "greyCell")?.withAlphaComponent(0.25).cgColor
+            titleLabel.textColor = UIColor(named:"greyLabel")
         }
     }
 }

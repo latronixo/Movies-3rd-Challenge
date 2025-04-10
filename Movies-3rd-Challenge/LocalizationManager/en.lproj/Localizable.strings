@@ -72,9 +72,9 @@
 "Action" = "Action";
 "Story Line" = "Story Line";
 "Cast and Crew" = "Cast and Crew";
-"Watch now" = "Watch now";
+"Watch Now" = "Watch Now";
 "Show More" = "Show More";
-
+"Show Less" = "Show Less";
 "Recent Watch" = "Recent Watch";
 
 // MARK: Onboarding 
@@ -90,3 +90,20 @@
 "Continue" = "Continue";
 "Start" = "Start";
 
+"Submit" = "Submit";
+"Password" = "Password";
+"Remember me" = "Remember me";
+"Forgot Password?" = "Forgot Password?";
+"Forgot your password?" = "Forgot your password?";
+
+"Sign In" = "Sign In";
+"Or continue with" = "Or continue with";
+"Continue with Google" = "Continue with Google";
+"Don't have an account?" = "Don't have an account?";
+"Sign Up" = "Sign Up";
+"Sign up" = "Sign up";
+"First Name" = "First Name";
+"Last Name" = "Last Name";
+"Confirm Password" = "Confirm Password";
+"Already have an account?" = "Already have an account?";
+"Login" = "Login";

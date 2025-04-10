@@ -177,7 +177,7 @@ class TempMovieDetailView: UIView {
     
     lazy var showMoreButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Увидеть больше", for: .normal)
+        button.setTitle("Show More", for: .normal)
         button.setTitleColor(UIColor(named: "Button"), for: .normal)
         button.titleLabel?.font = UIFont(name: "PlusJakartaSans-Medium", size: 14)
         button.translatesAutoresizingMaskIntoConstraints = false

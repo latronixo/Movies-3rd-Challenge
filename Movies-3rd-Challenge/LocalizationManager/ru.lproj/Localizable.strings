@@ -49,7 +49,7 @@
 "Gender" = "Пол";
 "Male" = "Мужской";
 "Female" = "Женский";
-"Location/notes" = "Местоположение/заметки";
+"Location" = "Местоположение/заметки";
 
 // Alerts
 "Enter new password" = "Введите новый пароль";
@@ -76,8 +76,9 @@
 "Minutes" = "минут";
 "Story Line" = "Сюжет";
 "Cast and Crew" = "Актеры и съемочная группа";
-"Watch now" = "Смотреть";
+"Watch Now" = "Смотреть";
 "Show More" = "Показать больше";
+"Show Less" = "Скрыть";
 
 
 // MARK: Recent Watch
@@ -98,4 +99,23 @@
 "Continue" = "Продолжить";
 "Start" = "Начать";
 
+// Auth, Reg
+
+"Submit" = "Отправить";
+"Password" = "Пароль";
+"Remember me" = "Запомнить меня";
+"Forgot Password?" = "Забыли пароль?";
+"Forgot your password?" = "Забыли пароль?";
+
+"Sign In" = "Войти";
+"Or continue with" = "Или продолжить...";
+"Continue with Google" = "Продолжить через Google";
+"Don't have an account?" = "Нет аккаунта?";
+"Sign Up" = "Зарегистрироваться";
+"Sign up" = "Зарегистрироваться";
+"First Name" = "Имя";
+"Last Name" = "Фамилия";
+"Confirm Password" = "Подтвердите пароль";
+"Already have an account?" = "Уже есть аккаунт?";
+"Login" = "Вход";
 
