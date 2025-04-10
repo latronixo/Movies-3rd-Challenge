@@ -11,6 +11,10 @@ import UIKit
 class FavoritesViewController: UIViewController {
     
     var movies: [Movie] = []
+    
+    //флаг для исключения повторного открытия MovieDetail
+    private var isNavigatingToDetail = false
+
 
     // MARK: - UI
     
@@ -34,7 +38,7 @@ class FavoritesViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        movies = RealmManager.shared.getAllFavorites(userId: "defaultUser")
+        movies = RealmManager.shared.getAllFavorites()
         tableView.reloadData()
     }
     
@@ -86,14 +90,26 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        guard !isNavigatingToDetail else { return } // Если переход уже выполняется, игнорируем повторное нажатие
+        isNavigatingToDetail = true                 // Устанавливаем флаг
+        
         let selectedMovie = movies[indexPath.item]
-        guard let id = selectedMovie.id else { return }
+        guard let id = selectedMovie.id else {
+            isNavigatingToDetail = false // Сбрасываем флаг при ошибке
+            return
+        }
         
         NetworkService.shared.fetchMovieDetail(id: id) { [weak self] detail in
-            guard let detail = detail else { return }
+            guard let detail = detail else {
+                self?.isNavigatingToDetail = false // Сбрасываем флаг при ошибке
+                return
+            }
             DispatchQueue.main.async {
                 let vc = TempMovieDetailViewController(movie: selectedMovie, detail: detail)
+                vc.hidesBottomBarWhenPushed = true  //скрываем таббар
                 self?.navigationController?.pushViewController(vc, animated: true)
+                self?.isNavigatingToDetail = false // Сбрасываем флаг после завершения перехода
             }
         }
     }

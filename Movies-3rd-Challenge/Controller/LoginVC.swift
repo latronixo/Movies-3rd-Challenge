@@ -24,7 +24,7 @@ class LoginVC: UIViewController {
         super.viewDidLoad()
         let titleLabel = UILabel()
         titleLabel.attributedText = NSAttributedString(
-            string: "Авторизация",
+            string: "Login",
             attributes: [
                 .font: UIFont(name: "PlusJakartaSans-Bold", size: 26) ?? .systemFont(ofSize: 26)])
         self.navigationItem.titleView = titleLabel
@@ -34,7 +34,20 @@ class LoginVC: UIViewController {
         mainView.signInButton.addTarget(self, action: #selector(signInTapped), for: .touchUpInside)
         mainView.googleButton.addTarget(self, action: #selector(signInGoogle), for: .touchUpInside)
         mainView.switchForRemember.addTarget(self, action: #selector(switchValueChanged), for: .touchUpInside)
+        
+        updateLocalizedText()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+                super.viewWillAppear(animated)
+                addObserverForLocalization()
+            }
+
+            override func viewWillDisappear(_ animated: Bool) {
+                super.viewWillDisappear(animated)
+                removeObserverForLocalization()
+            }
+    
     //MARK: SIGN_In
     @objc func signInTapped() {
         let email = mainView.emailTextField.text?.lowercased()
@@ -154,3 +167,37 @@ class LoginVC: UIViewController {
     
 }
 
+extension LoginVC {
+    private func addObserverForLocalization() {
+        NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.updateLocalizedText()
+        }
+    }
+    
+    private func removeObserverForLocalization() {
+        NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
+    }
+    
+    @objc func updateLocalizedText() {
+        mainView.emailLabel.text = "Email".localized()
+        mainView.emailTextField.placeholder = "Email".localized()
+        
+        mainView.passwordLabel.text = "Password".localized()
+        mainView.passwordTextField.placeholder = "Password".localized()
+        
+        mainView.switchLabel.text = "Remember me".localized()
+        mainView.forgetPasswordButton.setTitle("Forgot Password?".localized(), for: .normal)
+        
+        mainView.signInButton.setTitle("Sign In".localized(), for: .normal)
+        
+        mainView.textDevideLine.text = "Or continue with".localized()
+        mainView.googleButton.configuration?.title = "Continue with Google".localized()
+        
+        mainView.signupLabel.text = "Don't have an account?".localized()
+        mainView.signupButton.setTitle("Sign up".localized(), for: .normal)
+        
+        if let label = navigationItem.titleView as? UILabel {
+                label.text = "Login".localized()
+            }
+    }
+}

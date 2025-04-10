@@ -27,37 +27,45 @@ final class CategoryCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupUI()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setupUI() {
-        contentView.layer.cornerRadius = 16
-        contentView.layer.masksToBounds = true
-        contentView.backgroundColor = .secondarySystemBackground
-        
-        contentView.addSubview(titleLabel)
-        
+        bgView.backgroundColor = .systemBackground
+        bgView.layer.borderColor = UIColor(named: "greyCell")?.withAlphaComponent(0.25).cgColor
+        bgView.layer.borderWidth = 1
+        bgView.layer.cornerRadius = 16
+        contentView.addSubview(bgView)
+        bgView.translatesAutoresizingMaskIntoConstraints = false
+
+        titleLabel.font = .systemFont(ofSize: 14)
+        titleLabel.textAlignment = .center
+        titleLabel.textColor = UIColor(named:"greyLabel")
+        bgView.addSubview(titleLabel)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
-            titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            bgView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            bgView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            bgView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            bgView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+
+            titleLabel.centerXAnchor.constraint(equalTo: bgView.centerXAnchor),
+            titleLabel.centerYAnchor.constraint(equalTo: bgView.centerYAnchor)
         ])
     }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
+    func configure(title: String) {
+        titleLabel.text = title
+    }
     
-    private func updateAppearance() {
-        UIView.animate(withDuration: 0.2) {
-            if self.isCellSelected {
-                self.contentView.backgroundColor = UIColor(red: 0.4, green: 0.4, blue: 0.8, alpha: 1.0)
-                self.titleLabel.textColor = .white
-            } else {
-                self.contentView.backgroundColor = .secondarySystemBackground
-                self.titleLabel.textColor = .label
-            }
+    private func updateCellState() {
+        if isCellSelected {
+            bgView.backgroundColor = UIColor(named: "mainViolet")
+            bgView.layer.borderColor = UIColor(named: "mainViolet")?.cgColor
+            titleLabel.textColor = UIColor.white
+        } else {
+            bgView.backgroundColor = .systemBackground
+            bgView.layer.borderColor = UIColor(named: "greyCell")?.withAlphaComponent(0.25).cgColor
+            titleLabel.textColor = UIColor(named:"greyLabel")
         }
     }
     
