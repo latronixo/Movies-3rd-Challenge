@@ -17,7 +17,8 @@ final class SearchViewController: UIViewController {
     private var currentPage = 1
     private let limit = 10
 
-    private let genresList = Constants.genres
+    private var genresList: [GenreItem] = GenreProvider.genres(for: LanguageManager.shared.currentLanguage)
+
 
     // Таймер для задержки поиска
     private var searchTimer: Timer?
@@ -209,6 +210,7 @@ final class SearchViewController: UIViewController {
         ])
     }
     
+        //загружаем фильмы при переходе из БоксОфис
     func updateWithBoxOffice(movies: [Movie]) {
         self.movies = movies
         self.tableView.reloadData()
@@ -242,7 +244,6 @@ final class SearchViewController: UIViewController {
         isLoading = true
         
         networkManager.fetchMovies(currentPage, selectedGenre, selectedRating) { [weak self] newMovies in
-                
                 DispatchQueue.main.async {
                     
                     if self?.currentPage == 1 {
@@ -316,13 +317,12 @@ extension SearchViewController: FilterViewControllerDelegate {
             
             var indexPathToSelect: IndexPath
             
-            if let selectedGenre = self.selectedGenre, let index = self.genresList.firstIndex(of: selectedGenre) {
-                // Выделяем ячейку с выбранной категорией
-                indexPathToSelect = IndexPath(item: index, section: 0)
-            } else {
-                // Выделяем первую ячейку
-                indexPathToSelect = IndexPath(item: 0, section: 0)
-            }
+            if let selectedGenre = self.selectedGenre,
+                       let index = self.genresList.firstIndex(where: { $0.queryValue == selectedGenre }) {
+                        indexPathToSelect = IndexPath(item: index, section: 0)
+                    } else {
+                        indexPathToSelect = IndexPath(item: 0, section: 0)
+                    }
             
             // Выделяем ячейку и скроллим, чтобы она была видна
             self.categoryCollectionView.selectItem(at: indexPathToSelect, animated: true, scrollPosition: .centeredHorizontally)
@@ -475,12 +475,12 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
-        cell.configure(title: genresList[indexPath.item])
+        cell.configure(title: genresList[indexPath.item].displayName)
         
         // Определяем, должна ли ячейка быть выделена
         if let selectedGenre = selectedGenre {
             // Если есть выбранный жанр, проверяем соответствие
-            cell.isCellSelected = genresList[indexPath.item] == selectedGenre
+            cell.isCellSelected = genresList[indexPath.item].queryValue == selectedGenre
         } else {
             // Если нет выбранного жанра, выделяем первую ячейку
             cell.isCellSelected = indexPath.item == 0
@@ -492,7 +492,7 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
     func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-            let title = genresList[indexPath.item]
+        let title = genresList[indexPath.item].displayName
             let width = (title as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: 14)]).width + 32
             return CGSize(width: width, height: 32)
     }
@@ -513,7 +513,8 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
         cell.isCellSelected = true
         
         // Получаем текст из ячейки и устанавливаем как выбранный жанр
-        selectedGenre = cell.titleLabel.text
+        let selectedItem = genresList[indexPath.item]
+        selectedGenre = selectedItem.queryValue
         
         // Сбрасываем поиск и загружаем фильмы с новым фильтром
         currentPage = 1
@@ -567,10 +568,15 @@ extension SearchViewController {
     }
     
     func updateLocalizedText() {
+        
         setTitleUpper(navItem: navigationItem, title: "Search".localized())
         
         if let textField = searchBar.viewWithTag(101) as? UITextField {
             textField.placeholder = "Search for movies".localized()
         }
+        
+        genresList = GenreProvider.genres(for: LanguageManager.shared.currentLanguage)
+        categoryCollectionView.reloadData()
     }
 }
+

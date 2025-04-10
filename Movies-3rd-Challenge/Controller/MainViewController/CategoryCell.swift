@@ -5,7 +5,7 @@
 //  Created by Anna Melekhina on 01.04.2025.
 //
 
-let categories = Constants.genres
+//let categories = Constants.genres
 
 import UIKit
 

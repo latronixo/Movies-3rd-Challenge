@@ -341,7 +341,7 @@ extension MainViewController: UICollectionViewDelegate {
             }
         } else {
             // Для CategoryCell
-            for i in 0..<categories.count {
+            for i in 0..<genres.count {
                     let index = IndexPath(item: i, section: 0)
                     if let cell = collectionView.cellForItem(at: index) as? CategoryCell {
                         cell.isCellSelected = (index == indexPath)
