@@ -30,7 +30,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 window?.overrideUserInterfaceStyle = .unspecified
             }
         }
-        window?.rootViewController = UINavigationController(rootViewController: auth ? TabBarController() : LoginVC())
+        window?.rootViewController = UINavigationController(rootViewController: auth ? TabBarController() : LoginVC() )
         window?.makeKeyAndVisible()
         
     }

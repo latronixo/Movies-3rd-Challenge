@@ -130,7 +130,8 @@ extension FilterViewController {
     }
     
     func updateLocalizedText() {
-       
+        filterView.updateLocalizedGenres()
+
     }
 }
 

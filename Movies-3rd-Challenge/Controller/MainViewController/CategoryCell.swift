@@ -5,14 +5,15 @@
 //  Created by Anna Melekhina on 01.04.2025.
 //
 
-let categories = Constants.genres
+//let categories = Constants.genres
 
 import UIKit
 
 final class CategoryCell: UICollectionViewCell {
+    
     let titleLabel = UILabel()
-    private let bgView = UIView()
-
+    let bgView = UIView()
+    
     var isCellSelected: Bool = false {
         didSet {
             updateCellState()
@@ -49,6 +50,7 @@ final class CategoryCell: UICollectionViewCell {
 
     func configure(title: String) {
         titleLabel.text = title
+        updateCellState()
     }
     
     private func updateCellState() {
@@ -61,5 +63,10 @@ final class CategoryCell: UICollectionViewCell {
             bgView.layer.borderColor = UIColor(named: "greyCell")?.withAlphaComponent(0.25).cgColor
             titleLabel.textColor = UIColor(named:"greyLabel")
         }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        isCellSelected = false
     }
 }

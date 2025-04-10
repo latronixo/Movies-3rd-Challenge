@@ -8,7 +8,7 @@
 import Foundation
 
 enum Constants {
-    static let genres = ["Все", "боевик", "приключения", "детектив", "фэнтези", "другие"]
+    static let genres = ["Все", "Боевик", "Приключения", "Детектив", "Фэнтези", "Другие"]
 }
 
 struct GenreItem {

@@ -152,7 +152,7 @@ final class MainViewController: UIViewController {
         return indicator
     }()
     
-#warning("не забыть подставить сюда имя и аватар из FB / из экрана Сеттингс через Notification")
+//#warning("не забыть подставить сюда имя и аватар из FB / из экрана Сеттингс через Notification")
     private var username = "Name"
     private var banners: [Movie] = []   // верхняя карусель
      var movies: [Movie] = [] // бокс офис
@@ -354,7 +354,7 @@ extension MainViewController: UICollectionViewDelegate {
             }
         } else {
             // Для CategoryCell
-            for i in 0..<categories.count {
+            for i in 0..<genres.count {
                     let index = IndexPath(item: i, section: 0)
                     if let cell = collectionView.cellForItem(at: index) as? CategoryCell {
                         cell.isCellSelected = (index == indexPath)
