@@ -191,10 +191,9 @@ class MovieCell: UITableViewCell {
             //если данная ячейка на экране избранного, то удаляем ее
             favoritesVC.movies.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
-        } //else if let recentVC = tableView.delegate as RecentWatchViewController {
-            //раскомментировать, когда экран RecentWatchViewController будет готов
-          //  movie = recentVC.recentMovies[indexPath.row]
-        //}
+        } else if let recentVC = tableView.delegate as? MovieListController {
+            movie = recentVC.movies[indexPath.row]
+        }
         
         
         guard let movie = movie, let movieId = movie.id else { return }

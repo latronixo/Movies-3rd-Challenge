@@ -41,8 +41,15 @@ class RecentViewController: MovieListController {
     override func loadData(category: String = "Все") {
         let allMovies = RealmManager.shared.getRecentWatchedMovies()
             
-        if category == "Все" {
+        if category == "Все" || category == "All" {
             movies = allMovies
+        } else if category == "другие" || category == "Other"{
+            let excludedGenres = ["боевик", "приключения", "детектив", "фэнтези", "Action", "Adventure", "Detective", "Fantasy"]
+            movies = allMovies.filter { movie in
+                guard let genres = movie.genres else { return false }
+                return !genres.contains { excludedGenres.contains($0.name?.lowercased() ?? "") }
+            }
+            
         } else {
             movies = allMovies.filter { movie in
                 guard let genres = movie.genres else { return false }
