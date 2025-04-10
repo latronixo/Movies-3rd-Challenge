@@ -171,6 +171,7 @@ final class SearchViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         addObserverForLocalization()
+        tableView.reloadData()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -392,6 +393,7 @@ extension SearchViewController: UITableViewDelegate {
             DispatchQueue.main.async {
                 self?.activityIndicator.stopAnimating()
                 let vc = TempMovieDetailViewController(movie: selectedMovie, detail: detail)
+                vc.hidesBottomBarWhenPushed = true  //скрываем таббар
                 self?.navigationController?.pushViewController(vc, animated: true)
             }
         }

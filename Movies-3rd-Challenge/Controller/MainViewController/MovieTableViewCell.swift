@@ -137,7 +137,7 @@ class MovieTableViewCell: UITableViewCell {
         loadImage(from: movie.posterURL , into: posterImageView)
         
         // Обновляем состояние кнопки избранного
-        let isInFavorite = RealmManager.shared.isFavorite(userId: "defaultUser", movieId: movie.id ?? 0)
+        let isInFavorite = RealmManager.shared.isFavorite(movieId: movie.id ?? 0)
         heartButton.isSelected = isInFavorite
         heartButton.tintColor = isInFavorite ? UIColor(named: "mainViolet") : .gray
 
@@ -160,7 +160,7 @@ class MovieTableViewCell: UITableViewCell {
         //получаем movie контролера
         let movie = mainVC.movies[indexPath.row]
         
-        let shouldAddToFavorites = !RealmManager.shared.isFavorite(userId: "defaultUser", movieId: movie.id ?? 0)
+        let shouldAddToFavorites = !RealmManager.shared.isFavorite(movieId: movie.id ?? 0)
         
         // Анимация кнопки
         UIView.animate(withDuration: 0.2, animations: {
@@ -178,9 +178,9 @@ class MovieTableViewCell: UITableViewCell {
         // Работа с Realm в фоне
         DispatchQueue.main.async {
             if shouldAddToFavorites {
-                RealmManager.shared.addToFavorites(userId: "defaultUser", movie: movie)
+                RealmManager.shared.addToFavorites(movie: movie)
             } else {
-                RealmManager.shared.removeFromFavorites(userId: "defaultUser", movieId: movie.id ?? 0)
+                RealmManager.shared.removeFromFavorites(movieId: movie.id ?? 0)
             }
             
             self.heartButton.isUserInteractionEnabled = true

@@ -22,32 +22,48 @@ class UserRealm: Object {
     }
 }
 
-// MARK: - Класс для избранного
+// MARK: - Классы для избранного
 
-class FavoriteRealm: Object {
-    @Persisted(primaryKey: true) var id: Int = 1    //всегда один объект избранного
-    @Persisted var docs = List<MovieRealm>()        // Список фильмов в избранном
-    
-    @Persisted var user: UserRealm?
-    
-    convenience init(from model: MovieResponse) {
+//класс с датой просмотра
+class FavoriteMovieRealm: Object {
+    @Persisted(primaryKey: true) var id: String // Уникальный идентификатор для избранного фильма
+    @Persisted var movie: MovieRealm?            // Ссылка на фильм
+    @Persisted var addedDate: Date              // Дата добавления в избранное
+
+    convenience init(movie: MovieRealm, addedDate: Date) {
         self.init()
-        docs.append(objectsIn: model.docs.map { MovieRealm(from: $0) })
+        self.id = "\(movie.movieId)-\(UUID().uuidString)" // Уникальный ID
+        self.movie = movie
+        self.addedDate = addedDate
     }
- }
+}
 
-// MARK: - Класс для последнего просмосмотренного
+//класс избранного для хранения списка объектов FavoriteMovieRealm
+class FavoriteRealm: Object {
+    @Persisted(primaryKey: true) var id: String                 // Уникальный ID для избранного, связанный с пользователем
+    @Persisted var favoriteMovies = List<FavoriteMovieRealm>()  // Список избранных фильмов
+    @Persisted var user: UserRealm?                             // Связь с пользователем
+
+    convenience init(userId: String) {
+        self.init()
+        self.id = userId // ID совпадает с ID пользователя
+    }
+}
+
+// MARK: - Классы для последнего просмосмотренного
 
 class RecentWatchRealm: Object {
-    @Persisted var docs = List<MovieRealm>()    // Список просмотренных фильмов
-    @Persisted var watchDate = Date()           // Дата последнего просмотра
+    @Persisted var items = List <RecentWatchItemRealm>()    //Список просмотренных фильмов с датами
+    @Persisted var user: UserRealm?                         //Обратная ссылка на пользователя
+}
+
+class RecentWatchItemRealm: Object {
+    @Persisted var movie: MovieRealm?      // Ссылка на фильм
+    @Persisted var watchDate = Date()      // Дата последнего просмотра
     
-    //Связь с пользователем
-    @Persisted var user: UserRealm?
-    
-    convenience init(from model: MovieResponse) {
+    convenience init(movie: MovieRealm) {
         self.init()
-        docs.append(objectsIn: model.docs.map { MovieRealm(from: $0) })
+        self.movie = movie
         watchDate = Date()
     }
 }
