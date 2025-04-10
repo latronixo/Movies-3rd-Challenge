@@ -11,17 +11,12 @@ import UIKit
 
 final class CategoryCell: UICollectionViewCell {
     
-    let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .medium)
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    let titleLabel = UILabel()
+    let bgView = UIView()
     
     var isCellSelected: Bool = false {
         didSet {
-            updateAppearance()
+            updateCellState()
         }
     }
     
@@ -55,6 +50,7 @@ final class CategoryCell: UICollectionViewCell {
 
     func configure(title: String) {
         titleLabel.text = title
+        updateCellState()
     }
     
     private func updateCellState() {
@@ -67,11 +63,6 @@ final class CategoryCell: UICollectionViewCell {
             bgView.layer.borderColor = UIColor(named: "greyCell")?.withAlphaComponent(0.25).cgColor
             titleLabel.textColor = UIColor(named:"greyLabel")
         }
-    }
-    
-    func configure(title: String) {
-        titleLabel.text = title
-        updateAppearance()
     }
     
     override func prepareForReuse() {

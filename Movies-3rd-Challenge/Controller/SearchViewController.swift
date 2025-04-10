@@ -23,7 +23,8 @@ final class SearchViewController: UIViewController {
     private var searchTimer: Timer?
 
     private let networkManager = NetworkService.shared
-    private let apiKey = Secrets.apiKey
+//    private let apiKey = Secrets.apiKey
+    private let apiKey = "60DWKG0-RDJ48BY-M13M9CT-YKZBZKS"
 
     //флаг для исключения повторного открытия MovieDetail
     private var isNavigatingToDetail = false
