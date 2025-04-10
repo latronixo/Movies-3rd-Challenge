@@ -39,7 +39,7 @@ class RecentViewController: MovieListController {
     }
     
     override func loadData(category: String = "Все") {
-        let allMovies = TempDataManager.shared.getFavorites()
+        let allMovies = RealmManager.shared.getRecentWatchedMovies()
             
         if category == "Все" {
             movies = allMovies

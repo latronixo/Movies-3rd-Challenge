@@ -161,12 +161,6 @@ class MovieCell: UITableViewCell {
             genreCollectionView.reloadData()
         }
         
-//        DispatchQueue.main.async {
-//                self.genreCollectionView.collectionViewLayout.invalidateLayout()
-//                self.contentView.layoutIfNeeded()
-//            }
-        //updateFavoriteButton()
-
         // Обновляем состояние кнопки избранного
         let isFavorite = RealmManager.shared.isFavorite(movieId: movie.id ?? 0)
         addFavoriteButton.isSelected = isFavorite

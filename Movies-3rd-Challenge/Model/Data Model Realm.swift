@@ -39,15 +39,17 @@ class FavoriteRealm: Object {
 // MARK: - Класс для последнего просмосмотренного
 
 class RecentWatchRealm: Object {
-    @Persisted var docs = List<MovieRealm>()    // Список просмотренных фильмов
-    @Persisted var watchDate = Date()           // Дата последнего просмотра
+    @Persisted var items = List <RecentWatchItemRealm>()    //Список просмотренных фильмов с датами
+    @Persisted var user: UserRealm?                         //Обратная ссылка на пользователя
+}
+
+class RecentWatchItemRealm: Object {
+    @Persisted var movie: MovieRealm?      // Ссылка на фильм
+    @Persisted var watchDate = Date()      // Дата последнего просмотра
     
-    //Связь с пользователем
-    @Persisted var user: UserRealm?
-    
-    convenience init(from model: MovieResponse) {
+    convenience init(movie: MovieRealm) {
         self.init()
-        docs.append(objectsIn: model.docs.map { MovieRealm(from: $0) })
+        self.movie = movie
         watchDate = Date()
     }
 }

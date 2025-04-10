@@ -60,6 +60,7 @@ class TempMovieDetailViewController: UIViewController {
         self.mainView.actorsCollectionView.delegate = self
         self.mainView.actorsCollectionView.dataSource = self
 
+        RealmManager.shared.addToRecentWatch(movie: movie)
     }
     
     @objc func addToFavorite(_ sender: UIBarButtonItem) {
@@ -92,7 +93,6 @@ class TempMovieDetailViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
     @objc func watchNowTapped() {
-        
     }
     func configure() {
         let movie = self.movie

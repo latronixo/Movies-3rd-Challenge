@@ -111,17 +111,30 @@ class RealmManager {
     
     // Добавить фильм в историю просмотров пользователя
     func addToRecentWatch(movie: Movie) {
+        guard let user = getCurrentUserRealm() else { return }
+        
         do {
-            guard let user = getCurrentUserRealm() else { return }
-                    
             try realm.write {
-                if user.recentWatch == nil {
-                    user.recentWatch = RecentWatchRealm()
+                //Создаем или находим фильм в Realm
+                let movieRealm: MovieRealm
+                if let existing = realm.object(ofType: MovieRealm.self, forPrimaryKey: movie.id ?? 0) {
+                    movieRealm = existing
+                } else {
+                    movieRealm = MovieRealm(from: movie)
+                    realm.add(movieRealm)
                 }
                 
-                let movieRealm = MovieRealm(from: movie)
-                user.recentWatch?.docs.append(movieRealm)
-                user.recentWatch?.watchDate = Date()  // Обновляем дату последнего просмотра
+                //создаем новую запись в истории
+                let watchedItem = RecentWatchItemRealm(movie: movieRealm)
+                
+                //добавляем в начало списка
+                user.recentWatch?.items.insert(watchedItem, at: 0)
+                
+                //ограничиваем историю
+                if let count = user.recentWatch?.items.count, count > 10 {
+                    user.recentWatch?.items.removeLast()
+                }
+           
             }
         } catch {
             print("Error adding to recent watch: \(error)")
@@ -133,7 +146,10 @@ class RealmManager {
         guard let user = getCurrentUserRealm(), let recentWatch = user.recentWatch else {
             return []
         }
-        return recentWatch.docs.sorted(byKeyPath: "watchDate", ascending: false).map { $0.toModel() }
+        return recentWatch.items.sorted(byKeyPath: "watchDate", ascending: false).compactMap {
+            guard let movie = $0.movie?.toModel() else { return nil }
+            return movie
+        }
     }
     
     // Очистить историю просмотров пользователя
