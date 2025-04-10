@@ -23,8 +23,7 @@ final class SearchViewController: UIViewController {
     private var searchTimer: Timer?
 
     private let networkManager = NetworkService.shared
-//    private let apiKey = Secrets.apiKey
-    private let apiKey = "60DWKG0-RDJ48BY-M13M9CT-YKZBZKS"
+    private let apiKey = Secrets.apiKey
 
     // MARK: - UI Components
     
@@ -36,17 +35,23 @@ final class SearchViewController: UIViewController {
         let textField = UITextField()
         textField.placeholder = "Search for movies"
         textField.tag = 101
-        textField.backgroundColor = .white
+        textField.backgroundColor = .secondarySystemBackground
         textField.layer.borderWidth = 1
-        textField.layer.borderColor = #colorLiteral(red: 0.4023004472, green: 0.3941448927, blue: 0.7470854521, alpha: 1)
+        textField.layer.borderColor = UIColor(red: 0.4, green: 0.4, blue: 0.8, alpha: 1.0).cgColor
         textField.layer.cornerRadius = 25
         textField.clipsToBounds = true
         textField.leftViewMode = .always
         textField.delegate = self
-        textField.clearButtonMode = .never // Отключаем стандартный крестик
+        textField.clearButtonMode = .never
+        textField.textColor = .label
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "Search for movies",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel]
+        )
         
         // Иконка поиска слева
-        let searchIcon = UIImageView(image: UIImage(named: "searchIcon")?.withTintColor(#colorLiteral(red: 0.4023004472, green: 0.3941448927, blue: 0.7470854521, alpha: 1)))
+        let searchIcon = UIImageView(image: UIImage(named: "searchIcon"))
+        searchIcon.tintColor = .secondaryLabel
         searchIcon.contentMode = .scaleAspectFit
         let searchIconContainer = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 30))
         searchIcon.frame = CGRect(x: 10, y: 5, width: 18, height: 18)
@@ -55,14 +60,14 @@ final class SearchViewController: UIViewController {
         
         // Кнопка крестика (внутри текстового поля, слева от фильтра)
         let clearButton = UIButton(type: .custom)
-        clearButton.setImage(UIImage(named: "close"), for: .normal)
-        clearButton.tintColor = #colorLiteral(red: 0.4023004472, green: 0.3941448927, blue: 0.7470854521, alpha: 1)
+        clearButton.setImage(UIImage(named: "close")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        clearButton.tintColor = .secondaryLabel
         clearButton.addTarget(self, action: #selector(clearSearch), for: .touchUpInside)
         
         // Кнопка фильтра (внутри текстового поля справа)
         let filterButton = UIButton(type: .custom)
-        filterButton.setImage(UIImage(named: "filterIcon"), for: .normal)
-        filterButton.tintColor = #colorLiteral(red: 0.4023004472, green: 0.3941448927, blue: 0.7470854521, alpha: 1)
+        filterButton.setImage(UIImage(named: "filterIcon")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        filterButton.tintColor = .secondaryLabel
         filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
         
         // Контейнер для правых кнопок
@@ -121,7 +126,7 @@ final class SearchViewController: UIViewController {
         catLayout.scrollDirection = .horizontal
         catLayout.minimumLineSpacing = 12
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: catLayout)
-        collectionView.backgroundColor = .systemBackground
+        collectionView.backgroundColor = .clear
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(CategoryCell.self, forCellWithReuseIdentifier: "CategoryCell")
@@ -143,13 +148,31 @@ final class SearchViewController: UIViewController {
         return tableView
     }()
     
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .medium)
+        indicator.hidesWhenStopped = true
+        indicator.color = .systemGray
+        return indicator
+    }()
+
+    private lazy var emptyStateLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .secondaryLabel
+        label.numberOfLines = 0
+        label.font = .systemFont(ofSize: 16)
+        label.isHidden = true
+        return label
+    }()
+
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setTitleUpper(navItem: navigationItem, title: "Search")
         
-        view.backgroundColor = .white
+        // Устанавливаем цвет фона в зависимости от темы
+        view.backgroundColor = .systemBackground
         
         //убираем разделители между ячейками
         tableView.separatorStyle = .none
@@ -158,6 +181,14 @@ final class SearchViewController: UIViewController {
         setupConstraints()
         
         updateLocalizedText()
+        
+        // Добавляем наблюдатель за изменением темы
+//        NotificationCenter.default.addObserver(
+//            self,
+//            selector: #selector(updateTheme),
+//            name: UIApplication.didBecomeActiveNotification,
+//            object: nil
+//        )
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -176,7 +207,10 @@ final class SearchViewController: UIViewController {
         view.addSubview(searchBar)
         view.addSubview(categoryCollectionView)
         view.addSubview(tableView)
+        view.addSubview(activityIndicator)
+        view.addSubview(emptyStateLabel)
         
+        setupConstraints()
     }
     
     @objc private func clearSearch() {
@@ -189,6 +223,8 @@ final class SearchViewController: UIViewController {
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         genreScroll.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        emptyStateLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -20),
@@ -204,7 +240,15 @@ final class SearchViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: categoryCollectionView.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            emptyStateLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyStateLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyStateLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
+            emptyStateLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40)
         ])
     }
     
@@ -214,47 +258,80 @@ final class SearchViewController: UIViewController {
 
     }
     
+    // MARK: - State Management
+
+    private func showLoading() {
+        activityIndicator.startAnimating()
+        tableView.isHidden = true
+        emptyStateLabel.isHidden = true
+    }
+
+    private func hideLoading() {
+        activityIndicator.stopAnimating()
+        tableView.isHidden = false
+    }
+
+    private func showEmptyState(message: String) {
+        emptyStateLabel.text = message
+        emptyStateLabel.isHidden = false
+        tableView.isHidden = true
+    }
+
     // MARK: - Networking
     private func loadMoviesByName() {
-        guard !isLoading else { return }
+        guard !isLoading, !searchText.isEmpty else { return }
+        
+        showLoading()
         isLoading = true
         
         networkManager.fetchMovies(currentPage, searchText) { [weak self] newMovies in
+            guard let self = self else { return }
             
             DispatchQueue.main.async {
+                self.isLoading = false
+                self.hideLoading()
                 
-                if self?.currentPage == 1 {
-                    self?.movies = newMovies
+                if self.currentPage == 1 {
+                    self.movies = newMovies
                 } else {
-                    self?.movies.append(contentsOf: newMovies)
+                    self.movies.append(contentsOf: newMovies)
                 }
                 
-                self?.isLoading = false
+                if self.movies.isEmpty {
+                    self.showEmptyState(message: "По вашему запросу ничего не найдено.\nПопробуйте изменить параметры поиска.")
+                }
                 
-                self?.tableView.reloadData()
+                self.tableView.reloadData()
             }
         }
     }
     
     private func loadMoviesWithFilters() {
         guard !isLoading else { return }
+        
+        showLoading()
         isLoading = true
         
         networkManager.fetchMovies(currentPage, selectedGenre, selectedRating) { [weak self] newMovies in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                self.isLoading = false
+                self.hideLoading()
                 
-                DispatchQueue.main.async {
-                    
-                    if self?.currentPage == 1 {
-                        self?.movies = newMovies
-                    } else {
-                        self?.movies.append(contentsOf: newMovies)
-                    }
-                    
-                    self?.isLoading = false
-                    
-                    self?.tableView.reloadData()
+                if self.currentPage == 1 {
+                    self.movies = newMovies
+                } else {
+                    self.movies.append(contentsOf: newMovies)
                 }
+                
+                if self.movies.isEmpty {
+                    self.showEmptyState(message: "Фильмы по выбранным фильтрам не найдены.\nПопробуйте изменить параметры поиска.")
+                }
+                
+                self.tableView.reloadData()
             }
+        }
     }
     
     // MARK: - Genre Button Actions
@@ -405,28 +482,24 @@ extension SearchViewController: UITextFieldDelegate {
     
     //событие ввода символа в поле поиска. Спустя 3 секунды загружаем список фильмов в tableView
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        // 1. Отменяем предыдущий таймер (если был)
         searchTimer?.invalidate()
         
-        // 2. Получаем текущий текст + нововведенный символ
         let currentText = textField.text ?? ""
         guard let textRange = Range(range, in: currentText) else { return true }
         let updatedText = currentText.replacingCharacters(in: textRange, with: string)
         
-        // 3. Если текст пустой — сразу сбрасываем поиск
         if updatedText.isEmpty {
             clearSearch()
+            showEmptyState(message: "Введите название фильма для поиска")
             return true
         } else {
             resetGenreSelection()
         }
         
-        // 4. Запускаем таймер на 3 секунды
-        searchTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
+        searchTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { [weak self] _ in
             guard let self = self else { return }
-            
             self.searchText = updatedText
-            goSearchByName()
+            self.goSearchByName()
         }
         
         return true
@@ -463,64 +536,54 @@ extension SearchViewController: UITextFieldDelegate {
 
 }
 
-// MARK: - UICollectionViewDataSource
-//Делагаты для коллекции жанров
-extension SearchViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    
+// MARK: - UICollectionViewDelegate, UICollectionViewDataSource
+extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return genresList.count
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
-        cell.configure(title: genresList[indexPath.item])
-        
-        // Определяем, должна ли ячейка быть выделена
-        if let selectedGenre = selectedGenre {
-            // Если есть выбранный жанр, проверяем соответствие
-            cell.isCellSelected = genresList[indexPath.item] == selectedGenre
-        } else {
-            // Если нет выбранного жанра, выделяем первую ячейку
-            cell.isCellSelected = indexPath.item == 0
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as? CategoryCell else {
+            return UICollectionViewCell()
         }
+        
+        let genre = genresList[indexPath.item]
+        cell.configure(title: genre)
+        cell.isCellSelected = selectedGenre == genre
         
         return cell
     }
-
-    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout,
-                        sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-            let title = genresList[indexPath.item]
-            let width = (title as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: 14)]).width + 32
-            return CGSize(width: width, height: 32)
-    }
     
-    //событие нажатия на ячейку
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // Получаем выбранную ячейку
-        guard let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell else { return }
-
-        // Сначала снимаем выделение со всех ячеек
-        collectionView.visibleCells.forEach { visibleCell in
-            if let categoryCell = visibleCell as? CategoryCell {
+        let selectedGenre = genresList[indexPath.item]
+        
+        // Обновляем состояние всех видимых ячеек
+        collectionView.visibleCells.forEach { cell in
+            if let categoryCell = cell as? CategoryCell {
                 categoryCell.isCellSelected = false
             }
         }
         
-        // Выделяем только нажатую ячейку
-        cell.isCellSelected = true
+        // Обновляем выбранную ячейку
+        if let selectedCell = collectionView.cellForItem(at: indexPath) as? CategoryCell {
+            selectedCell.isCellSelected = true
+        }
         
-        // Получаем текст из ячейки и устанавливаем как выбранный жанр
-        selectedGenre = cell.titleLabel.text
-        
-        // Сбрасываем поиск и загружаем фильмы с новым фильтром
-        currentPage = 1
-        clearSearch()
-        movies.removeAll()
+        self.selectedGenre = selectedGenre
         loadMoviesWithFilters()
+    }
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+extension SearchViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let genre = genresList[indexPath.item]
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.text = genre
         
-        // Перезагружаем таблицу с фильмами
-        tableView.reloadData()
+        let width = label.intrinsicContentSize.width + 32 // Добавляем отступы
+        return CGSize(width: max(width, 60), height: 32)
     }
 }
 
@@ -541,12 +604,18 @@ extension SearchViewController {
 extension SearchViewController {
      // Обработка ошибок API
      private func handleError(_ error: Error) {
-         let alert = UIAlertController(title: "Ошибка",
-         message: "Не удалось загрузить данные. Проверьте подключение к интернету.", preferredStyle: .alert)
+         let alert = UIAlertController(
+             title: "Ошибка".localized(),
+             message: "Не удалось загрузить данные. Проверьте подключение к интернету.".localized(),
+             preferredStyle: .alert
+         )
          
-         alert.addAction(UIAlertAction(title: "Повторить", style: .default) { _ in
-             self.loadMoviesByName()
-         } )
+         alert.addAction(UIAlertAction(
+             title: "Повторить".localized(),
+             style: .default
+         ) { [weak self] _ in
+             self?.loadMoviesByName()
+         })
      
      present(alert, animated: true)
      }
@@ -572,3 +641,4 @@ extension SearchViewController {
         }
     }
 }
+
