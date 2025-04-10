@@ -54,24 +54,36 @@ class RealmManager {
             guard let user = getCurrentUserRealm() else { return }
                     
             try realm.write {
-                //если у пользователя нет таблицы избранного, то создаем ее
+                // Если у пользователя нет таблицы избранного, создаем её
                 if user.favorites == nil {
-                    user.favorites = FavoriteRealm()
+                    let favorites = FavoriteRealm(userId: user.firebaseUserId)
+                    user.favorites = favorites
+                    realm.add(favorites)
                 }
+
+                guard let favorites = user.favorites else { return }
                 
                 // Проверяем, есть ли уже такой фильм в Realm
-                if let existingMovie = realm.object(ofType: MovieRealm.self, forPrimaryKey: movie.id ?? 0) {
-                    // Если фильм уже существует, добавляем ссылку на него
-                    if !user.favorites!.docs.contains(existingMovie) {
-                        user.favorites?.docs.append(existingMovie)
-                    }
-                } else {
-                    // Если фильма нет в Realm, создаем новый
-                    let movieRealm = MovieRealm(from: movie)
-                    realm.add(movieRealm)
-                    user.favorites?.docs.append(movieRealm)
-                }
-            }
+                if let existingFavorite = favorites.favoriteMovies.first(where: { $0.movie?.movieId == movie.id }) {
+                    // Обновляем дату добавления
+                    existingFavorite.addedDate = Date()
+                      } else {
+                          // Проверяем, есть ли фильм в базе данных Realm
+                          let movieRealm: MovieRealm
+                          if let existingMovie = realm.object(ofType: MovieRealm.self, forPrimaryKey: movie.id ?? 0) {
+                              movieRealm = existingMovie
+                          } else {
+                              // Если фильма нет в базе, создаём его
+                              let newMovieRealm = MovieRealm(from: movie)
+                              realm.add(newMovieRealm)
+                              movieRealm = newMovieRealm
+                          }
+
+                          // Создаем новый объект FavoriteMovieRealm
+                          let favoriteMovie = FavoriteMovieRealm(movie: movieRealm, addedDate: Date())
+                          favorites.favoriteMovies.append(favoriteMovie)
+                      }
+                  }
         } catch {
             print("Error adding to favorites: \(error)")
         }
@@ -79,12 +91,12 @@ class RealmManager {
     
     // Удалить фильм из избранного пользователя
     func removeFromFavorites(movieId: Int) {
-        guard let user = getCurrentUserRealm() else { return }
+        guard let user = getCurrentUserRealm(), let favorites = user.favorites else { return }
                 
         do {
             try realm.write {
-                if let index = user.favorites?.docs.firstIndex(where: { $0.movieId == movieId }) {
-                                    user.favorites?.docs.remove(at: index)
+                if let index = favorites.favoriteMovies.firstIndex(where: { $0.movie?.movieId == movieId }) {
+                                favorites.favoriteMovies.remove(at: index)
                 }
             }
         } catch {
@@ -95,16 +107,29 @@ class RealmManager {
     // Получить все избранные фильмы пользователя
     func getAllFavorites() -> [Movie] {
         guard let user = getCurrentUserRealm(), let favorites = user.favorites else {
-                    return []
-                }
-        return favorites.docs.map { $0.toModel() }
+                return []
+            }
+
+        // Сортируем избранные фильмы по дате добавления, учитывая, что movie может быть nil
+        // Сортируем избранные фильмы по дате добавления
+        let sortedFavorites = favorites.favoriteMovies
+            .compactMap { $0.movie } // Игнорируем объекты, где movie == nil
+            .sorted(by: { (first: MovieRealm, second: MovieRealm) -> Bool in
+                guard let firstDate = favorites.favoriteMovies.first(where: { $0.movie?.movieId == first.movieId })?.addedDate,
+                      let secondDate = favorites.favoriteMovies.first(where: { $0.movie?.movieId == second.movieId })?.addedDate else {
+                    return false
+        }
+        return firstDate > secondDate
+        })
+        
+        return sortedFavorites.map { $0.toModel() }
     }
 
     // Проверить, является ли фильм избранным для пользователя
     func isFavorite(movieId: Int) -> Bool {
-        guard let user = getCurrentUserRealm() else { return false }
+        guard let user = getCurrentUserRealm(), let favorites = user.favorites else { return false }
                 
-        return user.favorites?.docs.contains(where: { $0.movieId == movieId }) ?? false
+        return favorites.favoriteMovies.contains(where: { $0.movie?.movieId == movieId })
     }
     
     // MARK: - Recent Watch Management
