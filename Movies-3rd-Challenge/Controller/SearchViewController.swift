@@ -563,35 +563,26 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
-        cell.configure(title: genresList[indexPath.item].displayName)
         
-        // Определяем, должна ли ячейка быть выделена
+        let genreItem = genresList[indexPath.item]
+        cell.configure(title: genreItem.displayName)
+        
         if let selectedGenre = selectedGenre {
-            // Если есть выбранный жанр, проверяем соответствие
-            cell.isCellSelected = genresList[indexPath.item].queryValue == selectedGenre
+            // Сравниваем queryValue, потому что selectedGenre — это значение, отправляемое в API (на русском)
+            cell.isCellSelected = genreItem.queryValue == selectedGenre
         } else {
-            // Если нет выбранного жанра, выделяем первую ячейку
             cell.isCellSelected = indexPath.item == 0
         }
-        
-        let genre = genresList[indexPath.item]
-        cell.configure(title: genre)
-        cell.isCellSelected = selectedGenre == genre
         
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout,
-                        sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        let title = genresList[indexPath.item].displayName
-            let width = (title as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: 14)]).width + 32
-            return CGSize(width: width, height: 32)
-    }
+  
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedGenre = genresList[indexPath.item]
-        
+        let genreItem = genresList[indexPath.item]
+
         // Обновляем состояние всех видимых ячеек
         collectionView.visibleCells.forEach { cell in
             if let categoryCell = cell as? CategoryCell {
@@ -604,7 +595,7 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
             selectedCell.isCellSelected = true
         }
         
-        self.selectedGenre = selectedGenre
+        self.selectedGenre = genreItem.queryValue
         loadMoviesWithFilters()
     }
 }
@@ -612,10 +603,10 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
 // MARK: - UICollectionViewDelegateFlowLayout
 extension SearchViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let genre = genresList[indexPath.item]
+        let title = genresList[indexPath.item].displayName
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .medium)
-        label.text = genre
+        label.text = title
         
         let width = label.intrinsicContentSize.width + 32 // Добавляем отступы
         return CGSize(width: max(width, 60), height: 32)
