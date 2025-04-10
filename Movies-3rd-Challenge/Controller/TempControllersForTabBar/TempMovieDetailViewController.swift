@@ -60,8 +60,19 @@ class TempMovieDetailViewController: UIViewController {
         self.mainView.actorsCollectionView.delegate = self
         self.mainView.actorsCollectionView.dataSource = self
 
+        updateLocalizedText()
         RealmManager.shared.addToRecentWatch(movie: movie)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            addObserverForLocalization()
+        }
+
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            removeObserverForLocalization()
+        }
     
     @objc func addToFavorite(_ sender: UIBarButtonItem) {
         //блокируем кнопку
@@ -128,13 +139,13 @@ class TempMovieDetailViewController: UIViewController {
     
     @objc func showMoreTapped() {
         self.showMore.toggle()
-        if self.showMore == true {
-            mainView.descriptionOfMovie.numberOfLines = 0
-            mainView.showMoreButton.setTitle("Скрыть", for: .normal)
-        } else {
-            mainView.descriptionOfMovie.numberOfLines = 3
-            mainView.showMoreButton.setTitle("Показать", for: .normal)
-        }
+        if self.showMore {
+              mainView.descriptionOfMovie.numberOfLines = 0
+          } else {
+              mainView.descriptionOfMovie.numberOfLines = 3
+          }
+          let title = self.showMore ? "Show Less".localized() : "Show More".localized()
+          mainView.showMoreButton.setTitle(title, for: .normal)
         
     }
     
@@ -191,4 +202,33 @@ extension TempMovieDetailViewController: UICollectionViewDataSource {
     }
     
     
+}
+
+extension TempMovieDetailViewController {
+    private func addObserverForLocalization() {
+        NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.updateLocalizedText()
+        }
+    }
+
+    private func removeObserverForLocalization() {
+        NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
+    }
+
+    @objc func updateLocalizedText() {
+        if let label = navigationItem.titleView as? UILabel {
+                label.text = "Movie Detail".localized()
+            }
+
+            mainView.wathchButton.setTitle("Watch Now".localized(), for: .normal)
+            
+
+            mainView.storyLine.text = "Story Line".localized()
+            mainView.titelOfActors.text = "Cast and Crew".localized()
+        
+        let showMoreTitle = showMore ? "Show Less".localized() : "Show More".localized()
+            mainView.showMoreButton.setTitle(showMoreTitle, for: .normal)
+        
+        }
+
 }

@@ -24,8 +24,10 @@ final class SearchViewController: UIViewController {
 
     private let networkManager = NetworkService.shared
     private let apiKey = Secrets.apiKey
-//    private let apiKey = "60DWKG0-RDJ48BY-M13M9CT-YKZBZKS"
 
+    //флаг для исключения повторного открытия MovieDetail
+    private var isNavigatingToDetail = false
+    
     // MARK: - UI Components
     
     private lazy var searchBar: UIView = {
@@ -384,17 +386,29 @@ extension SearchViewController: UITableViewDelegate {
 //
 //        }
 //    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        guard !isNavigatingToDetail else { return } // Если переход уже выполняется, игнорируем повторное нажатие
+        isNavigatingToDetail = true                 // Устанавливаем флаг
+        
         let selectedMovie = movies[indexPath.item]
-        guard let id = selectedMovie.id else { return }
-        activityIndicator.startAnimating()
+        guard let id = selectedMovie.id else {
+            isNavigatingToDetail = false // Сбрасываем флаг при ошибке
+            return
+        }
+        
         NetworkService.shared.fetchMovieDetail(id: id) { [weak self] detail in
-            guard let detail = detail else { return }
+            guard let detail = detail else {
+                self?.isNavigatingToDetail = false // Сбрасываем флаг при ошибке
+                return
+            }
             DispatchQueue.main.async {
                 self?.activityIndicator.stopAnimating()
                 let vc = TempMovieDetailViewController(movie: selectedMovie, detail: detail)
                 vc.hidesBottomBarWhenPushed = true  //скрываем таббар
                 self?.navigationController?.pushViewController(vc, animated: true)
+                self?.isNavigatingToDetail = false // Сбрасываем флаг после завершения перехода
             }
         }
     }
