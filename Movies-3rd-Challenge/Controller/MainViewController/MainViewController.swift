@@ -149,7 +149,7 @@ final class MainViewController: UIViewController {
         return indicator
     }()
     
-#warning("не забыть подставить сюда имя и аватар из FB / из экрана Сеттингс через Notification")
+//#warning("не забыть подставить сюда имя и аватар из FB / из экрана Сеттингс через Notification")
     private var username = "Name"
     private var banners: [Movie] = []   // верхняя карусель
      var movies: [Movie] = [] // бокс офис

@@ -27,7 +27,7 @@ class TempMovieDetailView: UIView {
     // MARK: - UI Elements
     lazy var imageOfMovie: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "Movie")
+        imageView.image = UIImage(named: "gradientPoster")
         imageView.layer.cornerRadius = 16
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit

@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import  FirebaseAuth
+import FirebaseFirestore
 
 class SignUpVc: UIViewController {
     let mainView: SignUpView = .init()
@@ -41,7 +42,11 @@ class SignUpVc: UIViewController {
         let email = mainView.emailTextField.text?.lowercased()
         let password = mainView.passwordTextField.text
         let cofirmPassword = mainView.confirmPasswordTextField.text
-        guard name != nil, lastName != nil, email != nil, password != nil, cofirmPassword != nil else {
+        guard let name = name, !name.isEmpty,
+              let lastName = lastName, !lastName.isEmpty,
+              let email = email, !email.isEmpty,
+              let password = password, !password.isEmpty,
+              let confirmPassword = cofirmPassword, !confirmPassword.isEmpty else {
             self.showAlert(title: "Ошибка", message: "Заполните все поля")
             return
         }
@@ -49,19 +54,38 @@ class SignUpVc: UIViewController {
             self.showAlert(title: "Ошибка", message: "Пароли не совпадают")
             return
         }
-        FirebaseAuth.Auth.auth().createUser(withEmail: email!, password: password!) { authResult, error in
+        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+            if let error = error {
+                print("ошибка \(error.localizedDescription)")
+                return
+            }
+            guard let user = authResult?.user else {
+                        print("Пользователь не создан")
+                        return
+                    }
+            self.saveUserToFireStore(userId: user.uid , firstName: name, lastName: lastName, email: email)
+            self.navigationController?.popViewController(animated: true)
+        }
+        
+    }
+    //MARK: FireStore
+    func saveUserToFireStore(userId: String, firstName: String, lastName: String, email: String) {
+        let dataBase = Firestore.firestore()
+        dataBase.collection(UsersFireSore.collectionName.rawValue).document(userId).setData ([
+            UsersFireSore.id.rawValue: userId,
+            UsersFireSore.firstName.rawValue: firstName,
+            UsersFireSore.lastName.rawValue: lastName,
+            UsersFireSore.email.rawValue: email,
+            UsersFireSore.dateOfBirth.rawValue: "Еще не задано",
+            UsersFireSore.male.rawValue: "Еще не задано",
+            UsersFireSore.location.rawValue: "Еще не задано"
+        ]) { error in
             if let error = error {
                 print("ошибка \(error.localizedDescription)")
                 return
             }
             print("успешно")
-            let vc = LoginVC()
-            self.navigationController?.pushViewController(vc, animated: true)
-            UserDefaults.standard.set(name, forKey: "firstName")
-            UserDefaults.standard.set(lastName, forKey: "lastName")
-            UserDefaults.standard.set(email, forKey: "email")
         }
-        
     }
     //MARK: ALERT
     private func showAlert(title: String, message: String, completion: (() -> Void)? = nil) {
@@ -71,8 +95,8 @@ class SignUpVc: UIViewController {
         })
         present(alert, animated: true)
     }
-    //MARK: EyeButtons
     
+    //MARK: EyeButtons
     @objc func showPass(selector: UIButton) {
         var textField: UITextField?
         if selector == self.mainView.eyeButton as UIButton {
@@ -85,5 +109,4 @@ class SignUpVc: UIViewController {
         let imageName = field.isSecureTextEntry ? "eye.slash" : "eye"
         selector.setImage(UIImage(systemName: imageName), for: .normal)
     }
-    
 }
