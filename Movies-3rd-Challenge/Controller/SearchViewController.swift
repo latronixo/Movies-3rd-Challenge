@@ -25,7 +25,7 @@ final class SearchViewController: UIViewController {
     private let networkManager = NetworkService.shared
     private let apiKey = Secrets.apiKey
 
-    //флаг для исключения повторного открытия 
+    //флаг для исключения повторного открытия MovieDetail
     private var isNavigatingToDetail = false
     
     // MARK: - UI Components
