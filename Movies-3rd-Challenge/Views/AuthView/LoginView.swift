@@ -21,6 +21,8 @@ class LoginView: UIView {
     lazy var emailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Email"
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
         textField.backgroundColor = UIColor(named: "logColor")
         textField.borderStyle = .roundedRect
         textField.layer.cornerRadius = 24
@@ -39,12 +41,22 @@ class LoginView: UIView {
     lazy var passwordTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Password"
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
+        textField.isSecureTextEntry = true
         textField.backgroundColor = UIColor(named: "logColor")
         textField.borderStyle = .roundedRect
         textField.layer.cornerRadius = 24
         textField.clipsToBounds = true
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
+    }()
+    lazy var eyeButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+        button.tintColor = UIColor(named: "discriptionSet")
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     lazy var stackForTextFields: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [emailLabel, emailTextField, passwordLabel, passwordTextField])
@@ -181,6 +193,9 @@ class LoginView: UIView {
     }
     
     func setView(){
+        passwordTextField.rightView = eyeButton
+        passwordTextField.rightViewMode = .always
+
         addSubview(stackForTextFields)
         addSubview(switchStackView)
         addSubview(stackForButtons)
