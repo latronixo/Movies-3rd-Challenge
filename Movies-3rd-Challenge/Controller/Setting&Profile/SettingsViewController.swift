@@ -420,7 +420,8 @@ class SettingsViewController: UIViewController {
                 let loginVC = LoginVC()
                 let navVC = UINavigationController(rootViewController: loginVC)
                 navVC.modalPresentationStyle = .fullScreen
-                
+                UserDefaults.standard.set(false, forKey: "isAuth")
+
                 self.present(navVC, animated: true)
                 
             } catch let signOutError as NSError {
