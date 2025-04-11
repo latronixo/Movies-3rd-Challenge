@@ -5,6 +5,8 @@
 //  Created by Александр Семёнов on 31.03.2025.
 //
 import UIKit
+import FirebaseAuth
+import FirebaseFirestore
 
 // Контроллер для отображения экранов онбординга
 final class OnboardingViewController: UIViewController {
@@ -113,6 +115,15 @@ final class OnboardingViewController: UIViewController {
     
     // Обработчик нажатия на кнопку начала использования приложения
     @objc private func startButtonTapped() {
+        
+        if let user = Auth.auth().currentUser {
+            let db = Firestore.firestore()
+            db.collection("Users").document(user.uid).updateData([
+                "didSeeOnboarding": true
+            ])
+        }
+        
+        
         let homeVC = TabBarController()
         homeVC.modalPresentationStyle = .fullScreen
         present(homeVC, animated: true)
