@@ -30,8 +30,7 @@ final class SearchViewController: UIViewController {
     private var searchTimer: Timer?
 
     private let networkManager = NetworkService.shared
-    private let apiKey = Secrets.apiKey
-
+    
     //флаг для исключения повторного открытия MovieDetail
     private var isNavigatingToDetail = false
     
@@ -575,7 +574,7 @@ extension SearchViewController: UITextFieldDelegate {
             resetGenreSelection()
         }
         
-        searchTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { [weak self] _ in
+        searchTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { [weak self] _ in
             guard let self = self else { return }
             self.searchText = updatedText
             self.goSearchByName()
@@ -637,8 +636,6 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
         searchText = ""
       
         selectedGenreIndex = indexPath.item
-        
-        let selectedCategory = (indexPath.item == 0) ? nil : genresList[indexPath.item].queryValue
         
         isGenreSelectionLocked = true
         categoryCollectionView.isUserInteractionEnabled = false

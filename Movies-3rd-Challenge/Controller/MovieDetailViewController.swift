@@ -177,7 +177,7 @@ class TempMovieDetailViewController: UIViewController {
             .withRenderingMode(.alwaysTemplate)
         
         navigationItem.rightBarButtonItem?.image = heartImage
-        navigationItem.rightBarButtonItem?.tintColor = isFavorite ? .red : UIColor(named: "iconColor")
+        navigationItem.rightBarButtonItem?.tintColor = isFavorite ? UIColor(named: "mainViolet") : UIColor(named: "iconColor")
     }
     
     @objc private func addToFavorite(_ sender: UIBarButtonItem) {

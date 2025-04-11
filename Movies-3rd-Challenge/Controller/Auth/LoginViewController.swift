@@ -30,6 +30,7 @@ class LoginVC: UIViewController {
                 .font: UIFont(name: "PlusJakartaSans-Bold", size: 26) ?? .systemFont(ofSize: 26)])
         self.navigationItem.titleView = titleLabel
         mainView.backgroundColor = .systemBackground
+        mainView.eyeButton.addTarget(self, action: #selector(showPass), for: .touchUpInside)
         mainView.signupButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
         mainView.forgetPasswordButton.addTarget(self, action: #selector(forgetPasswordTapped), for: .touchUpInside)
         mainView.signInButton.addTarget(self, action: #selector(signInTapped), for: .touchUpInside)
@@ -195,7 +196,18 @@ class LoginVC: UIViewController {
         }
     }
 
-    
+    //MARK: EyeButtons
+    @objc func showPass(selector: UIButton) {
+        var textField: UITextField?
+        if selector == self.mainView.eyeButton as UIButton {
+            textField = self.mainView.passwordTextField
+        }
+
+        guard let field = textField else { return }
+        field.isSecureTextEntry.toggle()
+        let imageName = field.isSecureTextEntry ? "eye.slash" : "eye"
+        selector.setImage(UIImage(systemName: imageName), for: .normal)
+    }
 }
 
 extension LoginVC {

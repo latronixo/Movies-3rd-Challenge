@@ -20,6 +20,8 @@ class SignUpView: UIView {
     lazy var firstNameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "First Name"
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
         textField.backgroundColor = UIColor(named: "logColor")
         textField.borderStyle = .roundedRect
         textField.layer.cornerRadius = 24
@@ -39,6 +41,8 @@ class SignUpView: UIView {
     lazy var lastNameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Last Name"
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
         textField.backgroundColor = UIColor(named: "logColor")
         textField.borderStyle = .roundedRect
         textField.layer.cornerRadius = 24
@@ -58,6 +62,8 @@ class SignUpView: UIView {
     lazy var emailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Email"
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
         textField.backgroundColor = UIColor(named: "logColor")
         textField.borderStyle = .roundedRect
         textField.layer.cornerRadius = 24
@@ -77,6 +83,8 @@ class SignUpView: UIView {
     lazy var passwordTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Password"
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
         textField.backgroundColor = UIColor(named: "logColor")
         textField.borderStyle = .roundedRect
         textField.layer.cornerRadius = 24
@@ -111,6 +119,8 @@ class SignUpView: UIView {
     lazy var confirmPasswordTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Confirm Password"
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
         textField.backgroundColor = UIColor(named: "logColor")
         textField.borderStyle = .roundedRect
         textField.layer.cornerRadius = 24
