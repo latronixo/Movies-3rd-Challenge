@@ -10,6 +10,7 @@ import UIKit
 import FirebaseAuth
 import GoogleSignIn
 import FirebaseCore
+import FirebaseFirestore
 
 class LoginVC: UIViewController {
     let mainView: LoginView = .init()
@@ -70,10 +71,8 @@ class LoginVC: UIViewController {
                 UserDefaults.standard.set(false , forKey: "isAuth")
             }
             UserDefaults.standard.set("app", forKey: "method")
-            DispatchQueue.main.async {
-                let vc = OnboardingViewController()
-                self.navigationController?.pushViewController(vc, animated: true)
-            }
+            
+            self.checkOnboardingStatus()
             
             
         }
@@ -111,8 +110,9 @@ class LoginVC: UIViewController {
                 } else {
                     UserDefaults.standard.set(false , forKey: "isAuth")
                 }
-                let vc = OnboardingViewController()
-                self.navigationController?.pushViewController(vc, animated: true)
+                
+                self.checkOnboardingStatus()
+
             }
         }
     }
@@ -164,6 +164,37 @@ class LoginVC: UIViewController {
             self.remindMe = false
         }
     }
+    
+    //проверяем видел или нет онборддинг
+    private func checkOnboardingStatus() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+
+        let db = Firestore.firestore()
+        let docRef = db.collection("Users").document(uid)
+
+        docRef.getDocument { snapshot, error in
+            if let error = error {
+                print("Ошибка получения данных: \(error.localizedDescription)")
+                return
+            }
+
+            let didSeeOnboarding = snapshot?.data()?["didSeeOnboarding"] as? Bool ?? false
+
+            DispatchQueue.main.async {
+                if didSeeOnboarding {
+                    // Если уже видел онбординг - на таббар
+                    let tabBar = TabBarController()
+                    tabBar.modalPresentationStyle = .fullScreen
+                    self.present(tabBar, animated: true)
+                } else {
+                    // Иначе - онбординг
+                    let vc = OnboardingViewController()
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+        }
+    }
+
     
 }
 

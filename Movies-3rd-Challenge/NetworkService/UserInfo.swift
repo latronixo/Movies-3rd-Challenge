@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
 class UserInfo{
     static let shared = UserInfo()
@@ -14,11 +15,10 @@ class UserInfo{
     
     //MARK: Получение Юзера
     func getUser(completion: @escaping (User?) -> Void) {
-        let email = UserDefaults.standard.string(forKey: UsersFireSore.email.rawValue)
-        guard let email = email else {
-            completion(nil)
-            return
-        }
+        guard let email = Auth.auth().currentUser?.email else {
+                completion(nil)
+                return
+            }
         
         let dataBase = Firestore.firestore()
         dataBase.collection(UsersFireSore.collectionName.rawValue)
@@ -31,7 +31,7 @@ class UserInfo{
                 }
                 
                 guard let documents = snapshot?.documents, !documents.isEmpty else {
-                    print("Пользователь с email '\(email)' не найден")
+                    print("Пользователь с email '\(email)' не имеет сохраненных документов")
                     completion(nil)
                     return
                 }
@@ -45,10 +45,11 @@ class UserInfo{
                 let male = data[UsersFireSore.male.rawValue] as? String ?? ""
                 let dateOfBirth = data[UsersFireSore.dateOfBirth.rawValue] as? String ?? ""
                 let location = data[UsersFireSore.location.rawValue] as? String ?? ""
+                let didSeeOnboarding = data["didSeeOnboarding"] as? Bool ?? false
 
                 let makeUser = User(id: id, firstName: name, lastName: lastName,
                                     email: email, male: male, dateOfBirth: dateOfBirth,
-                                    location: location)
+                                    location: location, didSeeOnboarding: didSeeOnboarding)
                 completion(makeUser)
             }
     }
@@ -78,7 +79,14 @@ class UserInfo{
             completion(true)
         }
     }
+    // получаем айди
+    func getCurrentUserID() -> String? {
+        return Auth.auth().currentUser?.uid
+    }
+    
 }
+
+
 //MARK: Enum
 enum UsersFireSore: String {
     case id = "id"
@@ -89,6 +97,8 @@ enum UsersFireSore: String {
     case male = "Пол"
     case dateOfBirth = "Дата рождения"
     case location = "Местоположение"
+    case avatarURL = "Аватар"
+
 }
 //MARK: USER
 class User {
@@ -99,8 +109,9 @@ class User {
     let male: String
     let dateOfBirth: String
     let location: String
+    let didSeeOnboarding: Bool
     
-    init(id: String, firstName: String, lastName: String, email: String, male: String, dateOfBirth: String, location: String) {
+    init(id: String, firstName: String, lastName: String, email: String, male: String, dateOfBirth: String, location: String, didSeeOnboarding: Bool) {
         self.id = id
         self.firstName = firstName
         self.lastName = lastName
@@ -108,5 +119,7 @@ class User {
         self.male = male
         self.dateOfBirth = dateOfBirth
         self.location = location
+        self.didSeeOnboarding = didSeeOnboarding
+
     }
 }

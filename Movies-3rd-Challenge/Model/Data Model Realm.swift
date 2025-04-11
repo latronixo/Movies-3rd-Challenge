@@ -17,12 +17,31 @@ class UserRealm: Object {
     convenience init(firebaseUserId: String) {
         self.init()
         self.firebaseUserId = firebaseUserId
-        self.favorites = FavoriteRealm()
+        
+        if let realm = try? Realm(),
+           let existingFavorites = realm.object(ofType: FavoriteRealm.self, forPrimaryKey: firebaseUserId) {
+            self.favorites = existingFavorites
+        } else {
+            self.favorites = FavoriteRealm(userId: firebaseUserId)
+        }
+        
         self.recentWatch = RecentWatchRealm()
     }
 }
 
 // MARK: - Классы для избранного
+
+//класс избранного для хранения списка объектов FavoriteMovieRealm
+class FavoriteRealm: Object {
+    @Persisted(primaryKey: true) var id: String                 // Уникальный ID для избранного, связанный с пользователем
+    @Persisted var favoriteMovies = List<FavoriteMovieRealm>()  // Список избранных фильмов
+    @Persisted var user: UserRealm?                             // Связь с пользователем
+
+    convenience init(userId: String) {
+        self.init()
+        self.id = userId // ID совпадает с ID пользователя
+    }
+}
 
 //класс с датой просмотра
 class FavoriteMovieRealm: Object {
@@ -35,18 +54,6 @@ class FavoriteMovieRealm: Object {
         self.id = "\(movie.movieId)-\(UUID().uuidString)" // Уникальный ID
         self.movie = movie
         self.addedDate = addedDate
-    }
-}
-
-//класс избранного для хранения списка объектов FavoriteMovieRealm
-class FavoriteRealm: Object {
-    @Persisted(primaryKey: true) var id: String                 // Уникальный ID для избранного, связанный с пользователем
-    @Persisted var favoriteMovies = List<FavoriteMovieRealm>()  // Список избранных фильмов
-    @Persisted var user: UserRealm?                             // Связь с пользователем
-
-    convenience init(userId: String) {
-        self.init()
-        self.id = userId // ID совпадает с ID пользователя
     }
 }
 

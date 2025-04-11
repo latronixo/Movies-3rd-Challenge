@@ -59,7 +59,7 @@ final class MainViewController: UIViewController {
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
-        tableView.register(MovieTableViewCell.self, forCellReuseIdentifier: "MovieCell")
+        tableView.register(BoxOfficeMovieTableViewCell.self, forCellReuseIdentifier: "MovieCell")
         tableView.rowHeight = 80
         tableView.separatorStyle = .none
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -152,8 +152,7 @@ final class MainViewController: UIViewController {
         return indicator
     }()
     
-//#warning("не забыть подставить сюда имя и аватар из FB / из экрана Сеттингс через Notification")
-    private var username = "Name"
+    private var username = ""
     private var banners: [Movie] = []   // верхняя карусель
      var movies: [Movie] = [] // бокс офис
     
@@ -174,9 +173,10 @@ final class MainViewController: UIViewController {
         
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(MovieTableViewCell.self, forCellReuseIdentifier: "MovieCell")
+        tableView.register(BoxOfficeMovieTableViewCell.self, forCellReuseIdentifier: "MovieCell")
         
         updateLocalizedText()
+        setupGreeting()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -273,6 +273,17 @@ final class MainViewController: UIViewController {
                 searchVC.updateWithBoxOffice(movies: self.movies)
             }
     }
+    
+    private func setupGreeting() {
+        UserInfo.shared.getUser { [weak self] user in
+            guard let self = self, let user = user else { return }
+            DispatchQueue.main.async {
+                self.username = user.firstName.isEmpty ? "User" : user.firstName
+                self.greetingLabel.text = "👋 Hello, \(self.username)"
+            }
+        }
+    }
+    
 }
 
 // MARK: CollectionView
@@ -383,7 +394,7 @@ extension MainViewController: UITableViewDataSource {
                 return UITableViewCell()
             }
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell", for: indexPath) as! MovieTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell", for: indexPath) as! BoxOfficeMovieTableViewCell
         
         let movie = movies[indexPath.row]
         cell.configure(movie: movie)

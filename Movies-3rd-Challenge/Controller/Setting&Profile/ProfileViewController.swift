@@ -6,6 +6,10 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FirebaseFirestore
+import GoogleSignIn
+import FirebaseCore
 
 class ProfileViewController: UIViewController {
     
@@ -84,7 +88,7 @@ class ProfileViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor.systemGray4
         button.layer.cornerRadius = 24
-        button.isEnabled = false
+        button.isEnabled = true
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(saveChangesButtonAction), for: .touchUpInside)
         return button
@@ -134,6 +138,7 @@ class ProfileViewController: UIViewController {
         locationTextView.delegate = self
         
         updateLocalizedText()
+        loadUserData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -358,7 +363,7 @@ class ProfileViewController: UIViewController {
     }
     
     private func showFormatErrorAlert() {
-        let alert = UIAlertController(title: "Error", message: "Invalid format", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Error", message: "Invalid format. Data is not saved", preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         alert.addAction(okAction)
         
@@ -382,8 +387,50 @@ class ProfileViewController: UIViewController {
     }
     
     @objc func saveChangesButtonAction(_ button: UIButton) {
-       //save to FB
+        print(Auth.auth().currentUser?.uid ?? "no user data")
+        guard let currentUserId = Auth.auth().currentUser?.uid else { return }
+            
+            let updatedUser = User(
+                id: currentUserId,
+                firstName: firstNameTextField.text ?? "",
+                lastName: lastNameTextField.text ?? "",
+                email: emailTextField.text ?? "",
+                male: maleButton.isSelected ? "Male" : "Female",
+                dateOfBirth: dobValueLabel.text ?? "",
+                location: locationTextView.text ?? "",
+                didSeeOnboarding: true
+            )
+            
+            UserInfo.shared.updateDataUser(user: updatedUser) { [weak self] success in
+                DispatchQueue.main.async {
+                    if success {
+                        self?.showSucessSaveAlert()
+                    } else {
+                        self?.showFormatErrorAlert()
+                    }
+                }
+            }
+    }
+    
+    private func loadUserData() {
+        UserInfo.shared.getUser { [weak self] user in
+            guard let self = self, let user = user else { return }
+            DispatchQueue.main.async {
+                self.firstNameTextField.text = user.firstName
+                self.lastNameTextField.text = user.lastName
+                self.emailTextField.text = user.email
+                self.locationTextView.text = user.location
+                self.dobValueLabel.text = user.dateOfBirth
+                
+                if user.male.lowercased() == "female" {
+                    self.genderButtonTapped(self.femaleButton)
+                } else {
+                    self.genderButtonTapped(self.maleButton)
+                }
+            }
         }
+    }
+
 }
 
 // MARK: - UITextField Padding Helper

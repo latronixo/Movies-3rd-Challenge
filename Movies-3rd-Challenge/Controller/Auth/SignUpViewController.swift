@@ -49,6 +49,7 @@ override func viewWillAppear(_ animated: Bool) {
     @objc func loginButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
+    
     @objc func signUpButtonTapped() {
         let name = mainView.firstNameTextField.text
         let lastName = mainView.lastNameTextField.text
@@ -63,24 +64,106 @@ override func viewWillAppear(_ animated: Bool) {
             self.showAlert(title: "Ошибка", message: "Заполните все поля")
             return
         }
+        
+        // Проверка валидности email
+        if let emailError = validateEmail(email) {
+            self.showAlert(title: "Ошибка", message: emailError)
+            return
+        }
+        
         guard password == cofirmPassword else {
             self.showAlert(title: "Ошибка", message: "Пароли не совпадают")
             return
         }
-        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+        
+        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { [weak self] authResult, error in
+            guard let self = self else { return }
+            
             if let error = error {
-                print("ошибка \(error.localizedDescription)")
+                self.catchAuthError(error: error)
                 return
             }
             guard let user = authResult?.user else {
-                        print("Пользователь не создан")
-                        return
-                    }
-            self.saveUserToFireStore(userId: user.uid , firstName: name, lastName: lastName, email: email)
+                self.showAlert(title: "Ошибка", message: "Пользователь не создан")
+                return
+            }
+            self.saveUserToFireStore(userId: user.uid, firstName: name, lastName: lastName, email: email)
             self.navigationController?.popViewController(animated: true)
         }
-        
     }
+    
+    private func validateEmail(_ email: String) -> String? {
+        // Проверка на запрещенные символы
+        let forbiddenCharacters = ["!", "#", "$", "%", "&", "~", "=", ",", "'"]
+        for char in forbiddenCharacters {
+            if email.contains(char) {
+                return "Email не может содержать символ: \(char)"
+            }
+        }
+        
+        // Проверка на пробелы и табуляцию
+        if email.contains(" ") || email.contains("\t") {
+            return "Email не может содержать пробелы или табуляцию"
+        }
+        
+        // Проверка на несколько точек подряд
+        if email.contains("..") {
+            return "Email не может содержать несколько точек подряд"
+        }
+        
+        // Проверка на кириллицу
+        let cyrillicRegex = ".*[А-Яа-я].*"
+        if email.range(of: cyrillicRegex, options: .regularExpression) != nil {
+            return "Email не может содержать кириллицу"
+        }
+        
+        // Базовая проверка формата email
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+        if !emailPredicate.evaluate(with: email) {
+            return "Некорректный формат email"
+        }
+        
+        return nil
+    }
+    
+    private func catchAuthError(error: Error) {
+        let errorMessage: String
+        if let authError = error as? AuthErrorCode {
+            switch authError.code {
+            case .emailAlreadyInUse:
+                errorMessage = "Этот email уже используется"
+            case .invalidEmail:
+                errorMessage = "Некорректный email"
+            case .weakPassword:
+                errorMessage = "Слишком слабый пароль. Минимум 6 символов"
+            case .networkError:
+                errorMessage = "Ошибка сети. Проверьте подключение к интернету"
+            default:
+                errorMessage = "Ошибка регистрации: \(error.localizedDescription)"
+            }
+        } else if let nsError = error as NSError? {
+            switch nsError.code {
+            case AuthErrorCode.emailAlreadyInUse.rawValue:
+                errorMessage = "Этот email уже используется"
+            case AuthErrorCode.invalidEmail.rawValue:
+                errorMessage = "Некорректный email"
+            case AuthErrorCode.weakPassword.rawValue:
+                errorMessage = "Слишком слабый пароль. Минимум 6 символов"
+            case AuthErrorCode.networkError.rawValue:
+                errorMessage = "Ошибка сети. Проверьте подключение к интернету"
+            default:
+                errorMessage = "Ошибка регистрации: \(error.localizedDescription)"
+            }
+        } else {
+            errorMessage = "Неизвестная ошибка: \(error.localizedDescription)"
+        }
+        
+        DispatchQueue.main.async {
+            self.showAlert(title: "Ошибка", message: errorMessage)
+        }
+    }
+    
     //MARK: FireStore
     func saveUserToFireStore(userId: String, firstName: String, lastName: String, email: String) {
         let dataBase = Firestore.firestore()
@@ -91,13 +174,21 @@ override func viewWillAppear(_ animated: Bool) {
             UsersFireSore.email.rawValue: email,
             UsersFireSore.dateOfBirth.rawValue: "Еще не задано",
             UsersFireSore.male.rawValue: "Еще не задано",
-            UsersFireSore.location.rawValue: "Еще не задано"
+            UsersFireSore.location.rawValue: "Еще не задано",
+            "didSeeOnboarding": false
+//            UsersFireSore.avatarURL.rawValue: "default"
+
         ]) { error in
             if let error = error {
-                print("ошибка \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.showAlert(title: "Ошибка", message: "Ошибка сохранения данных: \(error.localizedDescription)")
+                }
                 return
             }
-            print("успешно")
+            
+            DispatchQueue.main.async {
+                self.navigationController?.popViewController(animated: true)
+            }
         }
     }
     //MARK: ALERT

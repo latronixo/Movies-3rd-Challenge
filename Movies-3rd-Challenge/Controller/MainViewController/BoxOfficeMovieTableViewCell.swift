@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MovieTableViewCell: UITableViewCell {
+class BoxOfficeMovieTableViewCell: UITableViewCell {
     private let posterImageView = UIImageView()
     private let titleLabel = UILabel()
     private let ratingLabel = UILabel()
