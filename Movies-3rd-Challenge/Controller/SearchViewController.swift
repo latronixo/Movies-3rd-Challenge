@@ -16,8 +16,14 @@ final class SearchViewController: UIViewController {
     private var isLoading = false
     private var currentPage = 1
     private let limit = 10
-
+    private var currentRequestToken: UUID?
+    private var isGenreSelectionLocked = false
+    private var maxAttempts = 5
+    private var attempts = 0
+    private var selectedGenreIndex = 0
+    
     private var genresList: [GenreItem] = GenreProvider.genres(for: LanguageManager.shared.currentLanguage)
+
 
 
     // Таймер для задержки поиска
@@ -115,7 +121,7 @@ final class SearchViewController: UIViewController {
         self.searchTextField = textField
         return container
     }()
-    // Добавьте эти свойства в класс
+    
     private weak var searchTextField: UITextField!
     private weak var clearButton: UIButton!
     
@@ -173,7 +179,7 @@ final class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setTitleUpper(navItem: navigationItem, title: "Search")
+        setTitleUpper(navigationController, "Search", view)
         
         // Устанавливаем цвет фона в зависимости от темы
         view.backgroundColor = .systemBackground
@@ -197,6 +203,10 @@ final class SearchViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        navigationItem.title = ""
+        navigationItem.titleView = UIView()
+        
         addObserverForLocalization()
         tableView.reloadData()
     }
@@ -209,6 +219,7 @@ final class SearchViewController: UIViewController {
     
     // MARK: - UI Setup
     private func setupUI() {
+
         view.addSubview(searchBar)
         view.addSubview(categoryCollectionView)
         view.addSubview(tableView)
@@ -232,12 +243,13 @@ final class SearchViewController: UIViewController {
         emptyStateLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
+
             searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -20),
             searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
             searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             searchBar.heightAnchor.constraint(equalToConstant: 50),
 
-            categoryCollectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
+            categoryCollectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 20),
             categoryCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
             categoryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             categoryCollectionView.heightAnchor.constraint(equalToConstant: 44),
@@ -257,17 +269,18 @@ final class SearchViewController: UIViewController {
         ])
     }
     
-        //загружаем фильмы при переходе из БоксОфис
-    func updateWithBoxOffice(movies: [Movie]) {
-        self.movies = movies
-        self.tableView.reloadData()
-
-    }
+    //загружаем фильмы при переходе из БоксОфис
+      func updateWithBoxOffice(movies: [Movie]) {
+          self.movies = movies
+          self.tableView.reloadData()
+      }
     
     // MARK: - State Management
 
     private func showLoading() {
         activityIndicator.startAnimating()
+        movies.removeAll()
+        tableView.reloadData()
         tableView.isHidden = true
         emptyStateLabel.isHidden = true
     }
@@ -312,33 +325,62 @@ final class SearchViewController: UIViewController {
         }
     }
     
-    private func loadMoviesWithFilters() {
-        guard !isLoading else { return }
+    private func loadMoviesWithFilters(_ selectedCategory: String? = nil) {
+        tableView.reloadData()
         
+        guard !isLoading else { return }
         showLoading()
         isLoading = true
         
-        networkManager.fetchMovies(currentPage, selectedGenre, selectedRating) { [weak self] newMovies in
-            guard let self = self else { return }
+        
+        let requestToken = UUID()
+        self.currentRequestToken = requestToken
+        
+        let apiGenre = (selectedCategory == genresList[0].queryValue) ? nil : selectedCategory
+        
+        networkManager.fetchMovies(currentPage, apiGenre, selectedRating) { [weak self] newMovies in
+            
+            guard let self = self, self.currentRequestToken == requestToken else { return }
             
             DispatchQueue.main.async {
+                self.isGenreSelectionLocked = false
+                self.categoryCollectionView.isUserInteractionEnabled = true
+                
                 self.isLoading = false
                 self.hideLoading()
                 
                 if self.currentPage == 1 {
-                    self.movies = newMovies
+                    
+                    if newMovies.isEmpty {
+                        self.handleEmptyResults(selectedCategory: selectedCategory)
+                    } else {
+                        self.movies = newMovies
+                        self.attempts = 0
+                    }
                 } else {
                     self.movies.append(contentsOf: newMovies)
-                }
-                
-                if self.movies.isEmpty {
-                    self.showEmptyState(message: "Фильмы по выбранным фильтрам не найдены.\nПопробуйте изменить параметры поиска.")
                 }
                 
                 self.tableView.reloadData()
             }
         }
     }
+    
+    private func handleEmptyResults(selectedCategory: String?) {
+        attempts += 1
+        
+        if attempts < maxAttempts {
+            if selectedRating != nil {
+                currentPage = Int.random(in: 1...50)
+            }
+            loadMoviesWithFilters(selectedCategory)
+        } else {
+            attempts = 0
+            movies.removeAll()
+            showEmptyState(message: "Фильмы по выбранным фильтрам не найдены.\nПопробуйте изменить параметры поиска.")
+        }
+    }
+    
     
     // MARK: - Genre Button Actions
     //нажатие на кнопку с фильтрами - вызов алерта с фильтрами
@@ -358,26 +400,38 @@ final class SearchViewController: UIViewController {
 extension SearchViewController: FilterViewControllerDelegate {
     // Вызывается когда пользователь применяет фильтры в алерте
     func filterViewController(_ controller: FilterViewController, didApplyFilters category: String?, rating: Int?) {
-        selectedGenre = category
+        
+        isGenreSelectionLocked = false
+        categoryCollectionView.isUserInteractionEnabled = true
+        
+        if let category = category,
+               let index = genresList.firstIndex(where: { $0.queryValue == category }) {
+                selectedGenreIndex = index
+            } else {
+                selectedGenreIndex = 0  // "Все"
+            }
+    
         selectedRating = rating
         
+        
         // Обновляем выделение категории в коллекции
-        updateCategorySelectionInCollection()
+       // updateCategorySelectionInCollection()
+        categoryCollectionView.reloadData()
         
         // Сбрасываем страницу и загружаем фильмы с новыми фильтрами
         currentPage = 1
         movies.removeAll()
-        loadMoviesWithFilters()
+        loadMoviesWithFilters(selectedGenreIndex == 0 ? nil : genresList[selectedGenreIndex].queryValue)
         tableView.reloadData()
     }
 
     // Вызывается когда пользователь сбрасывает фильтры
     func filterViewControllerDidReset(_ controller: FilterViewController) {
-        selectedGenre = nil
+        selectedGenreIndex = 0
         selectedRating = nil
         
         // Обновляем выделение категории в коллекции (выбираем первую категорию при сбросе)
-        updateCategorySelectionInCollection()
+        categoryCollectionView.reloadData()
         
         // Сбрасываем страницу и загружаем фильмы без фильтров
         currentPage = 1
@@ -395,7 +449,6 @@ extension SearchViewController: FilterViewControllerDelegate {
         // После перезагрузки выделяем нужную ячейку
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            
             var indexPathToSelect: IndexPath
             
             if let selectedGenre = self.selectedGenre,
@@ -407,6 +460,10 @@ extension SearchViewController: FilterViewControllerDelegate {
             
             // Выделяем ячейку и скроллим, чтобы она была видна
             self.categoryCollectionView.selectItem(at: indexPathToSelect, animated: true, scrollPosition: .centeredHorizontally)
+            
+            self.categoryCollectionView.visibleCells.forEach { cell in
+                (cell as? CategoryCell)?.isCellSelected = false
+            }
             
             // Также устанавливаем isCellSelected для выбранной ячейки
             if let cell = self.categoryCollectionView.cellForItem(at: indexPathToSelect) as? CategoryCell {
@@ -427,6 +484,10 @@ extension SearchViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MovieCell.identifier, for: indexPath) as! MovieCell
+        
+        guard indexPath.row < movies.count else {
+               return cell // Возвращаем пустую ячейку, если индекс невалидный
+           }
         
         let movie = movies[indexPath.row]
         cell.configure(with: movie)
@@ -471,6 +532,7 @@ extension SearchViewController: UITableViewDelegate {
                 return
             }
             DispatchQueue.main.async {
+                self?.activityIndicator.stopAnimating()
                 let vc = TempMovieDetailViewController(movie: selectedMovie, detail: detail)
                 vc.hidesBottomBarWhenPushed = true  //скрываем таббар
                 self?.navigationController?.pushViewController(vc, animated: true)
@@ -535,23 +597,9 @@ extension SearchViewController: UITextFieldDelegate {
     }
     
     private func resetGenreSelection() {
-        // Снимаем выделение со всех ячеек
-        categoryCollectionView.visibleCells.forEach { cell in
-            if let categoryCell = cell as? CategoryCell {
-                categoryCell.isCellSelected = false
-            }
-        }
-        
-        // Выбираем первую ячейку ("Все")
-        let defaultIndexPath = IndexPath(item: 0, section: 0)
-        categoryCollectionView.selectItem(at: defaultIndexPath, animated: true, scrollPosition: .left)
-        if let defaultCell = categoryCollectionView.cellForItem(at: defaultIndexPath) as? CategoryCell {
-            defaultCell.isCellSelected = true
-        }
-        
-        selectedGenre = nil
+        selectedGenreIndex = 0
+        categoryCollectionView.reloadData()
     }
-
 }
 
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource
@@ -566,35 +614,53 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
         let genreItem = genresList[indexPath.item]
         cell.configure(title: genreItem.displayName)
         
-        if let selectedGenre = selectedGenre {
-            // Сравниваем queryValue, потому что selectedGenre — это значение, отправляемое в API (на русском)
-            cell.isCellSelected = genreItem.queryValue == selectedGenre
-        } else {
-            cell.isCellSelected = indexPath.item == 0
-        }
+//        let isSelected: Bool
+//        
+//        if let selectedGenre = selectedGenre {
+//            // Сравниваем queryValue, потому что selectedGenre — это значение, отправляемое в API (на русском)
+//            isSelected = (genreItem.queryValue == selectedGenre)
+//        } else {
+//            isSelected = (indexPath.item == 0)
+//        }
+//        cell.isCellSelected = isSelected
+        
+        cell.isCellSelected = (indexPath.item == selectedGenreIndex)
         
         return cell
     }
-
-  
+    
+    
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        	let genreItem = genresList[indexPath.item]
-
-        // Обновляем состояние всех видимых ячеек
-        collectionView.visibleCells.forEach { cell in
-            if let categoryCell = cell as? CategoryCell {
-                categoryCell.isCellSelected = false
-            }
-        }
+        guard !isGenreSelectionLocked else { return }
         
-        // Обновляем выбранную ячейку
-        if let selectedCell = collectionView.cellForItem(at: indexPath) as? CategoryCell {
-            selectedCell.isCellSelected = true
-        }
+        searchTextField.text = ""
+        searchText = ""
+      
+        selectedGenreIndex = indexPath.item
         
-        self.selectedGenre = genreItem.queryValue
-        loadMoviesWithFilters()
+        let selectedCategory = (indexPath.item == 0) ? nil : genresList[indexPath.item].queryValue
+        
+        isGenreSelectionLocked = true
+        categoryCollectionView.isUserInteractionEnabled = false
+        
+        currentRequestToken = nil
+        searchTimer?.invalidate()
+        
+        collectionView.reloadData()
+        
+        collectionView.selectItem(
+            at: indexPath,
+            animated: true, scrollPosition: .centeredHorizontally
+        )
+        
+        currentPage = 1
+        movies.removeAll()
+        
+        searchTimer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: false) { [weak self] _ in
+            self?.loadMoviesWithFilters(self?.selectedGenre)
+           }
+        
     }
 }
 
@@ -659,7 +725,7 @@ extension SearchViewController {
     
     func updateLocalizedText() {
         
-        setTitleUpper(navItem: navigationItem, title: "Search".localized())
+      //  setTitleUpper(navItem: navigationItem, title: "Search".localized())
         
         if let textField = searchBar.viewWithTag(101) as? UITextField {
             textField.placeholder = "Search for movies".localized()
@@ -669,4 +735,3 @@ extension SearchViewController {
         categoryCollectionView.reloadData()
     }
 }
-

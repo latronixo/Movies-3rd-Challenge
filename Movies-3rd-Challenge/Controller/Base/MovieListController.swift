@@ -13,6 +13,7 @@ class MovieListController: UIViewController {
     private var isNavigatingToDetail = false
 
     // MARK: - UI
+    
        let tableView: UITableView = {
            let tableView = UITableView()
            tableView.rowHeight = 184
@@ -34,10 +35,9 @@ class MovieListController: UIViewController {
             super.viewDidLoad()
             
             loadData()
-            
+            setTitleUpper(navigationController, "Recent Watch", view)
             setViews()
             setDelegates()
-            setupNavigationBar()
         }
     
     // MARK: - Methods to override
@@ -79,19 +79,6 @@ class MovieListController: UIViewController {
     private func setDelegates() {
         tableView.dataSource = self
         tableView.delegate = self
-    }
-    
-    func setupNavigationBar() {
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.label]
-        appearance.backgroundColor = .systemBackground
-        appearance.shadowColor = .clear
-        
-        navigationController?.navigationBar.isTranslucent = true
-        navigationController?.navigationBar.backgroundColor = .clear
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
     }
     
     func setupConstraints() {

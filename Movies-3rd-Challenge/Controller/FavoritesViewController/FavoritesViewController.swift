@@ -28,9 +28,8 @@ class FavoritesViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setTitleUpper(navItem: navigationItem, title: "Favorites")
-        navigationBarAppearanceSettings()
+    
+        setTitleUpper(navigationController, "Favorites", view)
         
         setViews()
         setDelegates()
@@ -38,6 +37,10 @@ class FavoritesViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
+        navigationItem.title = ""
+        navigationItem.titleView = UIView()
+        
         movies = RealmManager.shared.getAllFavorites()
         tableView.reloadData()
     }
@@ -59,17 +62,6 @@ class FavoritesViewController: UIViewController {
     private func setDelegates() {
         tableView.dataSource = self
         tableView.delegate = self
-    }
-    
-    func navigationBarAppearanceSettings() {
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.label]
-        appearance.backgroundColor = .systemBackground
-        appearance.shadowColor = .clear
-        
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
     }
 }
 
