@@ -97,6 +97,8 @@ enum UsersFireSore: String {
     case male = "Пол"
     case dateOfBirth = "Дата рождения"
     case location = "Местоположение"
+    case avatarURL = "Аватар"
+
 }
 //MARK: USER
 class User {
