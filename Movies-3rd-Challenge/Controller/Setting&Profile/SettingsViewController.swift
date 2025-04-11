@@ -13,6 +13,8 @@ class SettingsViewController: UIViewController {
 
     // MARK: - UI Elements
 
+    private var user: User?
+
     private lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "avatar")
@@ -168,9 +170,9 @@ class SettingsViewController: UIViewController {
         return button
     }()
     
-    private lazy var userName = "Andy"
-    private lazy var lastName = "Lexian"
-    private lazy var login = "@" + userName + "999" //непонятно откуда брать, можно первую часть от почты
+    private lazy var userName = ""
+    private lazy var lastName = ""
+    private lazy var login = "@" + userName
     private var newPassword: String?
     
     private lazy var titleLabel: UILabel = {
@@ -190,6 +192,7 @@ class SettingsViewController: UIViewController {
         setupUI()
         
         languageDidChange()
+        loadUserInfo()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -322,6 +325,17 @@ class SettingsViewController: UIViewController {
                }
            }
     }
+    
+    private func loadUserInfo() {
+        UserInfo.shared.getUser { [weak self] user in
+            guard let self = self, let user = user else { return }
+            self.user = user
+            DispatchQueue.main.async {
+                self.nameLabel.text = "\(user.firstName) \(user.lastName)"
+                self.usernameLabel.text = "@" + user.firstName + "999"
+            }
+        }
+    }
 
     // MARK: - Actions
 
@@ -344,12 +358,27 @@ class SettingsViewController: UIViewController {
              
             }
             
-            let saveAction = UIAlertAction(title: "Save", style: .default) { [weak self] _ in
-                guard let password = alert.textFields?.first?.text, !password.isEmpty else { return }
-                self?.newPassword = password
-                
-                // сохр в Firebase
-            }
+        let saveAction = UIAlertAction(title: "Save", style: .default) { _ in
+               guard let newPassword = alert.textFields?.first?.text, !newPassword.isEmpty else {
+                   self.showAlert(title: "Error", message: "Password cannot be empty")
+                   return
+               }
+               
+               guard let user = Auth.auth().currentUser else {
+                   self.showAlert(title: "Error", message: "No user is logged in")
+                   return
+               }
+
+               user.updatePassword(to: newPassword) { error in
+                   DispatchQueue.main.async {
+                       if let error = error {
+                           self.showAlert(title: "Error", message: error.localizedDescription)
+                       } else {
+                           self.showAlert(title: "Success", message: "Password updated successfully")
+                       }
+                   }
+               }
+           }
             
         let cancelAction = UIAlertAction(title: "Cancel".localized(), style: .cancel)
             
@@ -360,17 +389,20 @@ class SettingsViewController: UIViewController {
     }
 
     @objc private func forgotPasswordButtonTapped() {
-        //запрос в файрбейз
-        let alert = UIAlertController(
-            title: nil,
-            message: "New password was sent to your email".localized(),
-                preferredStyle: .alert
-            )
-            
-            let okAction = UIAlertAction(title: "Ок", style: .default)
-            alert.addAction(okAction)
-            
-            present(alert, animated: true)
+        guard let email = Auth.auth().currentUser?.email else {
+            self.showAlert(title: "Error", message: "Email not found")
+            return
+        }
+        
+        Auth.auth().sendPasswordReset(withEmail: email) { error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    self.showAlert(title: "Error", message: error.localizedDescription)
+                } else {
+                    self.showAlert(title: "Success", message: "Reset link was sent to \(email)")
+                }
+            }
+        }
     }
 
     @objc private func darkModeSwitchChanged() {
@@ -423,6 +455,16 @@ class SettingsViewController: UIViewController {
         titleLabel.text = "Settings".localized()
     }
     
+}
+extension SettingsViewController {
+    func showAlert(title: String, message: String, completion: (() -> Void)? = nil) {
+        let alert = UIAlertController(title: title.localized(), message: message.localized(), preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK".localized(), style: .default) { _ in
+            completion?()
+        }
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
+    }
 }
 
 

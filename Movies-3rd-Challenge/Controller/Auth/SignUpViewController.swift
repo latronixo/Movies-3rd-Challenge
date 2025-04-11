@@ -91,7 +91,9 @@ override func viewWillAppear(_ animated: Bool) {
             UsersFireSore.email.rawValue: email,
             UsersFireSore.dateOfBirth.rawValue: "Еще не задано",
             UsersFireSore.male.rawValue: "Еще не задано",
-            UsersFireSore.location.rawValue: "Еще не задано"
+            UsersFireSore.location.rawValue: "Еще не задано",
+            "didSeeOnboarding": false
+
         ]) { error in
             if let error = error {
                 print("ошибка \(error.localizedDescription)")
