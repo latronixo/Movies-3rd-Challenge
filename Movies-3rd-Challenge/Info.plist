@@ -20,6 +20,7 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>Montserrat-Medium.ttf</string>
+		<string></string>
 		<string>PlusJakartaSans-Bold.ttf</string>
 		<string>PlusJakartaSans-SemiBold.ttf</string>
 		<string>PlusJakartaSans-Medium.ttf</string>

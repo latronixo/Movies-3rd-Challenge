@@ -13,6 +13,14 @@ class MovieListController: UIViewController {
     private var isNavigatingToDetail = false
 
     // MARK: - UI
+    
+    lazy var titleLabel: UILabel = {
+        let element = UILabel()
+        element.font = UIFont(name: "PlusJakartaSans-Bold", size: 18)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
        let tableView: UITableView = {
            let tableView = UITableView()
            tableView.rowHeight = 184
@@ -92,6 +100,7 @@ class MovieListController: UIViewController {
         navigationController?.navigationBar.backgroundColor = .clear
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        self.navigationItem.titleView = titleLabel
     }
     
     func setupConstraints() {

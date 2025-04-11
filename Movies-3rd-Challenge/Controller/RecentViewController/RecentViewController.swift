@@ -34,7 +34,7 @@ class RecentViewController: MovieListController {
         super.viewWillAppear(animated)
         
         loadData()
-        setTitleUpper(navItem: navigationItem, title: "Recent Watch")
+        titleLabel.text = "Recent Watch"
         setupCategoryFilter()
         setupConstraints()
         

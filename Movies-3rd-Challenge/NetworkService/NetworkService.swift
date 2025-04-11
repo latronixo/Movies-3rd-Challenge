@@ -6,6 +6,7 @@ class NetworkService {
     private let universalSearchMoviesURLString = "https://api.kinopoisk.dev/v1.4/movie"
     private let movieDetailURLString = "https://api.kinopoisk.dev/v1.4/movie/"
     private let apiKey = Secrets.apiKey
+    private var currentTask: URLSessionTask?
     
     static let shared = NetworkService()
     
@@ -89,15 +90,19 @@ class NetworkService {
     
     // MARK: - поиск по жанрам и рейтингу
     
-    func fetchMovies(_ currentPage: Int, _ genres: String?, _ rating: Int?, completion: @escaping ([Movie]) -> Void) {
+    func fetchMovies(_ currentPage: Int, _ selectedCategory: String?, _ rating: Int?, completion: @escaping ([Movie]) -> Void) {
+        
+        currentTask?.cancel()
+        
         // Создаем базовые компоненты URL
         var urlComponents = URLComponents(string: universalSearchMoviesURLString)
         
+        let sortField = (rating != nil) ? "rating.kp" : "votes.kp"
+        
         // Создаем массив для query items
         var queryItems = [
-            URLQueryItem(name: "page", value: String(currentPage)),
             URLQueryItem(name: "limit", value: String(10)),
-            URLQueryItem(name: "sortField", value: "rating.kp"),
+            URLQueryItem(name: "sortField", value: sortField),
             URLQueryItem(name: "sortType", value: "-1"),
             URLQueryItem(name: "notNullFields", value: "id"),
             URLQueryItem(name: "notNullFields", value: "name"),
@@ -110,19 +115,29 @@ class NetworkService {
             URLQueryItem(name: "selectFields", value: "poster"),
             URLQueryItem(name: "selectFields", value: "votes"),
             URLQueryItem(name: "selectFields", value: "genres"),
+            
             URLQueryItem(name: "selectFields", value: "year"),
+            
+            // можно добавить этот запрос, чтобы уменьшить количество выгружаемых данных и ускорить работу сети
+//            URLQueryItem(name: "year", value: String(Calendar.current.component(.year, from: Date()))),
+            
+            URLQueryItem(name: "type", value: "movie")
         ]
         
         // Добавляем параметры жанра
-        if let genre = genres {
-            if genre == "другие" {
+        if let genres = selectedCategory, genres != "Все" {
+            if genres == "другие" {
+                queryItems.append(URLQueryItem(name: "page", value: String(currentPage)))
                 queryItems.append(URLQueryItem(name: "genres.name", value: "!боевик"))
                 queryItems.append(URLQueryItem(name: "genres.name", value: "!приключения"))
                 queryItems.append(URLQueryItem(name: "genres.name", value: "!детектив"))
                 queryItems.append(URLQueryItem(name: "genres.name", value: "!фэнтези"))
-            } else if genre != "Все" {
-                queryItems.append(URLQueryItem(name: "genres.name", value: genre))
+            } else {
+                queryItems.append(URLQueryItem(name: "page", value: String(currentPage)))
+                queryItems.append(URLQueryItem(name: "genres.name", value: genres))
             }
+        } else if rating == nil {
+            queryItems.append(URLQueryItem(name: "page", value: String(Int.random(in: 1...50))))
         }
         
         // Добавляем параметры рейтинга
@@ -137,21 +152,20 @@ class NetworkService {
             }
             queryItems.append(URLQueryItem(name: "rating.kp", value: ratingValue))
         }
-        
+    
         urlComponents?.queryItems = queryItems
         
         guard let url = urlComponents?.url else {
             completion([])
             return
         }
-        
         // Создаем запрос
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue(apiKey, forHTTPHeaderField: "X-API-KEY")
         
         // Выполняем запрос
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        currentTask = URLSession.shared.dataTask(with: request) { data, response, error in
             // Проверяем на наличие ошибки
             if let error = error {
                 print("Error fetching movies: \(error.localizedDescription)")
@@ -195,7 +209,8 @@ class NetworkService {
                 print("Response data: \(String(data: data, encoding: .utf8) ?? "No data")")
                 completion([])
             }
-        }.resume()
+        }
+        currentTask?.resume()
     }
     
     // MARK: - поиск по id
@@ -400,7 +415,6 @@ class NetworkService {
             completion([])
             return
         }
-        
         //Создаем запрос
         var request = URLRequest(url: url)
         request.httpMethod = "GET"

@@ -24,13 +24,21 @@ class FavoritesViewController: UIViewController {
         return tableView
     }()
     
+    private lazy var titleLabel: UILabel = {
+        let element = UILabel()
+        element.font = UIFont(name: "PlusJakartaSans-Bold", size: 18)
+        element.translatesAutoresizingMaskIntoConstraints = false
+        return element
+    }()
+    
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setTitleUpper(navItem: navigationItem, title: "Favorites")
+    
         navigationBarAppearanceSettings()
+        titleLabel.text = "Favorites"
+        self.navigationItem.titleView = titleLabel
         
         setViews()
         setDelegates()
@@ -38,6 +46,7 @@ class FavoritesViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
         movies = RealmManager.shared.getAllFavorites()
         tableView.reloadData()
     }
