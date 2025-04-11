@@ -24,21 +24,12 @@ class FavoritesViewController: UIViewController {
         return tableView
     }()
     
-    private lazy var titleLabel: UILabel = {
-        let element = UILabel()
-        element.font = UIFont(name: "PlusJakartaSans-Bold", size: 18)
-        element.translatesAutoresizingMaskIntoConstraints = false
-        return element
-    }()
-    
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
     
-        navigationBarAppearanceSettings()
-        titleLabel.text = "Favorites"
-        self.navigationItem.titleView = titleLabel
+        setTitleUpper(navigationController, "Favorites", view)
         
         setViews()
         setDelegates()
@@ -46,6 +37,9 @@ class FavoritesViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
+        navigationItem.title = ""
+        navigationItem.titleView = UIView()
         
         movies = RealmManager.shared.getAllFavorites()
         tableView.reloadData()
@@ -68,17 +62,6 @@ class FavoritesViewController: UIViewController {
     private func setDelegates() {
         tableView.dataSource = self
         tableView.delegate = self
-    }
-    
-    func navigationBarAppearanceSettings() {
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.label]
-        appearance.backgroundColor = .systemBackground
-        appearance.shadowColor = .clear
-        
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
     }
 }
 

@@ -33,8 +33,11 @@ class RecentViewController: MovieListController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        navigationItem.title = ""
+        navigationItem.titleView = UIView()
+        
         loadData()
-        titleLabel.text = "Recent Watch"
+        
         setupCategoryFilter()
         setupConstraints()
         

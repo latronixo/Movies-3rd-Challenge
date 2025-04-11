@@ -179,13 +179,10 @@ final class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setTitleUpper(navigationController, "Search", view)
+        
         // Устанавливаем цвет фона в зависимости от темы
         view.backgroundColor = .systemBackground
-        
-        navigationController?.navigationBar.isTranslucent = true
-        navigationController?.navigationBar.backgroundColor = .clear
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.shadowImage = UIImage()
         
         //убираем разделители между ячейками
         tableView.separatorStyle = .none
@@ -207,13 +204,8 @@ final class SearchViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        
-        navigationController?.navigationBar.isTranslucent = true
-        navigationController?.navigationBar.backgroundColor = .clear
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.shadowImage = UIImage()
-        
-        setTitleUpper(navItem: navigationItem, title: "Search")
+        navigationItem.title = ""
+        navigationItem.titleView = UIView()
         
         addObserverForLocalization()
         tableView.reloadData()
@@ -745,4 +737,3 @@ extension SearchViewController {
         categoryCollectionView.reloadData()
     }
 }
-
