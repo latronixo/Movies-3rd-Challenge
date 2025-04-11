@@ -42,16 +42,16 @@ class RealmManager {
                     realm.add(newUser)
                     
                     // Проверяем, существует ли FavoriteRealm c данным id
-                    if realm.object(ofType: FavoriteRealm.self, forPrimaryKey: firebaseUser.uid) == nil {
-                        print(firebaseUser.uid)
-                        //если не существует, то создаем новую таблицу FavoriteRealm
-                        let favorites = FavoriteRealm(userId: firebaseUser.uid)
-                        realm.add(favorites)
-                        newUser.favorites = favorites
-                    } else {
-                        // а если существует, то закрепляем за пользователем уже существующую таблицу FavoriteRealm
-                        newUser.favorites = realm.object(ofType: FavoriteRealm.self, forPrimaryKey: firebaseUser.uid)
-                    }
+//                    if realm.object(ofType: FavoriteRealm.self, forPrimaryKey: firebaseUser.uid) == nil {
+//                        print(firebaseUser.uid)
+//                        //если не существует, то создаем новую таблицу FavoriteRealm
+//                        let favorites = FavoriteRealm(userId: firebaseUser.uid)
+//                        realm.add(favorites)
+//                        newUser.favorites = favorites
+//                    } else {
+//                        // а если существует, то закрепляем за пользователем уже существующую таблицу FavoriteRealm
+//                        newUser.favorites = realm.object(ofType: FavoriteRealm.self, forPrimaryKey: firebaseUser.uid)
+//                    }
                 }
                 return newUser
             } catch {

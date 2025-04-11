@@ -17,7 +17,14 @@ class UserRealm: Object {
     convenience init(firebaseUserId: String) {
         self.init()
         self.firebaseUserId = firebaseUserId
-        self.favorites = FavoriteRealm()
+        
+        if let realm = try? Realm(),
+           let existingFavorites = realm.object(ofType: FavoriteRealm.self, forPrimaryKey: firebaseUserId) {
+            self.favorites = existingFavorites
+        } else {
+            self.favorites = FavoriteRealm(userId: firebaseUserId)
+        }
+        
         self.recentWatch = RecentWatchRealm()
     }
 }
