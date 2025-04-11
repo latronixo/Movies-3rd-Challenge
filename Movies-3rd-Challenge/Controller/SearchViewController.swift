@@ -639,8 +639,6 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
       
         selectedGenreIndex = indexPath.item
         
-        let selectedCategory = (indexPath.item == 0) ? nil : genresList[indexPath.item].queryValue
-        
         isGenreSelectionLocked = true
         categoryCollectionView.isUserInteractionEnabled = false
         
