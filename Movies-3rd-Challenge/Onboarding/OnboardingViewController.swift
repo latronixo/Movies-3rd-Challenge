@@ -75,6 +75,7 @@ final class OnboardingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        updateLocalizedText()
         setupUI()
     }
     
@@ -91,8 +92,8 @@ final class OnboardingViewController: UIViewController {
         view.addSubview(collectionView)
         view.addSubview(pageControl)
         
-        pageControl.numberOfPages = slides.count
-        pageControl.transform = CGAffineTransform(scaleX: 1.5, y: 1.5) // Увеличиваем размер точек
+        pageControl.numberOfPages = slideKeys.count
+        pageControl.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
         navigationController?.setNavigationBarHidden(true, animated: false)
         
         NSLayoutConstraint.activate([
@@ -104,6 +105,8 @@ final class OnboardingViewController: UIViewController {
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             pageControl.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -397)
         ])
+        
+        pageControl.currentPage = 0
     }
     
     // MARK: - Button Actions
@@ -119,9 +122,10 @@ final class OnboardingViewController: UIViewController {
     private func scrollToNextSlide() {
         let currentPage = pageControl.currentPage
         if currentPage < slides.count - 1 {
-            let indexPath = IndexPath(item: currentPage + 1, section: 0)
+            let nextPage = currentPage + 1
+            let indexPath = IndexPath(item: nextPage, section: 0)
             collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-            pageControl.currentPage = currentPage + 1
+            pageControl.currentPage = nextPage
         }
     }
 }
@@ -200,5 +204,12 @@ extension OnboardingViewController {
                 description: descriptionKey.localized()
             )
         }
+        pageControl.numberOfPages = slides.count
         collectionView.reloadData()
-    }}
+        
+        // Если это первая загрузка, прокручиваем к началу
+        if pageControl.currentPage == 0 {
+            collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .centeredHorizontally, animated: false)
+        }
+    }
+}
