@@ -29,14 +29,29 @@ class RealmManager {
             return nil
         }
         
+        //Проверяем, есть ли текущий пользователь в базе
         if let existingUser = realm.object(ofType: UserRealm.self, forPrimaryKey: firebaseUser.uid) {
             return existingUser
         } else {
             // Создаем нового пользователя если не найден
+            print("firebaseUser.uid = \(firebaseUser.uid)")
+            
             let newUser = UserRealm(firebaseUserId: firebaseUser.uid)
             do {
                 try realm.write {
                     realm.add(newUser)
+                    
+                    // Проверяем, существует ли FavoriteRealm c данным id
+                    if realm.object(ofType: FavoriteRealm.self, forPrimaryKey: firebaseUser.uid) == nil {
+                        print(firebaseUser.uid)
+                        //если не существует, то создаем новую таблицу FavoriteRealm
+                        let favorites = FavoriteRealm(userId: firebaseUser.uid)
+                        realm.add(favorites)
+                        newUser.favorites = favorites
+                    } else {
+                        // а если существует, то закрепляем за пользователем уже существующую таблицу FavoriteRealm
+                        newUser.favorites = realm.object(ofType: FavoriteRealm.self, forPrimaryKey: firebaseUser.uid)
+                    }
                 }
                 return newUser
             } catch {
@@ -181,18 +196,4 @@ class RealmManager {
             return movie
         }
     }
-    
-    // Очистить историю просмотров пользователя
-//    func clearRecentWatchHistory(userId: String) {
-//        do {
-//            guard let user = getUser(id: userId), let recentWatch = user.recentWatch else { return }
-//            
-//            try realm.write {
-//                realm.delete(recentWatch.docs)
-//            }
-//        } catch {
-//            print("Error clearing recent watch history: \(error)")
-//        }
-//    }
 }
-
