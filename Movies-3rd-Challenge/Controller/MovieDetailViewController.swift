@@ -6,14 +6,14 @@
 //
 import UIKit
 import Kingfisher
-import AVKit
-import AVFoundation
+import WebKit
 
 class TempMovieDetailViewController: UIViewController {
     private let mainView: TempMovieDetailView = .init()
     private var movie: Movie
     private var detail: MovieDetail
     private var showMore: Bool = false
+    private var webView: WKWebView?
     
     init(movie: Movie, detail: MovieDetail) {
         self.movie = movie
@@ -33,7 +33,6 @@ class TempMovieDetailViewController: UIViewController {
         configure()
         setupCollectionView()
         setupButtons()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -45,6 +44,8 @@ class TempMovieDetailViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         removeObserverForLocalization()
+        webView?.removeFromSuperview()
+        webView = nil
     }
     
     // MARK: - Setup Methods
@@ -91,6 +92,67 @@ class TempMovieDetailViewController: UIViewController {
         mainView.wathchButton.addTarget(self, action: #selector(watchNowTapped), for: .touchUpInside)
     }
     
+    // MARK: - Video Playback
+    
+    @objc private func watchNowTapped() {
+        RealmManager.shared.addToRecentWatch(movie: movie)
+        
+        guard let videoURL = self.detail.videos?.trailers?.first?.url else {
+            self.showAlert(title: "Ошибка", message: "Трейлер не доступен")
+            return
+        }
+//        let videoURL = "https://rutube.ru/video/18a647acb3a93c15a43e96b1bb9b8bf1/?playlist=374796" //Можно посмтреть симпсонов
+        guard let makeURL = URL(string: videoURL) else {
+            showAlert(title: "Ошибка", message: "Video URL not available")
+            return
+        }
+        
+        if let existingWebView = webView {
+            existingWebView.isHidden = false
+            view.bringSubviewToFront(existingWebView)
+        } else {
+            setupWebView(with: makeURL)
+        }
+    }
+    
+    private func setupWebView(with url: URL) {
+        let config = WKWebViewConfiguration()
+        config.allowsInlineMediaPlayback = true
+        config.mediaTypesRequiringUserActionForPlayback = []
+        
+
+        webView = WKWebView(frame: view.bounds, configuration: config)
+        webView?.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        webView?.navigationDelegate = self
+
+        addCloseButton()
+        
+        guard let webView = webView else { return }
+        view.addSubview(webView)
+        
+        let request = URLRequest(url: url)
+        webView.load(request)
+    }
+    
+    private func addCloseButton() {
+        let closeButton = UIButton(type: .system)
+        closeButton.setTitle("×", for: .normal)
+        closeButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 24)
+        closeButton.backgroundColor = .darkGray.withAlphaComponent(0.7)
+        closeButton.tintColor = .white
+        closeButton.layer.cornerRadius = 15
+        closeButton.frame = CGRect(x: view.bounds.width - 50, y: view.safeAreaInsets.top + 20, width: 30, height: 30)
+        closeButton.addTarget(self, action: #selector(closeVideo), for: .touchUpInside)
+        
+        webView?.addSubview(closeButton)
+        webView?.bringSubviewToFront(closeButton)
+    }
+    
+    @objc private func closeVideo() {
+        webView?.removeFromSuperview()
+        webView = nil
+    }
+    
     // MARK: - Favorite Logic
     
     private func updateFavoriteButtonState() {
@@ -135,21 +197,6 @@ class TempMovieDetailViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
     
-    @objc private func watchNowTapped() {
-        guard let videoURL = self.detail.videos?.trailers?.first?.url else {
-            self.showAlert(title: "Ошибка", message: "У данного видео нет трейлера")
-            return
-        }
-        RealmManager.shared.addToRecentWatch(movie: movie)
-        print("\(videoURL)")
-        let player = AVPlayer(url: URL(string: videoURL)!)
-        let playerViewController = AVPlayerViewController()
-        playerViewController.player = player
-        present(playerViewController, animated: true) {
-            player.play()
-        }
-    }
-    
     @objc private func showMoreTapped() {
         showMore.toggle()
         mainView.descriptionOfMovie.numberOfLines = showMore ? 0 : 3
@@ -178,7 +225,8 @@ class TempMovieDetailViewController: UIViewController {
             star.tintColor = .systemYellow
         }
     }
-    //MARK: ALERT
+    
+    // MARK: ALERT
     private func showAlert(title: String, message: String, completion: (() -> Void)? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
@@ -192,8 +240,20 @@ class TempMovieDetailViewController: UIViewController {
     }
 }
 
-// MARK: - CollectionView Extensions
+// MARK: - WKNavigationDelegate
+extension TempMovieDetailViewController: WKNavigationDelegate {
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        print("Video loaded successfully")
+    }
+    
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        showAlert(title: "Error", message: "Failed to load video: \(error.localizedDescription)")
+        webView.removeFromSuperview()
+        self.webView = nil
+    }
+}
 
+// MARK: - CollectionView Extensions
 extension TempMovieDetailViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView,
                        layout collectionViewLayout: UICollectionViewLayout,
@@ -235,7 +295,6 @@ extension TempMovieDetailViewController: UICollectionViewDataSource {
 }
 
 // MARK: - Localization
-
 extension TempMovieDetailViewController {
     private func addObserverForLocalization() {
         NotificationCenter.default.addObserver(forName: LanguageManager.languageDidChangeNotification,
