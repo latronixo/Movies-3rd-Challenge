@@ -7,6 +7,7 @@
 
 import UIKit
 import GoogleSignIn
+import FirebaseAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
