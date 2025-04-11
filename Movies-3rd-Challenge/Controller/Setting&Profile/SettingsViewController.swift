@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FirebaseFirestore
 
 class SettingsViewController: UIViewController {
 
@@ -380,7 +382,22 @@ class SettingsViewController: UIViewController {
     }
 
     @objc private func logoutButtonTapped() {
-        //fb
+        do {
+                try Auth.auth().signOut()
+                
+                let loginVC = LoginVC()
+                let navVC = UINavigationController(rootViewController: loginVC)
+                navVC.modalPresentationStyle = .fullScreen
+                
+                self.present(navVC, animated: true)
+                
+            } catch let signOutError as NSError {
+                print("Ошибка при выходе из Firebase: \(signOutError.localizedDescription)")
+                let alert = UIAlertController(title: "Ошибка", message: "Не удалось выйти из аккаунта", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ок", style: .default))
+                present(alert, animated: true)
+            }
+ 
     }
     
         // MARK: Localization methods
