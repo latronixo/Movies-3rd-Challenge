@@ -24,6 +24,18 @@ class UserRealm: Object {
 
 // MARK: - Классы для избранного
 
+//класс избранного для хранения списка объектов FavoriteMovieRealm
+class FavoriteRealm: Object {
+    @Persisted(primaryKey: true) var id: String                 // Уникальный ID для избранного, связанный с пользователем
+    @Persisted var favoriteMovies = List<FavoriteMovieRealm>()  // Список избранных фильмов
+    @Persisted var user: UserRealm?                             // Связь с пользователем
+
+    convenience init(userId: String) {
+        self.init()
+        self.id = userId // ID совпадает с ID пользователя
+    }
+}
+
 //класс с датой просмотра
 class FavoriteMovieRealm: Object {
     @Persisted(primaryKey: true) var id: String // Уникальный идентификатор для избранного фильма
@@ -35,18 +47,6 @@ class FavoriteMovieRealm: Object {
         self.id = "\(movie.movieId)-\(UUID().uuidString)" // Уникальный ID
         self.movie = movie
         self.addedDate = addedDate
-    }
-}
-
-//класс избранного для хранения списка объектов FavoriteMovieRealm
-class FavoriteRealm: Object {
-    @Persisted(primaryKey: true) var id: String                 // Уникальный ID для избранного, связанный с пользователем
-    @Persisted var favoriteMovies = List<FavoriteMovieRealm>()  // Список избранных фильмов
-    @Persisted var user: UserRealm?                             // Связь с пользователем
-
-    convenience init(userId: String) {
-        self.init()
-        self.id = userId // ID совпадает с ID пользователя
     }
 }
 
