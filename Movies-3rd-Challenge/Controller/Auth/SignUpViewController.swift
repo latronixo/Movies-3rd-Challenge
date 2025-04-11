@@ -174,10 +174,11 @@ override func viewWillAppear(_ animated: Bool) {
             UsersFireSore.email.rawValue: email,
             UsersFireSore.dateOfBirth.rawValue: "Еще не задано",
             UsersFireSore.male.rawValue: "Еще не задано",
-            UsersFireSore.location.rawValue: "Еще не задано"
-        ]) { [weak self] error in
-            guard let self = self else { return }
-            
+            UsersFireSore.location.rawValue: "Еще не задано",
+            "didSeeOnboarding": false
+//            UsersFireSore.avatarURL.rawValue: "default"
+
+        ]) { error in
             if let error = error {
                 DispatchQueue.main.async {
                     self.showAlert(title: "Ошибка", message: "Ошибка сохранения данных: \(error.localizedDescription)")

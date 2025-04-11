@@ -33,6 +33,9 @@ class TempMovieDetailViewController: UIViewController {
         configure()
         setupCollectionView()
         setupButtons()
+        
+        updateLocalizedText()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {

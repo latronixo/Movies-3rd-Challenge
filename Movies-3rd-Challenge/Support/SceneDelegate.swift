@@ -39,18 +39,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let url = URLContexts.first?.url else { return }
         GIDSignIn.sharedInstance.handle(url)
     }
-//    func sceneDidBecomeActive(_ scene: UIScene) {
-//        if let theme = UserDefaults.standard.string(forKey: "AppTheme") {
-//                switch theme {
-//                case "dark":
-//                    window?.overrideUserInterfaceStyle = .dark
-//                case "light":
-//                    window?.overrideUserInterfaceStyle = .light
-//                default:
-//                    window?.overrideUserInterfaceStyle = .unspecified  
-//                }
-//            }
-//        }
+
   
 }
 
