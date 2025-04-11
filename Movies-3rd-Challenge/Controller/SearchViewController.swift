@@ -407,7 +407,7 @@ extension SearchViewController: FilterViewControllerDelegate {
                let index = genresList.firstIndex(where: { $0.queryValue == category }) {
                 selectedGenreIndex = index
             } else {
-                selectedGenreIndex = 0  // "Все"
+                selectedGenreIndex = 0
             }
     
         selectedRating = rating
@@ -657,7 +657,7 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
         movies.removeAll()
         
         searchTimer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: false) { [weak self] _ in
-            self?.loadMoviesWithFilters(self?.selectedGenre)
+            self?.loadMoviesWithFilters(selectedCategory)
            }
         
     }
@@ -724,7 +724,7 @@ extension SearchViewController {
     
     func updateLocalizedText() {
         
-      //  setTitleUpper(navItem: navigationItem, title: "Search".localized())
+        setupCustomTitle("Search".localized(), navigationItem)
         
         if let textField = searchBar.viewWithTag(101) as? UITextField {
             textField.placeholder = "Search for movies".localized()
