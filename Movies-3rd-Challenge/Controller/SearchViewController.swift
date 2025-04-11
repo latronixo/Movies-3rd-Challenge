@@ -179,7 +179,7 @@ final class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setTitleUpper(navigationController, "Search", view)
+        setupCustomTitle("Search", navigationItem)
         
         // Устанавливаем цвет фона в зависимости от темы
         view.backgroundColor = .systemBackground
@@ -204,8 +204,7 @@ final class SearchViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        navigationItem.title = ""
-        navigationItem.titleView = UIView()
+        setupCustomTitle("Search", navigationItem)
         
         addObserverForLocalization()
         tableView.reloadData()
@@ -244,7 +243,7 @@ final class SearchViewController: UIViewController {
         
         NSLayoutConstraint.activate([
 
-            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -20),
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
             searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             searchBar.heightAnchor.constraint(equalToConstant: 50),

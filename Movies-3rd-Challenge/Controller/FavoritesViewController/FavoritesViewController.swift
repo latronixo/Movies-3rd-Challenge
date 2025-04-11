@@ -28,8 +28,8 @@ class FavoritesViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
-        setTitleUpper(navigationController, "Favorites", view)
+        
+        setupCustomTitle("Favorites", navigationItem)
         
         setViews()
         setDelegates()
@@ -38,8 +38,7 @@ class FavoritesViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         
-        navigationItem.title = ""
-        navigationItem.titleView = UIView()
+        setupCustomTitle("Favorites", navigationItem)
         
         movies = RealmManager.shared.getAllFavorites()
         tableView.reloadData()
