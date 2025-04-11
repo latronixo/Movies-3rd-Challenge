@@ -3,6 +3,7 @@ import UIKit
 class RecentViewController: MovieListController {
     
     private var selectedCategoryIndex: Int = 0
+    private var categories: [GenreItem] = GenreProvider.genres(for: LanguageManager.shared.currentLanguage)
     
     private lazy var categoriesContainer:  UIView = {
         let container = UIView()
@@ -36,6 +37,14 @@ class RecentViewController: MovieListController {
         setTitleUpper(navItem: navigationItem, title: "Recent Watch")
         setupCategoryFilter()
         setupConstraints()
+        
+        addObserverForLocalization()
+
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeObserverForLocalization()
     }
     
     override func loadData(category: String = "Все") {
@@ -96,7 +105,7 @@ extension RecentViewController: UICollectionViewDelegate, UICollectionViewDataSo
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
-        cell.configure(title: categories[indexPath.item])
+        cell.configure(title: categories[indexPath.item].displayName)
         cell.isCellSelected = (indexPath.item == selectedCategoryIndex)
         return cell
     }
@@ -105,8 +114,9 @@ extension RecentViewController: UICollectionViewDelegate, UICollectionViewDataSo
         selectedCategoryIndex = indexPath.item
         collectionView.reloadData()
         
-        let selectedCategory = categories[indexPath.item]
-        loadData(category: selectedCategory)
+        let selectedGenreItem = categories[indexPath.item]
+        let queryValue = selectedGenreItem.queryValue ?? selectedGenreItem.displayName
+        loadData(category: queryValue)
     }
 }
 
@@ -116,8 +126,29 @@ extension RecentViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        let title = categories[indexPath.item]
+        let title = categories[indexPath.item].displayName
         let width = (title as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: 14)]).width + 32
         return CGSize(width: width, height: 32)
+    }
+}
+
+// Localization
+extension RecentViewController {
+    private func addObserverForLocalization() {
+        NotificationCenter.default.addObserver(
+            forName: LanguageManager.languageDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.updateLocalizedText()
+        }
+    }
+    private func removeObserverForLocalization() {
+        NotificationCenter.default.removeObserver(self, name: LanguageManager.languageDidChangeNotification, object: nil)
+    }
+    @objc func updateLocalizedText() {
+        self.categories = GenreProvider.genres(for: LanguageManager.shared.currentLanguage)
+        categoryCollectionView.reloadData()
+        loadData(category: categories[selectedCategoryIndex].queryValue ?? categories[selectedCategoryIndex].displayName)
     }
 }

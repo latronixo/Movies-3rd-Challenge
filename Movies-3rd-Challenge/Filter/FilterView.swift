@@ -145,8 +145,8 @@ class FilterView: UIView {
     // MARK: - Data
     
     // Массив доступных категорий
-    private let categories = Constants.genres
-    
+    private var categories: [GenreItem] = GenreProvider.genres(for: LanguageManager.shared.currentLanguage)
+
     // Массив доступных рейтингов (количество звезд)
     private let ratings = [1, 2, 3, 4, 5]
     
@@ -231,7 +231,8 @@ class FilterView: UIView {
         
         // Выбираем категорию, выбранную на экране Search. А по умолчанию - Все
         var indexOfDefaultSelectedCategory: Int? = 0
-        if let selCategory = selectedCategory, let indexOfCategory = categories.firstIndex(of: selCategory) {
+        if let selCategory = selectedCategory,
+           let indexOfCategory = categories.firstIndex(where: { $0.displayName == selCategory }){
             indexOfDefaultSelectedCategory = indexOfCategory
         }
             let defaultCategoryIndex = IndexPath(item: indexOfDefaultSelectedCategory!, section: 0)
@@ -286,7 +287,9 @@ class FilterView: UIView {
         ratingCollectionView.selectItem(at: nil, animated: false, scrollPosition: .top)
         
         // Устанавливаем выбранную категорию
-        if let selCategory = selectedCategory, let index = categories.firstIndex(of: selCategory) {
+        if let selCategory = selectedCategory,
+           let index = categories.firstIndex(where: { $0.queryValue == selCategory }) {
+
             let indexPath = IndexPath(item: index, section: 0)
             categoriesCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .top)
             selectedCategoryIndex = indexPath
@@ -308,7 +311,7 @@ class FilterView: UIView {
     // Возвращает выбранную категорию
     func getSelectedCategory() -> String? {
         if let indexPath = selectedCategoryIndex {
-            return categories[indexPath.item]
+            return categories[indexPath.item].queryValue
         }
         return nil
     }
@@ -319,6 +322,11 @@ class FilterView: UIView {
             return ratings[indexPath.item]
         }
         return nil
+    }
+    
+    func updateLocalizedGenres() {
+        categories = GenreProvider.genres(for: LanguageManager.shared.currentLanguage)
+        categoriesCollectionView.reloadData()
     }
 }
 
@@ -338,7 +346,7 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == categoriesCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FilterCategoryCell.identifier, for: indexPath) as! FilterCategoryCell
-            cell.configure(with: categories[indexPath.item])
+            cell.configure(with: categories[indexPath.item].displayName)
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FilterRatingCell.identifier, for: indexPath) as! FilterRatingCell
@@ -364,7 +372,7 @@ extension FilterView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView == categoriesCollectionView {
             // Динамически вычисляем ширину ячейки на основе текста
-            let categoryText = categories[indexPath.item]
+            let categoryText = categories[indexPath.item].displayName
             let font = UIFont.systemFont(ofSize: 14, weight: .medium)
             let textSize = categoryText.size(withAttributes: [NSAttributedString.Key.font: font])
             
