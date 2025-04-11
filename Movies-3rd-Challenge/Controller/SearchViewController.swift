@@ -580,7 +580,7 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
   
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let genreItem = genresList[indexPath.item]
+        	let genreItem = genresList[indexPath.item]
 
         // Обновляем состояние всех видимых ячеек
         collectionView.visibleCells.forEach { cell in
