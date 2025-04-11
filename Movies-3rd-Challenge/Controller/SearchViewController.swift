@@ -20,6 +20,7 @@ final class SearchViewController: UIViewController {
     private var isGenreSelectionLocked = false
     private var maxAttempts = 5
     private var attempts = 0
+    private var selectedGenreIndex = 0
     
     private var genresList: [GenreItem] = GenreProvider.genres(for: LanguageManager.shared.currentLanguage)
 
@@ -403,27 +404,34 @@ extension SearchViewController: FilterViewControllerDelegate {
         isGenreSelectionLocked = false
         categoryCollectionView.isUserInteractionEnabled = true
         
-        selectedGenre = category
+        if let category = category,
+               let index = genresList.firstIndex(where: { $0.queryValue == category }) {
+                selectedGenreIndex = index
+            } else {
+                selectedGenreIndex = 0  // "Все"
+            }
+    
         selectedRating = rating
         
         
         // Обновляем выделение категории в коллекции
-        updateCategorySelectionInCollection()
+       // updateCategorySelectionInCollection()
+        categoryCollectionView.reloadData()
         
         // Сбрасываем страницу и загружаем фильмы с новыми фильтрами
         currentPage = 1
         movies.removeAll()
-        loadMoviesWithFilters(selectedGenre)
+        loadMoviesWithFilters(selectedGenreIndex == 0 ? nil : genresList[selectedGenreIndex].queryValue)
         tableView.reloadData()
     }
 
     // Вызывается когда пользователь сбрасывает фильтры
     func filterViewControllerDidReset(_ controller: FilterViewController) {
-        selectedGenre = nil
+        selectedGenreIndex = 0
         selectedRating = nil
         
         // Обновляем выделение категории в коллекции (выбираем первую категорию при сбросе)
-        updateCategorySelectionInCollection()
+        categoryCollectionView.reloadData()
         
         // Сбрасываем страницу и загружаем фильмы без фильтров
         currentPage = 1
@@ -589,26 +597,8 @@ extension SearchViewController: UITextFieldDelegate {
     }
     
     private func resetGenreSelection() {
-        // Снимаем выделение со всех ячеек
-        categoryCollectionView.visibleCells.forEach { cell in
-            if let categoryCell = cell as? CategoryCell {
-                categoryCell.isCellSelected = false
-            }
-        }
-        
-        // Выбираем первую ячейку ("Все")
-        let defaultIndexPath = IndexPath(item: 0, section: 0)
-        categoryCollectionView.selectItem(at: defaultIndexPath, animated: true, scrollPosition: .left)
-        if let defaultCell = categoryCollectionView.cellForItem(at: defaultIndexPath) as? CategoryCell {
-            defaultCell.isCellSelected = true
-        }
-        categoryCollectionView.visibleCells.forEach { cell in
-                if let cell = cell as? CategoryCell,
-                   let ip = categoryCollectionView.indexPath(for: cell),
-                   ip.item != 0 {
-                    cell.isCellSelected = false
-                }
-            }
+        selectedGenreIndex = 0
+        categoryCollectionView.reloadData()
     }
 }
 
@@ -624,12 +614,17 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
         let genreItem = genresList[indexPath.item]
         cell.configure(title: genreItem.displayName)
         
-        if let selectedGenre = selectedGenre {
-            // Сравниваем queryValue, потому что selectedGenre — это значение, отправляемое в API (на русском)
-            cell.isCellSelected = genreItem.queryValue == selectedGenre
-        } else {
-            cell.isCellSelected = indexPath.item == 0
-        }
+//        let isSelected: Bool
+//        
+//        if let selectedGenre = selectedGenre {
+//            // Сравниваем queryValue, потому что selectedGenre — это значение, отправляемое в API (на русском)
+//            isSelected = (genreItem.queryValue == selectedGenre)
+//        } else {
+//            isSelected = (indexPath.item == 0)
+//        }
+//        cell.isCellSelected = isSelected
+        
+        cell.isCellSelected = (indexPath.item == selectedGenreIndex)
         
         return cell
     }
@@ -639,21 +634,25 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard !isGenreSelectionLocked else { return }
         
-        selectedGenre = (indexPath.item == 0) ? nil :  genresList[indexPath.item].queryValue
-        let selectedIndex = indexPath.item
-        
-        collectionView.visibleCells.forEach { cell in
-            if let cell = cell as? CategoryCell, let ip = collectionView.indexPath(for: cell) {
-                cell.isCellSelected = (ip.item == selectedIndex)
-            }
-        }
+        searchTextField.text = ""
+        searchText = ""
       
+        selectedGenreIndex = indexPath.item
+        
+        let selectedCategory = (indexPath.item == 0) ? nil : genresList[indexPath.item].queryValue
+        
         isGenreSelectionLocked = true
         categoryCollectionView.isUserInteractionEnabled = false
         
         currentRequestToken = nil
         searchTimer?.invalidate()
         
+        collectionView.reloadData()
+        
+        collectionView.selectItem(
+            at: indexPath,
+            animated: true, scrollPosition: .centeredHorizontally
+        )
         
         currentPage = 1
         movies.removeAll()
