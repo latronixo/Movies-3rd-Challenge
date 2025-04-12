@@ -36,7 +36,6 @@ class MovieListController: UIViewController {
             
             loadData()
             
-            setupCustomTitle("Recent Watch", navigationItem)
             setViews()
             setDelegates()
         }

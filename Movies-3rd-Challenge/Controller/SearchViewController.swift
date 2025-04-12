@@ -178,8 +178,6 @@ final class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupCustomTitle("Search", navigationItem)
-        
         // Устанавливаем цвет фона в зависимости от темы
         view.backgroundColor = .systemBackground
         
@@ -203,7 +201,7 @@ final class SearchViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        setupCustomTitle("Search", navigationItem)
+        setupNavBarTitle("Search", navigationItem)
         
         addObserverForLocalization()
         tableView.reloadData()
@@ -643,6 +641,8 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
         currentRequestToken = nil
         searchTimer?.invalidate()
         
+        let selectedCategory = (indexPath.item == 0) ? nil : genresList[indexPath.item].queryValue
+        
         collectionView.reloadData()
         
         collectionView.selectItem(
@@ -721,7 +721,7 @@ extension SearchViewController {
     
     func updateLocalizedText() {
         
-        setupCustomTitle("Search".localized(), navigationItem)
+        setupNavBarTitle("Search".localized(), navigationItem)
         
         if let textField = searchBar.viewWithTag(101) as? UITextField {
             textField.placeholder = "Search for movies".localized()

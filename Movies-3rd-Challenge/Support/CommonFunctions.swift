@@ -8,13 +8,14 @@
 
 import UIKit
 
-func setupCustomTitle(_ title: String, _ navigationItem: UINavigationItem) {
+func setupNavBarTitle(_ title: String, _ navigationItem: UINavigationItem) {
     
     let titleLabel = UILabel()
     titleLabel.attributedText = NSAttributedString(
         string: title,
         attributes: [
             .font: UIFont(name: "PlusJakartaSans-Bold", size: 18) ?? .systemFont(ofSize: 18)])
+    
     
       if #available(iOS 13.0, *) {
           titleLabel.textColor = UIColor { traitCollection in

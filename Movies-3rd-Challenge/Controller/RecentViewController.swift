@@ -33,7 +33,7 @@ class RecentViewController: MovieListController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        setupCustomTitle("Recent Watch", navigationItem)
+        setupNavBarTitle("Recent Watch", navigationItem)
         
         loadData()
         

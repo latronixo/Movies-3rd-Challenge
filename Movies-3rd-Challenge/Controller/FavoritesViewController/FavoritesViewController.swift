@@ -29,8 +29,6 @@ class FavoritesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupCustomTitle("Favorites", navigationItem)
-        
         setViews()
         setDelegates()
         setupConstraints()
@@ -38,7 +36,7 @@ class FavoritesViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         
-        setupCustomTitle("Favorites", navigationItem)
+        setupNavBarTitle("Favorites", navigationItem)
         
         movies = RealmManager.shared.getAllFavorites()
         tableView.reloadData()
