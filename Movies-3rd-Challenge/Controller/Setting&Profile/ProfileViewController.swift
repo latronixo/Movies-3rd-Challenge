@@ -78,9 +78,9 @@ class ProfileViewController: UIViewController {
         return button
     }()
     
-    private lazy var maleButton = makeGenderButton(title: "Male", isSelected: true)
+    private lazy var maleButton = makeGenderButton(title: "Male", isSelected: false)
     private lazy var femaleButton = makeGenderButton(title: "Female", isSelected: false)
-    
+    private var selectedGender: String = "Male"
     
     private lazy var saveButton: UIButton = {
         let button = UIButton(type: .system)
@@ -340,6 +340,7 @@ class ProfileViewController: UIViewController {
         }
         sender.backgroundColor = UIColor(named: "mainViolet")
         sender.setTitleColor(.white, for: .normal)
+        selectedGender = (sender == maleButton) ? "Male" : "Female"
     }
     
     // MARK: - Date Picker
@@ -396,7 +397,7 @@ class ProfileViewController: UIViewController {
                 firstName: firstNameTextField.text ?? "",
                 lastName: lastNameTextField.text ?? "",
                 email: emailTextField.text ?? "",
-                male: maleButton.isSelected ? "Male" : "Female",
+                male: selectedGender,
                 dateOfBirth: dobValueLabel.text ?? "",
                 location: locationTextView.text ?? "",
                 didSeeOnboarding: true,
@@ -424,13 +425,14 @@ class ProfileViewController: UIViewController {
                 self.locationTextView.text = user.location
                 self.dobValueLabel.text = user.dateOfBirth
                 self.selectedAvatarName = user.avatarName
+                self.selectedGender = user.male
+                self.avatarImageView.image = UIImage(named: user.avatarName)
                 
                 if user.male.lowercased() == "female" {
                     self.genderButtonTapped(self.femaleButton)
                 } else {
                     self.genderButtonTapped(self.maleButton)
                 }
-                self.avatarImageView.image = UIImage(named: user.avatarName)
             }
         }
     }
