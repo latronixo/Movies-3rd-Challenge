@@ -30,7 +30,7 @@ class TempMovieDetailView: UIView {
         imageView.image = UIImage(named: "gradientPoster")
         imageView.layer.cornerRadius = 16
         imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -47,7 +47,7 @@ class TempMovieDetailView: UIView {
     // MARK: - Calendar Stack
     lazy var calendarImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "calendar")
+        imageView.image = UIImage(named: "calendar")
         imageView.tintColor = UIColor(named: "iconColor")
         imageView.heightAnchor.constraint(equalToConstant: 16).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 16).isActive = true
@@ -75,7 +75,7 @@ class TempMovieDetailView: UIView {
     // MARK: - Duration Stack
     lazy var clockImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "clock")
+        imageView.image = UIImage(named: "clock")
         imageView.tintColor = UIColor(named: "iconColor")
         imageView.heightAnchor.constraint(equalToConstant: 16).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 16).isActive = true
@@ -103,7 +103,7 @@ class TempMovieDetailView: UIView {
     // MARK: - Category Stack
     lazy var movieImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "film")
+        imageView.image = UIImage(named: "film")
         imageView.tintColor = UIColor(named: "iconColor")
         imageView.heightAnchor.constraint(equalToConstant: 16).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 16).isActive = true
@@ -276,9 +276,9 @@ class TempMovieDetailView: UIView {
         // Констрейнты для остальных элементов
         NSLayoutConstraint.activate([
             imageOfMovie.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
-            imageOfMovie.heightAnchor.constraint(equalToConstant: 200),
+            imageOfMovie.heightAnchor.constraint(equalToConstant: 300),
             imageOfMovie.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            imageOfMovie.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.8),
+            imageOfMovie.widthAnchor.constraint(equalToConstant: 224),
             
             movieStack.topAnchor.constraint(equalTo: imageOfMovie.bottomAnchor, constant: 20),
             movieStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
