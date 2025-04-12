@@ -18,8 +18,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         
-        let auth = UserDefaults.standard.bool(forKey: "isAuth")
-//        let auth = true
+        GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
+                if let error = error {
+                    print("❌ Не удалось восстановить Google-сессию: \(error.localizedDescription)")
+                }
+
+                let auth = UserDefaults.standard.bool(forKey: "isAuth")
+                if auth || user != nil {
+                    self.window?.rootViewController = TabBarController()
+                } else {
+                    let navVC = UINavigationController(rootViewController: LoginVC())
+                    self.window?.rootViewController = navVC
+                }
+
+                self.window?.makeKeyAndVisible()
+            }
         
         if let theme = UserDefaults.standard.string(forKey: "AppTheme") {
             switch theme {
@@ -31,8 +44,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 window?.overrideUserInterfaceStyle = .unspecified
             }
         }
-        window?.rootViewController = UINavigationController(rootViewController: auth ? TabBarController() : LoginVC() )
-        window?.makeKeyAndVisible()
+//        window?.rootViewController = UINavigationController(rootViewController: auth ? TabBarController() : LoginVC() )
+//        window?.makeKeyAndVisible()
         
     }
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
