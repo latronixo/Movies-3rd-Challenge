@@ -87,6 +87,16 @@ class FilterViewController: UIViewController {
     func setInitialFilters(category: String?, rating: Int?) {
         selectedCategory = category
         selectedRating = rating
+        
+        if let category = category {
+                filterView.selectedCategory = category
+            } else {
+                filterView.selectedCategory = nil
+            }
+        
+        filterView.selectedRating = rating
+        filterView.updateSelectedFilters()
+        
     }
 }
 
