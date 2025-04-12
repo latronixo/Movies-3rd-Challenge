@@ -33,8 +33,7 @@ class RecentViewController: MovieListController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        navigationItem.title = ""
-        navigationItem.titleView = UIView()
+        setupNavBarTitle("Recent Watch", navigationItem)
         
         loadData()
         
@@ -47,6 +46,7 @@ class RecentViewController: MovieListController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
         removeObserverForLocalization()
     }
     

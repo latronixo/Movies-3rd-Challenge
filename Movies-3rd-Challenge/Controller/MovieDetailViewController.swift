@@ -27,6 +27,7 @@ class TempMovieDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupView()
         setupNavigationBar()
         updateFavoriteButtonState()
@@ -40,6 +41,9 @@ class TempMovieDetailViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        setupNavBarTitle("Movie Detail", navigationItem)
+        
         addObserverForLocalization()
         updateFavoriteButtonState()
     }
@@ -76,7 +80,8 @@ class TempMovieDetailViewController: UIViewController {
             target: self,
             action: #selector(addToFavorite))
         
-        navigationItem.titleView = titleLabel
+//        navigationItem.titleView = titleLabel
+        
         navigationItem.rightBarButtonItem = rightButton
         navigationItem.leftBarButtonItem = backButton
         navigationItem.hidesBackButton = true
