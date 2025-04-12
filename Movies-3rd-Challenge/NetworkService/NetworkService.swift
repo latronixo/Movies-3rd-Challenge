@@ -145,11 +145,11 @@ class NetworkService {
         if let ratingNotNil = rating {
             let ratingValue: String
             switch ratingNotNil {
-            case 5: ratingValue = "9-10"
-            case 4: ratingValue = "7-9"
-            case 3: ratingValue = "5-7"
-            case 2: ratingValue = "3-5"
-            default: ratingValue = "1-3"
+            case 5: ratingValue = "8.5-10"
+            case 4: ratingValue = "6.5-8.4"
+            case 3: ratingValue = "4.5-6.4"
+            case 2: ratingValue = "2.5-4.4"
+            default: ratingValue = "1-2.4"
             }
             queryItems.append(URLQueryItem(name: "rating.kp", value: ratingValue))
         }
@@ -205,6 +205,7 @@ class NetworkService {
                 let decoder = JSONDecoder()
                 let response = try decoder.decode(MovieResponse.self, from: data)
                 completion(response.docs)
+                print(response.docs)
             } catch let decodingError {
                 print("Decoding error: \(decodingError.localizedDescription)")
                 print("Response data: \(String(data: data, encoding: .utf8) ?? "No data")")

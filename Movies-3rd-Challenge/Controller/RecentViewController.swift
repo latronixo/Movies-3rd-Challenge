@@ -33,8 +33,8 @@ class RecentViewController: MovieListController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        setupNavBarTitle("Recent Watch", navigationItem)
-        
+        setupNavBarTitle("Recent Watch".localized(), navigationItem)
+
         loadData()
         
         setupCategoryFilter()
@@ -153,5 +153,6 @@ extension RecentViewController {
         self.categories = GenreProvider.genres(for: LanguageManager.shared.currentLanguage)
         categoryCollectionView.reloadData()
         loadData(category: categories[selectedCategoryIndex].queryValue ?? categories[selectedCategoryIndex].displayName)
+
     }
 }

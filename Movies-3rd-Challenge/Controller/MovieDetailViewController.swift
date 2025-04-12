@@ -68,12 +68,6 @@ class TempMovieDetailViewController: UIViewController {
             target: self,
             action: #selector(backTapped))
         
-        let titleLabel = UILabel()
-        titleLabel.attributedText = NSAttributedString(
-            string: "Movie Detail",
-            attributes: [
-                .font: UIFont(name: "PlusJakartaSans-Bold", size: 26) ?? .systemFont(ofSize: 26)])
-        
         let rightButton = UIBarButtonItem(
             image: UIImage(systemName: "heart"),
             style: .plain,

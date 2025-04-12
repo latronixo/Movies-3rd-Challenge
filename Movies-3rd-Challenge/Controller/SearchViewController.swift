@@ -201,7 +201,7 @@ final class SearchViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        setupNavBarTitle("Search", navigationItem)
+        setupNavBarTitle("Search".localized(), navigationItem)
         
         addObserverForLocalization()
         tableView.reloadData()
@@ -384,7 +384,10 @@ final class SearchViewController: UIViewController {
         
         let filterVC = FilterViewController()
         filterVC.delegate = self
-        filterVC.setInitialFilters(category: selectedGenre, rating: selectedRating)
+        
+        let categoryForAlert = selectedGenreIndex == 0 ? nil : genresList[selectedGenreIndex].queryValue
+        
+        filterVC.setInitialFilters(category: categoryForAlert, rating: selectedRating)
         
         present(filterVC, animated: true)
     }
@@ -414,6 +417,16 @@ extension SearchViewController: FilterViewControllerDelegate {
        // updateCategorySelectionInCollection()
         categoryCollectionView.reloadData()
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            let indexPath = IndexPath(item: self.selectedGenreIndex, section: 0)
+            self.categoryCollectionView.scrollToItem(
+                    at: indexPath,
+                    at: .centeredHorizontally,
+                    animated: true
+                )
+            }
+        
+        
         // Сбрасываем страницу и загружаем фильмы с новыми фильтрами
         currentPage = 1
         movies.removeAll()
@@ -423,6 +436,7 @@ extension SearchViewController: FilterViewControllerDelegate {
 
     // Вызывается когда пользователь сбрасывает фильтры
     func filterViewControllerDidReset(_ controller: FilterViewController) {
+        selectedGenreIndex = 0
         selectedGenreIndex = 0
         selectedRating = nil
         

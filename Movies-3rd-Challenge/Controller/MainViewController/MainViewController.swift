@@ -287,7 +287,7 @@ final class MainViewController: UIViewController {
             guard let self = self, let user = user else { return }
             DispatchQueue.main.async {
                 self.username = user.firstName.isEmpty ? "User" : user.firstName
-                self.greetingLabel.text = "👋 Hello, \(self.username)"
+                self.greetingLabel.text = "👋 Hello, ".localized() + self.username
                 self.avatarImageView.image = UIImage(named: user.avatarName)
             }
         }
