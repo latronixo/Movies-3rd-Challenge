@@ -178,8 +178,6 @@ final class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setTitleUpper(navigationController, "Search", view)
-        
         // Устанавливаем цвет фона в зависимости от темы
         view.backgroundColor = .systemBackground
         
@@ -203,8 +201,7 @@ final class SearchViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        navigationItem.title = ""
-        navigationItem.titleView = UIView()
+        setupNavBarTitle("Search", navigationItem)
         
         addObserverForLocalization()
         tableView.reloadData()
@@ -243,7 +240,7 @@ final class SearchViewController: UIViewController {
         
         NSLayoutConstraint.activate([
 
-            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -20),
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
             searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             searchBar.heightAnchor.constraint(equalToConstant: 50),
@@ -407,7 +404,7 @@ extension SearchViewController: FilterViewControllerDelegate {
                let index = genresList.firstIndex(where: { $0.queryValue == category }) {
                 selectedGenreIndex = index
             } else {
-                selectedGenreIndex = 0  // "Все"
+                selectedGenreIndex = 0
             }
     
         selectedRating = rating
@@ -644,6 +641,8 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
         currentRequestToken = nil
         searchTimer?.invalidate()
         
+        let selectedCategory = (indexPath.item == 0) ? nil : genresList[indexPath.item].queryValue
+        
         collectionView.reloadData()
         
         collectionView.selectItem(
@@ -655,7 +654,7 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
         movies.removeAll()
         
         searchTimer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: false) { [weak self] _ in
-            self?.loadMoviesWithFilters(self?.selectedGenre)
+            self?.loadMoviesWithFilters(selectedCategory)
            }
         
     }
@@ -722,7 +721,7 @@ extension SearchViewController {
     
     func updateLocalizedText() {
         
-      //  setTitleUpper(navItem: navigationItem, title: "Search".localized())
+        setupNavBarTitle("Search".localized(), navigationItem)
         
         if let textField = searchBar.viewWithTag(101) as? UITextField {
             textField.placeholder = "Search for movies".localized()

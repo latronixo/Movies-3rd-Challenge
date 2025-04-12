@@ -37,7 +37,7 @@ class MovieCell: UITableViewCell {
     private lazy var titleLabel: UILabel = {
         let element = UILabel()
         element.font = UIFont(name: "PlusJakartaSans-Bold", size: 18)
-        element.numberOfLines = 4
+        element.numberOfLines = 3
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()

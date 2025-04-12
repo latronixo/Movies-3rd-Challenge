@@ -118,7 +118,7 @@ class NetworkService {
             
             URLQueryItem(name: "selectFields", value: "year"),
             
-            // можно добавить этот запрос, чтобы уменьшить количество выгружаемых данных и ускорить работу сети
+            // можно добавить этот фильтр, чтобы еще уменьшить количество выгружаемых данных и ускорить работу сети
 //            URLQueryItem(name: "year", value: String(Calendar.current.component(.year, from: Date()))),
             
             URLQueryItem(name: "type", value: "movie")
@@ -128,6 +128,7 @@ class NetworkService {
         if let genres = selectedCategory, genres != "Все" {
             if genres == "другие" {
                 queryItems.append(URLQueryItem(name: "page", value: String(currentPage)))
+                
                 queryItems.append(URLQueryItem(name: "genres.name", value: "!боевик"))
                 queryItems.append(URLQueryItem(name: "genres.name", value: "!приключения"))
                 queryItems.append(URLQueryItem(name: "genres.name", value: "!детектив"))

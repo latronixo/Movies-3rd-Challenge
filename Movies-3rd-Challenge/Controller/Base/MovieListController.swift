@@ -35,7 +35,7 @@ class MovieListController: UIViewController {
             super.viewDidLoad()
             
             loadData()
-            setTitleUpper(navigationController, "Recent Watch", view)
+            
             setViews()
             setDelegates()
         }
