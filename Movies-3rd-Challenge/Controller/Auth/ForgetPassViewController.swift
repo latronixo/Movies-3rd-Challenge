@@ -10,7 +10,7 @@ import UIKit
 import FirebaseAuth
 
 class ForgetPassVC: UIViewController {
-    private let mainView: ForgetPass = .init()
+    private let mainView: ForgetPassView = .init()
     private var showAlert: Bool = false
     private var alertMessage: String = ""
     

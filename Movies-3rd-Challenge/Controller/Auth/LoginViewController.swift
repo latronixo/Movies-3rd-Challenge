@@ -16,6 +16,8 @@ class LoginVC: UIViewController {
     let mainView: LoginView = .init()
     private var remindMe: Bool = true
     
+    private var isAuthorizationProcess = false
+    
     override func loadView() {
         self.view = mainView
     }
@@ -52,16 +54,23 @@ class LoginVC: UIViewController {
     
     //MARK: SIGN_In
     @objc func signInTapped() {
+        
+        guard !isAuthorizationProcess else { return }
+        isAuthorizationProcess = true
+        
         let email = mainView.emailTextField.text?.lowercased()
         let password = mainView.passwordTextField.text
         
         guard email != nil && email != "", password != nil && password != "" else {
             self.showAlert(title: "Ошибка", message: "Введите данные")
+            isAuthorizationProcess = false
             return
         }
+        
         FirebaseAuth.Auth.auth().signIn(withEmail: email!, password: password!) { result, error in
             if let error = error {
                 self.cathcAuthError(error: error)
+                self.isAuthorizationProcess = false
                 return
             }
             print("Успешно")
@@ -75,8 +84,9 @@ class LoginVC: UIViewController {
             
             self.checkOnboardingStatus()
             
-            
         }
+        isAuthorizationProcess = false
+
     }
     @objc func signInGoogle() {
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
