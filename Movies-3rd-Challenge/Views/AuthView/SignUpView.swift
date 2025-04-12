@@ -195,7 +195,7 @@ class SignUpView: UIView {
         NSLayoutConstraint.activate([
             alreadyStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -30),
             alreadyStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            alreadyStackView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.6),
+            alreadyStackView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.65),
             
             signUpButton.bottomAnchor.constraint(equalTo: alreadyStackView.topAnchor, constant: -30),
             signUpButton.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.8),
