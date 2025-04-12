@@ -16,7 +16,7 @@ class ProfileViewController: UIViewController {
     // MARK: - UI Elements
     
     private lazy var avatarImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "avatar"))
+        let imageView = UIImageView(image: UIImage(named: selectedAvatarName))
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 50
@@ -86,7 +86,7 @@ class ProfileViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle("Save Changes", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor.systemGray4
+        button.backgroundColor = UIColor(named: "mainViolet")
         button.layer.cornerRadius = 24
         button.isEnabled = true
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -123,6 +123,7 @@ class ProfileViewController: UIViewController {
     private var notes = ""
     private var birthDate = ""
     private var newPassword = ""
+    private var selectedAvatarName: String = "avatar1"
     
     // MARK: - View Lifecycle
     
@@ -315,18 +316,16 @@ class ProfileViewController: UIViewController {
                 print("камера")
             }
 
-            alertVC.onChoosePhoto = { [weak self] in
-                let imagePicker = UIImagePickerController()
-                imagePicker.delegate = self
-                imagePicker.allowsEditing = true
-                imagePicker.sourceType = .photoLibrary
-                self?.present(imagePicker, animated: true, completion: nil)
+        alertVC.onChoosePhoto = {[weak self] in
+            alertVC.onAvatarSelected = { selectedAvatar in
+                self?.avatarImageView.image = UIImage(named: selectedAvatar)
+                self?.selectedAvatarName = selectedAvatar
             }
+        }
 
             alertVC.onDeletePhoto = { [weak self] in
-                self?.avatarImageView.image = UIImage(systemName: "person.circle.fill")
-                self?.avatarImageView.tintColor = .gray
-                self?.avatarImageView.backgroundColor = .clear
+                self?.avatarImageView.image = UIImage(named: "gradientPoster")
+                
             }
 
             present(alertVC, animated: true)
@@ -398,7 +397,8 @@ class ProfileViewController: UIViewController {
                 male: maleButton.isSelected ? "Male" : "Female",
                 dateOfBirth: dobValueLabel.text ?? "",
                 location: locationTextView.text ?? "",
-                didSeeOnboarding: true
+                didSeeOnboarding: true,
+                avatarName: selectedAvatarName
             )
             
             UserInfo.shared.updateDataUser(user: updatedUser) { [weak self] success in
@@ -427,6 +427,7 @@ class ProfileViewController: UIViewController {
                 } else {
                     self.genderButtonTapped(self.maleButton)
                 }
+                self.avatarImageView.image = UIImage(named: user.avatarName)
             }
         }
     }
@@ -446,20 +447,20 @@ extension UITextField {
 //MARK: UIImagePickerControllerDelegate, UINavigationControllerDelegate
 
 extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        guard let selectedImage = info[.editedImage] as? UIImage else {
-            dismiss(animated: true, completion: nil)
-            return
-        }
-        
-        avatarImageView.image = selectedImage
-        
-        dismiss(animated: true, completion: nil)
-    }
-    
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        dismiss(animated: true, completion: nil)
-    }
+//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+//        guard let selectedImage = info[.editedImage] as? UIImage else {
+//            dismiss(animated: true, completion: nil)
+//            return
+//        }
+//        
+//        avatarImageView.image = selectedImage
+//        
+//        dismiss(animated: true, completion: nil)
+//    }
+//    
+//    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+//        dismiss(animated: true, completion: nil)
+//    }
 }
 
 extension ProfileViewController: UITextFieldDelegate, UITextViewDelegate {

@@ -78,7 +78,7 @@ final class MainViewController: UIViewController {
 
     private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "person.circle.fill")
+        imageView.image = UIImage(named: "avatar1")
         imageView.tintColor = .systemGray
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 20
@@ -280,6 +280,7 @@ final class MainViewController: UIViewController {
             DispatchQueue.main.async {
                 self.username = user.firstName.isEmpty ? "User" : user.firstName
                 self.greetingLabel.text = "👋 Hello, \(self.username)"
+                self.avatarImageView.image = UIImage(named: user.avatarName)
             }
         }
     }

@@ -46,10 +46,12 @@ class UserInfo{
                 let dateOfBirth = data[UsersFireSore.dateOfBirth.rawValue] as? String ?? ""
                 let location = data[UsersFireSore.location.rawValue] as? String ?? ""
                 let didSeeOnboarding = data["didSeeOnboarding"] as? Bool ?? false
+                let avatarName = data[UsersFireSore.avatarURL.rawValue] as? String ?? "avatar1"
 
                 let makeUser = User(id: id, firstName: name, lastName: lastName,
                                     email: email, male: male, dateOfBirth: dateOfBirth,
-                                    location: location, didSeeOnboarding: didSeeOnboarding)
+                                    location: location,
+                                    didSeeOnboarding: didSeeOnboarding, avatarName: avatarName)
                 completion(makeUser)
             }
     }
@@ -68,7 +70,8 @@ class UserInfo{
             UsersFireSore.email.rawValue: user.email,
             UsersFireSore.dateOfBirth.rawValue: user.dateOfBirth,
             UsersFireSore.male.rawValue: user.male,
-            UsersFireSore.location.rawValue: user.location
+            UsersFireSore.location.rawValue: user.location,
+            UsersFireSore.avatarURL.rawValue: user.avatarName
         ]) { error in
             if let error = error {
                 print("Ошибка обновления данных: \(error.localizedDescription)")
@@ -110,8 +113,9 @@ class User {
     let dateOfBirth: String
     let location: String
     let didSeeOnboarding: Bool
+    let avatarName: String
     
-    init(id: String, firstName: String, lastName: String, email: String, male: String, dateOfBirth: String, location: String, didSeeOnboarding: Bool) {
+    init(id: String, firstName: String, lastName: String, email: String, male: String, dateOfBirth: String, location: String, didSeeOnboarding: Bool, avatarName: String) {
         self.id = id
         self.firstName = firstName
         self.lastName = lastName
@@ -120,6 +124,6 @@ class User {
         self.dateOfBirth = dateOfBirth
         self.location = location
         self.didSeeOnboarding = didSeeOnboarding
-
+        self.avatarName = avatarName
     }
 }
