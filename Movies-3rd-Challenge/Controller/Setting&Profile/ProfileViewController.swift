@@ -327,6 +327,8 @@ class ProfileViewController: UIViewController {
         
         alertVC.onDeletePhoto = { [weak self] in
             self?.avatarImageView.image = UIImage(named: "gradientPoster")
+            self?.selectedAvatarName = "gradientPoster"
+
             
         }
         
