@@ -17,7 +17,7 @@ class SettingsViewController: UIViewController {
 
     private lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "avatar")
+        imageView.image = UIImage(named: "avatar1")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 35
@@ -198,6 +198,7 @@ class SettingsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         addObserverForLocalization()
+        loadUserInfo()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -333,6 +334,7 @@ class SettingsViewController: UIViewController {
             DispatchQueue.main.async {
                 self.nameLabel.text = "\(user.firstName) \(user.lastName)"
                 self.usernameLabel.text = "@" + user.firstName + "999"
+                self.profileImageView.image = UIImage(named: user.avatarName)
             }
         }
     }

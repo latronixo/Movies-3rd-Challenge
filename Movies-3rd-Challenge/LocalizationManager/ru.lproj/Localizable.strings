@@ -63,7 +63,7 @@
 // Avatar
 "Change your picture" = "Изменить фото";
 "Take a photo" = "Сделать фото";
-"Choose from your file" = "Выбрать из файлов";
+"Choose your photo" = "Выбрать фото";
 "Delete Photo" = "Удалить фото";
 
 // MARK: Favorites

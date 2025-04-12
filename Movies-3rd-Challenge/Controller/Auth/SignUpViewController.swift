@@ -189,8 +189,8 @@ override func viewWillAppear(_ animated: Bool) {
             UsersFireSore.dateOfBirth.rawValue: "Еще не задано",
             UsersFireSore.male.rawValue: "Еще не задано",
             UsersFireSore.location.rawValue: "Еще не задано",
-            "didSeeOnboarding": false
-//            UsersFireSore.avatarURL.rawValue: "default"
+            "didSeeOnboarding": false,
+            UsersFireSore.avatarURL.rawValue: "avatar1"
 
         ]) { error in
             if let error = error {
