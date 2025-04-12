@@ -198,6 +198,7 @@ class SettingsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         addObserverForLocalization()
+        loadUserInfo()
     }
     
     override func viewWillDisappear(_ animated: Bool) {

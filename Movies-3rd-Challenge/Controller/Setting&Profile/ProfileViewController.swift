@@ -145,6 +145,7 @@ class ProfileViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         addObserverForLocalization()
+        loadUserData()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -316,19 +317,20 @@ class ProfileViewController: UIViewController {
                 print("камера")
             }
 
-        alertVC.onChoosePhoto = {[weak self] in
-            alertVC.onAvatarSelected = { selectedAvatar in
-                self?.avatarImageView.image = UIImage(named: selectedAvatar)
-                self?.selectedAvatarName = selectedAvatar
-            }
+        alertVC.onAvatarSelected = { [weak self] selectedAvatar in
+            guard let self = self else { return }
+            self.selectedAvatarName = selectedAvatar
+            self.avatarImageView.image = UIImage(named: selectedAvatar)
+            self.loadUserData()
         }
-
-            alertVC.onDeletePhoto = { [weak self] in
-                self?.avatarImageView.image = UIImage(named: "gradientPoster")
-                
-            }
-
-            present(alertVC, animated: true)
+        
+        
+        alertVC.onDeletePhoto = { [weak self] in
+            self?.avatarImageView.image = UIImage(named: "gradientPoster")
+            
+        }
+        
+        present(alertVC, animated: true)
     }
     
     @objc private func genderButtonTapped(_ sender: UIButton) {
@@ -421,6 +423,7 @@ class ProfileViewController: UIViewController {
                 self.emailTextField.text = user.email
                 self.locationTextView.text = user.location
                 self.dobValueLabel.text = user.dateOfBirth
+                self.selectedAvatarName = user.avatarName
                 
                 if user.male.lowercased() == "female" {
                     self.genderButtonTapped(self.femaleButton)

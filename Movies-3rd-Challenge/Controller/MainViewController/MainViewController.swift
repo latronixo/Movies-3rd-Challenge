@@ -184,6 +184,14 @@ final class MainViewController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         tableView.reloadData()
         addObserverForLocalization()
+        
+        UserInfo.shared.getUser { [weak self] user in
+               guard let user = user else { return }
+               DispatchQueue.main.async {
+                   self?.avatarImageView.image = UIImage(named: user.avatarName)
+               }
+           }
+        setupGreeting()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
