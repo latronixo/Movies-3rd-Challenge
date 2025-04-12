@@ -115,18 +115,43 @@ class LoginVC: UIViewController {
                     print("Ошибка Firebase: \(error.localizedDescription)")
                     return
                 }
-                UserDefaults.standard.set("google", forKey: "method")
-                if self.remindMe == true {
-                    UserDefaults.standard.set(true , forKey: "isAuth")
-                } else {
-                    UserDefaults.standard.set(false , forKey: "isAuth")
-                }
                 
+                guard let firebaseUser = authResult?.user else { return }
+                let userID = firebaseUser.uid
+                let email = firebaseUser.email ?? ""
+                let name = firebaseUser.displayName ?? ""
+                let nameParts = name.split(separator: " ")
+                let firstName = nameParts.first.map(String.init) ?? ""
+                let lastName = nameParts.dropFirst().joined(separator: " ")
+                
+                let db = Firestore.firestore()
+                let userDocRef = db.collection("Users").document(userID)
+                
+                // Проверим — если документа нет, создадим
+                userDocRef.getDocument { snapshot, error in
+                    if let snapshot = snapshot, !snapshot.exists {
+                        userDocRef.setData([
+                            "id": userID,
+                            "Email": email,
+                            "Имя": firstName,
+                            "Фамилия": lastName,
+                            "Пол": "Еще не задано",
+                            "Дата рождения": "Еще не задано",
+                            "Местоположение": "Еще не задано",
+                            "Аватар": "avatar1",
+                            "didSeeOnboarding": false
+                        ]) { error in
+                            if let error = error {
+                                print("Ошибка при создании документа пользователя: \(error.localizedDescription)")
+                            } else {
+                                print("Документ пользователя создан ✅")
+                            }
+                        }
+                    }
+                }
                 self.checkOnboardingStatus()
-
             }
-        }
-    }
+        }}
     
     private func cathcAuthError(error: Error) {
         let errorMessage: String
