@@ -11,6 +11,9 @@ import  FirebaseAuth
 import FirebaseFirestore
 
 class SignUpVc: UIViewController {
+    
+    private var isSignUpProcess = false
+    
     let mainView: SignUpView = .init()
     
     override func loadView() {
@@ -51,6 +54,10 @@ override func viewWillAppear(_ animated: Bool) {
     }
     
     @objc func signUpButtonTapped() {
+        
+        guard !isSignUpProcess else { return }
+        isSignUpProcess = true
+        
         let name = mainView.firstNameTextField.text
         let lastName = mainView.lastNameTextField.text
         let email = mainView.emailTextField.text?.lowercased()
@@ -62,6 +69,7 @@ override func viewWillAppear(_ animated: Bool) {
               let password = password, !password.isEmpty,
               let confirmPassword = cofirmPassword, !confirmPassword.isEmpty else {
             self.showAlert(title: "Ошибка", message: "Заполните все поля")
+            isSignUpProcess = false
             return
         }
         
@@ -73,11 +81,15 @@ override func viewWillAppear(_ animated: Bool) {
         
         guard password == cofirmPassword else {
             self.showAlert(title: "Ошибка", message: "Пароли не совпадают")
+            isSignUpProcess = false
             return
         }
         
         FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { [weak self] authResult, error in
-            guard let self = self else { return }
+            guard let self = self else {
+                self?.isSignUpProcess = false
+                return
+            }
             
             if let error = error {
                 self.catchAuthError(error: error)
@@ -85,11 +97,13 @@ override func viewWillAppear(_ animated: Bool) {
             }
             guard let user = authResult?.user else {
                 self.showAlert(title: "Ошибка", message: "Пользователь не создан")
+                self.isSignUpProcess = false
                 return
             }
             self.saveUserToFireStore(userId: user.uid, firstName: name, lastName: lastName, email: email)
             self.navigationController?.popViewController(animated: true)
         }
+        isSignUpProcess = false
     }
     
     private func validateEmail(_ email: String) -> String? {

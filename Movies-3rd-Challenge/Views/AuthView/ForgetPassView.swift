@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class ForgetPass: UIView {
+class ForgetPassView: UIView {
     lazy var emailLabel: UILabel = {
         let label = UILabel()
         label.text = "Email"
@@ -20,6 +20,9 @@ class ForgetPass: UIView {
     lazy var emailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Email"
+        textField.keyboardType = .emailAddress
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
         textField.backgroundColor = UIColor(named: "logColor")
         textField.borderStyle = .roundedRect
         textField.layer.cornerRadius = 24
