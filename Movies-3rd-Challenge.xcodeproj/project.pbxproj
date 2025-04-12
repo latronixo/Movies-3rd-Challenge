@@ -6,6 +6,15 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3E987F102DA69026000776B5 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 3E987F0F2DA69026000776B5 /* GoogleSignIn */; };
+		3E987F122DA69026000776B5 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3E987F112DA69026000776B5 /* GoogleSignInSwift */; };
+		3EA2DA922DA5B9D90077D0D0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 3EA2DA912DA5B9D90077D0D0 /* FirebaseAuth */; };
+		3EA2DA942DA5B9D90077D0D0 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 3EA2DA932DA5B9D90077D0D0 /* FirebaseFirestore */; };
+		6B10044C2DA6C8DC0092F3CF /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 6B10044B2DA6C8DC0092F3CF /* RealmSwift */; };
+		6BDA64242D9C1B03003B6709 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 6BDA64232D9C1B03003B6709 /* Kingfisher */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		6BB614AE2D96D8B4001A86B8 /* Movies-3rd-Challenge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Movies-3rd-Challenge.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +45,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B10044C2DA6C8DC0092F3CF /* RealmSwift in Frameworks */,
+				3E987F122DA69026000776B5 /* GoogleSignInSwift in Frameworks */,
+				6BDA64242D9C1B03003B6709 /* Kingfisher in Frameworks */,
+				3E987F102DA69026000776B5 /* GoogleSignIn in Frameworks */,
+				3EA2DA922DA5B9D90077D0D0 /* FirebaseAuth in Frameworks */,
+				3EA2DA942DA5B9D90077D0D0 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +93,12 @@
 			);
 			name = "Movies-3rd-Challenge";
 			packageProductDependencies = (
+				6BDA64232D9C1B03003B6709 /* Kingfisher */,
+				3EA2DA912DA5B9D90077D0D0 /* FirebaseAuth */,
+				3EA2DA932DA5B9D90077D0D0 /* FirebaseFirestore */,
+				3E987F0F2DA69026000776B5 /* GoogleSignIn */,
+				3E987F112DA69026000776B5 /* GoogleSignInSwift */,
+				6B10044B2DA6C8DC0092F3CF /* RealmSwift */,
 			);
 			productName = "Movies-3rd-Challenge";
 			productReference = 6BB614AE2D96D8B4001A86B8 /* Movies-3rd-Challenge.app */;
@@ -104,9 +125,16 @@
 			knownRegions = (
 				en,
 				Base,
+				ru,
 			);
 			mainGroup = 6BB614A52D96D8B4001A86B8;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				3EA2DA902DA5B9D90077D0D0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				3E987F0E2DA69026000776B5 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				6B10044A2DA6C8DC0092F3CF /* XCRemoteSwiftPackageReference "realm-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6BB614AF2D96D8B4001A86B8 /* Products */;
 			projectDirPath = "";
@@ -145,15 +173,17 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z4PKJ57KTJ;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Movies-3rd-Challenge/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Movies;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -179,14 +209,16 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z4PKJ57KTJ;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Movies-3rd-Challenge/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Movies;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -345,6 +377,74 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3E987F0E2DA69026000776B5 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+		3EA2DA902DA5B9D90077D0D0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.11.0;
+			};
+		};
+		6B10044A2DA6C8DC0092F3CF /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.3.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3E987F0F2DA69026000776B5 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3E987F0E2DA69026000776B5 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		3E987F112DA69026000776B5 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3E987F0E2DA69026000776B5 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		3EA2DA912DA5B9D90077D0D0 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3EA2DA902DA5B9D90077D0D0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		3EA2DA932DA5B9D90077D0D0 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3EA2DA902DA5B9D90077D0D0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		6B10044B2DA6C8DC0092F3CF /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6B10044A2DA6C8DC0092F3CF /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+		6BDA64232D9C1B03003B6709 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6BDA64222D9C1B03003B6709 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6BB614A62D96D8B4001A86B8 /* Project object */;
 }

@@ -1,0 +1,109 @@
+/* 
+  Localizable.strings
+  Movies-3rd-Challenge
+
+  Created by Anna Melekhina on 07.04.2025.
+  
+*/
+
+// MARK: Search
+
+"Search" = "Search";
+"Filter" = "Filter";
+"Reset Filters" = "Reset Filters";
+"Categories" = "Categories";
+"All" = "All";
+"Star Rating" = "Star Rating";
+"Apply Filters" = "Apply Filters";
+"Search for movies" = "Search for movies";
+
+// MARK: Main
+
+"Hello, Name 👋" = "Hello, Name 👋";
+"Category" = "Category";
+"Box Office" = "Box Office";
+"See All" = "See All";
+"Streaming for movie lovers" = "Streaming for movie lovers";
+
+// MARK: Settings
+
+"Personal Info" = "Personal Info";
+"  Profile" = "  Profile";
+"Setting" = "Setting";
+"  Change Password" = "  Change Password";
+"  Forgot Password" = "  Forgot Password";
+"Dark Mode" = "Dark Mode";
+"Log Out" = "Log Out";
+"  Choose Language" = "  Choose Language";
+"Select Language" = "Select Language";
+"Security" = "Security";
+
+
+"First Name" = "First Name";
+"Last Name" = "Last Name";
+"E-mail" = "E-mail";
+"Date of Birth" = "Date of Birth";
+"Gender" = "Gender";
+"Male" = "Male";
+"Female" = "Female";
+"Location/notes" = "Location/notes";
+
+"Enter new password" = "Enter new password";
+"New password" = "New password";
+"Cancel" = "Cancel";
+"Save" = "Save";
+"New password was sent to your email" = "New password was sent to your email";
+"Ok" = "Ok";
+"Save Changes" = "Save Changes";
+
+"Change your picture" = "Change your picture";
+"Take a photo" = "Take a photo";
+"Choose your photo" = "Choose your photo";
+"Delete Photo" = "Delete Photo";
+
+// MARK: Favorites
+
+"Favorites" = "Favorites";
+
+// MARK: MovieDetail
+
+"Movie Detail" = "Movie Detail";
+"Minutes" = "Minutes";
+"Action" = "Action";
+"Story Line" = "Story Line";
+"Cast and Crew" = "Cast and Crew";
+"Watch Now" = "Watch Now";
+"Show More" = "Show More";
+"Show Less" = "Show Less";
+"Recent Watch" = "Recent Watch";
+
+// MARK: Onboarding 
+"Slide1Title" = "Watch your favorite movie easily";
+"Slide1Description" = "Discover the world of high-quality video content and enjoy it with us. Find your movie.";
+
+"Slide2Title" = "Watch on any Device";
+"Slide2Description" = "Stream on your phone, tablet, laptop, and TV without paying more.";
+
+"Slide3Title" = "Download and Go";
+"Slide3Description" = "Save your data, watch offline on a plane, train, or rocket.";
+
+"Continue" = "Continue";
+"Start" = "Start";
+
+"Submit" = "Submit";
+"Password" = "Password";
+"Remember me" = "Remember me";
+"Forgot Password?" = "Forgot Password?";
+"Forgot your password?" = "Forgot your password?";
+
+"Sign In" = "Sign In";
+"Or continue with" = "Or continue with";
+"Continue with Google" = "Continue with Google";
+"Don't have an account?" = "Don't have an account?";
+"Sign Up" = "Sign Up";
+"Sign up" = "Sign up";
+"First Name" = "First Name";
+"Last Name" = "Last Name";
+"Confirm Password" = "Confirm Password";
+"Already have an account?" = "Already have an account?";
+"Login" = "Login";
