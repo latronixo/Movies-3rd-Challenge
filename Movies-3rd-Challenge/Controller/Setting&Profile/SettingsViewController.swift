@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import GoogleSignIn
 
 class SettingsViewController: UIViewController {
 
@@ -432,6 +433,9 @@ class SettingsViewController: UIViewController {
                 alert.addAction(UIAlertAction(title: "Ок", style: .default))
                 present(alert, animated: true)
             }
+        
+        // Выход из Google (если использовался Google Sign-In)
+        GIDSignIn.sharedInstance.signOut()
  
     }
     
