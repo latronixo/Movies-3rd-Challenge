@@ -36,7 +36,7 @@ class FavoritesViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         
-        setupNavBarTitle("Favorites", navigationItem)
+        setupNavBarTitle("Favorites".localized(), navigationItem)
         
         movies = RealmManager.shared.getAllFavorites()
         tableView.reloadData()

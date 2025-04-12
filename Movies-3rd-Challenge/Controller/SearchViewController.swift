@@ -201,7 +201,7 @@ final class SearchViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        setupNavBarTitle("Search", navigationItem)
+        setupNavBarTitle("Search".localized(), navigationItem)
         
         addObserverForLocalization()
         tableView.reloadData()
