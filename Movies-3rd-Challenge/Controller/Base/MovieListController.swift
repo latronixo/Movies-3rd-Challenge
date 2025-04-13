@@ -57,11 +57,6 @@ class MovieListController: UIViewController {
         }
     }
     
-    // MARK: - Private Properties
-    
-    let movie1 = Movie(id: 1, name: "Luck", description: "wow", rating: Rating(kp: 3.5), movieLength: 146, poster: nil, votes: Votes(kp: 4), genres: [Genre(name: "Драма"), Genre(name: "Документальный"), Genre(name: "Полнометражный")], year: 1999)
-    
-    
     // MARK: - Set Views
     
     private func setViews() {

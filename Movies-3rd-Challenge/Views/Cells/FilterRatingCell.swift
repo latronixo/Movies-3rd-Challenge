@@ -95,7 +95,7 @@ class FilterRatingCell: UICollectionViewCell {
         
         // Добавляем новые звезды
         for _ in 0..<rating {
-            let starImageView = UIImageView(image: UIImage(systemName: "star.fill"))
+            let starImageView = UIImageView(image: UIImage(named: "starYellow"))
             starImageView.contentMode = .scaleAspectFit
             starImageView.tintColor = UIColor(red: 1.0, green: 0.8, blue: 0.0, alpha: 1.0) // Золотой цвет для звезд
             

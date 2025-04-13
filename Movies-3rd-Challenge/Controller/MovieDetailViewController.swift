@@ -223,7 +223,7 @@ class TempMovieDetailViewController: UIViewController {
         let rating = movie.rating?.kp ?? 0
         let fiveStarRating = rating / 2.0
         for (index, star) in mainView.stars.enumerated() {
-            star.image = UIImage(systemName: index < Int(round(fiveStarRating)) ? "star.fill" : "star")
+            star.image = UIImage(named: index < Int(round(fiveStarRating)) ? "starYellow" : "starGray")
             star.tintColor = .systemYellow
         }
     }
