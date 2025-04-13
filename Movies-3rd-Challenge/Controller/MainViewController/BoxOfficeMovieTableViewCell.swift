@@ -12,6 +12,14 @@ class BoxOfficeMovieTableViewCell: UITableViewCell {
     private let titleLabel = UILabel()
     private let ratingLabel = UILabel()
 
+    private let starImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "starYellow")
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
     private let categoryLabel: UILabel = {
            let label = UILabel()
            label.font = .systemFont(ofSize: 13)
@@ -79,14 +87,25 @@ class BoxOfficeMovieTableViewCell: UITableViewCell {
         ratingLabel.adjustsFontSizeToFitWidth = true
         contentView.addSubview(ratingLabel)
         ratingLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        contentView.addSubview(starImageView)
 
         NSLayoutConstraint.activate([
             votesLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             votesLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
+//            ratingLabel.trailingAnchor.constraint(equalTo: votesLabel.leadingAnchor, constant: -1),
+//            ratingLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+//            ratingLabel.widthAnchor.constraint(equalToConstant: 40),
+            
+            starImageView.trailingAnchor.constraint(equalTo: ratingLabel.leadingAnchor, constant: -4),
+            starImageView.centerYAnchor.constraint(equalTo: ratingLabel.centerYAnchor),
+            starImageView.widthAnchor.constraint(equalToConstant: 16),
+            starImageView.heightAnchor.constraint(equalToConstant: 16),
+            
             ratingLabel.trailingAnchor.constraint(equalTo: votesLabel.leadingAnchor, constant: -1),
             ratingLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            ratingLabel.widthAnchor.constraint(equalToConstant: 40),
+            ratingLabel.widthAnchor.constraint(equalToConstant: 20),
             
             heartButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             heartButton.bottomAnchor.constraint(equalTo: ratingLabel.topAnchor, constant: 1),
@@ -125,7 +144,9 @@ class BoxOfficeMovieTableViewCell: UITableViewCell {
 
     func configure(movie: Movie) {
         titleLabel.text = movie.name
-        ratingLabel.text = "⭐️ " + NetworkService.shared.formatRatingToFiveScale(movie.rating?.kp)
+        
+        //ratingLabel.text = "⭐️ " + NetworkService.shared.formatRatingToFiveScale(movie.rating?.kp)
+        ratingLabel.text = NetworkService.shared.formatRatingToFiveScale(movie.rating?.kp)
         if let length = movie.movieLength, length != 0 {
             timeLabel.text = "\(length) мин."
         } else {

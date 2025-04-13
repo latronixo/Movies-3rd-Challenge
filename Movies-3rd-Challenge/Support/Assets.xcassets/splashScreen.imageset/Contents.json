@@ -1,17 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "Splash Screen.svg",
-      "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "light"
-        }
-      ],
-      "filename" : "Splash Screen 1.svg",
+      "filename" : "splashScreenLight.svg",
       "idiom" : "universal"
     },
     {

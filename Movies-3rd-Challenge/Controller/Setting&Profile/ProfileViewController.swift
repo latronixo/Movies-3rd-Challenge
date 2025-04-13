@@ -132,6 +132,7 @@ class ProfileViewController: UIViewController {
         view.backgroundColor = .systemBackground
         title = "Profile"
         setupUI()
+        setupNavigationBar()
         
         firstNameTextField.delegate = self
         lastNameTextField.delegate = self
@@ -264,6 +265,18 @@ class ProfileViewController: UIViewController {
         emailTextField.textContentType = .emailAddress
         emailTextField.keyboardType = .emailAddress
     }
+    private func setupNavigationBar() {
+        let backButton = UIBarButtonItem(
+            image: UIImage(named: "Arrow Back"),
+            style: .plain,
+            target: self,
+            action: #selector(backTapped))
+        
+        navigationItem.leftBarButtonItem = backButton
+        navigationItem.hidesBackButton = true
+ 
+        navigationItem.leftBarButtonItem?.tintColor = UIColor(named: "iconColor")
+    }
     
     // MARK: - ui methods
     
@@ -305,6 +318,7 @@ class ProfileViewController: UIViewController {
         return button
     }
     
+    
     // MARK: - Actions
     
     @objc private func editAvatarTapped() {
@@ -340,6 +354,10 @@ class ProfileViewController: UIViewController {
         }
         sender.backgroundColor = UIColor(named: "mainViolet")
         sender.setTitleColor(.white, for: .normal)
+    }
+    
+    @objc private func backTapped() {
+        navigationController?.popViewController(animated: true)
     }
     
     // MARK: - Date Picker

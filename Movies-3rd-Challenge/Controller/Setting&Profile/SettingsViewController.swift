@@ -333,7 +333,7 @@ class SettingsViewController: UIViewController {
             self.user = user
             DispatchQueue.main.async {
                 self.nameLabel.text = "\(user.firstName) \(user.lastName)"
-                self.usernameLabel.text = "@" + user.firstName + "999"
+                self.usernameLabel.text = "@" + user.firstName
                 self.profileImageView.image = UIImage(named: user.avatarName)
             }
         }
