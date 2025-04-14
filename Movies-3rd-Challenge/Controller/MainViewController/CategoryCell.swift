@@ -23,7 +23,7 @@ final class CategoryCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         bgView.backgroundColor = .systemBackground
-        bgView.layer.borderColor = UIColor(named: "greyCell")?.withAlphaComponent(0.25).cgColor
+        bgView.layer.borderColor = UIColor(named: "greyCell")?.cgColor
         bgView.layer.borderWidth = 1
         bgView.layer.cornerRadius = 16
         contentView.addSubview(bgView)
