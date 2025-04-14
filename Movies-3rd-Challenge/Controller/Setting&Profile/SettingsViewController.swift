@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import GoogleSignIn
 
 class SettingsViewController: UIViewController {
 
@@ -418,11 +419,14 @@ class SettingsViewController: UIViewController {
     @objc private func logoutButtonTapped() {
         do {
                 try Auth.auth().signOut()
-                
+                GIDSignIn.sharedInstance.signOut()
+            
+                UserDefaults.standard.set(false, forKey: "isAuth")
+            
                 let loginVC = LoginVC()
                 let navVC = UINavigationController(rootViewController: loginVC)
                 navVC.modalPresentationStyle = .fullScreen
-                UserDefaults.standard.set(false, forKey: "isAuth")
+                
 
                 self.present(navVC, animated: true)
                 
