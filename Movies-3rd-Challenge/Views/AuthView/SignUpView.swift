@@ -19,11 +19,16 @@ class SignUpView: UIView {
     }()
     lazy var firstNameTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "First Name"
+        
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: textField.frame.height))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
+        
+        textField.placeholder = "Enter your first name"
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .none
         textField.backgroundColor = UIColor(named: "logColor")
-        textField.borderStyle = .roundedRect
+        textField.borderStyle = .none
         textField.layer.cornerRadius = 24
         textField.clipsToBounds = true
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -40,11 +45,16 @@ class SignUpView: UIView {
     }()
     lazy var lastNameTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Last Name"
+        
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: textField.frame.height))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
+        
+        textField.placeholder = "Enter your last name"
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .none
         textField.backgroundColor = UIColor(named: "logColor")
-        textField.borderStyle = .roundedRect
+        textField.borderStyle = .none
         textField.layer.cornerRadius = 24
         textField.clipsToBounds = true
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -61,12 +71,17 @@ class SignUpView: UIView {
     }()
     lazy var emailTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Email"
+        
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: textField.frame.height))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
+        
+        textField.placeholder = "Enter your email"
         textField.keyboardType = .emailAddress
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .none
         textField.backgroundColor = UIColor(named: "logColor")
-        textField.borderStyle = .roundedRect
+        textField.borderStyle = .none
         textField.layer.cornerRadius = 24
         textField.clipsToBounds = true
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -83,11 +98,16 @@ class SignUpView: UIView {
     }()
     lazy var passwordTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Password"
+        
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: textField.frame.height))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
+        
+        textField.placeholder = "Enter your password"
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .none
         textField.backgroundColor = UIColor(named: "logColor")
-        textField.borderStyle = .roundedRect
+        textField.borderStyle = .none
         textField.layer.cornerRadius = 24
         textField.clipsToBounds = true
         textField.isSecureTextEntry = true
@@ -99,12 +119,13 @@ class SignUpView: UIView {
         let button = UIButton()
         button.setImage(UIImage(systemName: "eye.slash"), for: .normal)
         button.tintColor = UIColor(named: "discriptionSet")
+        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     lazy var confirmPasswordLabel: UILabel = {
         let label = UILabel()
-        label.text = "Confirm Password"
+        label.text = "Enter your password"
         label.font = UIFont(name: "PlusJakartaSans-Medium", size: 14)
         label.textColor = UIColor(named: "discriptionSet")
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -114,16 +135,22 @@ class SignUpView: UIView {
         let button = UIButton()
         button.setImage(UIImage(systemName: "eye.slash"), for: .normal)
         button.tintColor = UIColor(named: "discriptionSet")
+        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     lazy var confirmPasswordTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Confirm Password"
+        
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: textField.frame.height))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
+        
+        textField.placeholder = "Enter your password"
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .none
         textField.backgroundColor = UIColor(named: "logColor")
-        textField.borderStyle = .roundedRect
+        textField.borderStyle = .none
         textField.layer.cornerRadius = 24
         textField.clipsToBounds = true
         textField.isSecureTextEntry = true
