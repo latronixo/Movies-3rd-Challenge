@@ -12,7 +12,33 @@
 
 ## Демонстрация работы приложения:
 
-⚠ ДОБАВИТЬ ВИДЕО ИЛИ ГИФКУ
+<img width="180" alt="Снимок экрана 2025-04-14 в 15 34 39" src="https://github.com/user-attachments/assets/58674844-a02c-41e2-9391-b45e45273d7e" />
+
+<img width="180" alt="Снимок экрана 2025-04-14 в 15 40 52" src="https://github.com/user-attachments/assets/6da59566-6fb7-43be-902b-006fa2b0544e" />
+
+<img width="180" alt="Снимок экрана 2025-04-14 в 15 42 13" src="https://github.com/user-attachments/assets/a2acf50b-a113-41e1-8d19-da1caa430e86" />
+
+<img width="180" alt="Снимок экрана 2025-04-14 в 15 42 37" src="https://github.com/user-attachments/assets/735f495d-fbc1-449b-bc8e-d9a8a6cf6d3f" />
+
+<img width="180" alt="Снимок экрана 2025-04-14 в 15 44 50" src="https://github.com/user-attachments/assets/83d276e0-a6b1-403a-a74a-8be03dfb05db" />
+
+<img width="180" alt="Снимок экрана 2025-04-14 в 15 45 04" src="https://github.com/user-attachments/assets/aeda5c30-e547-4af6-aef7-7d363073179d" />
+
+<img width="180" alt="Снимок экрана 2025-04-14 в 15 45 51" src="https://github.com/user-attachments/assets/888023c1-0a15-4bd0-b7bc-a64b0d7be566" />
+
+<img width="180" alt="Снимок экрана 2025-04-14 в 15 48 58" src="https://github.com/user-attachments/assets/1e7d08e6-1fbb-45c3-a4d0-4ff698748039" />
+
+<img width="180" alt="Снимок экрана 2025-04-14 в 15 49 05" src="https://github.com/user-attachments/assets/a5e0ceec-c873-485a-92f8-5c20207a6533" />
+
+<img width="180" alt="Снимок экрана 2025-04-14 в 15 49 43" src="https://github.com/user-attachments/assets/ec6c1331-8300-40ec-b651-67d2ed60b112" />
+
+<img width="180" alt="Снимок экрана 2025-04-14 в 15 50 00" src="https://github.com/user-attachments/assets/8f2bfff3-bb69-4040-9081-ced55dadfee0" />
+
+<img width="180" alt="Снимок экрана 2025-04-14 в 15 51 48" src="https://github.com/user-attachments/assets/4a86d28e-4a7b-40bf-a24e-0e977f861e91" />
+
+<img width="180" alt="Снимок экрана 2025-04-14 в 15 52 19" src="https://github.com/user-attachments/assets/f4002f9f-1d91-4d60-a9fe-130017fd01e3" />
+
+
 <br>
 <br>
 
