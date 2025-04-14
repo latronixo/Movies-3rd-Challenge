@@ -115,7 +115,11 @@ class LoginVC: UIViewController {
                     print("Ошибка Firebase: \(error.localizedDescription)")
                     return
                 }
-                
+                if self.remindMe == true {
+                    UserDefaults.standard.set(true , forKey: "isAuth")
+                } else {
+                    UserDefaults.standard.set(false , forKey: "isAuth")
+                }
                 guard let firebaseUser = authResult?.user else { return }
                 let userID = firebaseUser.uid
                 let email = firebaseUser.email ?? ""
@@ -151,7 +155,8 @@ class LoginVC: UIViewController {
                 }
                 self.checkOnboardingStatus()
             }
-        }}
+        }
+    }
     
     private func cathcAuthError(error: Error) {
         let errorMessage: String

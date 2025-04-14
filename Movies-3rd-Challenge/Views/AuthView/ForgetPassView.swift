@@ -19,12 +19,17 @@ class ForgetPassView: UIView {
     }()
     lazy var emailTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Email"
+        
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: textField.frame.height))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
+        
+        textField.placeholder = "Enter your email"
         textField.keyboardType = .emailAddress
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .none
         textField.backgroundColor = UIColor(named: "logColor")
-        textField.borderStyle = .roundedRect
+        textField.borderStyle = .none
         textField.layer.cornerRadius = 24
         textField.clipsToBounds = true
         textField.translatesAutoresizingMaskIntoConstraints = false

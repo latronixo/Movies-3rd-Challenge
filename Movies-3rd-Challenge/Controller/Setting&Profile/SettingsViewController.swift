@@ -334,7 +334,7 @@ class SettingsViewController: UIViewController {
             self.user = user
             DispatchQueue.main.async {
                 self.nameLabel.text = "\(user.firstName) \(user.lastName)"
-                self.usernameLabel.text = "@" + user.firstName + "999"
+                self.usernameLabel.text = "@" + user.firstName
                 self.profileImageView.image = UIImage(named: user.avatarName)
             }
         }
@@ -419,11 +419,14 @@ class SettingsViewController: UIViewController {
     @objc private func logoutButtonTapped() {
         do {
                 try Auth.auth().signOut()
-                
+                GIDSignIn.sharedInstance.signOut()
+            
+                UserDefaults.standard.set(false, forKey: "isAuth")
+            
                 let loginVC = LoginVC()
                 let navVC = UINavigationController(rootViewController: loginVC)
                 navVC.modalPresentationStyle = .fullScreen
-                UserDefaults.standard.set(false, forKey: "isAuth")
+                
 
                 self.present(navVC, animated: true)
                 
