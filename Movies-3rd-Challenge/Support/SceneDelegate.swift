@@ -23,15 +23,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     print("❌ Не удалось восстановить Google-сессию: \(error.localizedDescription)")
                 }
 
-                let auth = UserDefaults.standard.bool(forKey: "isAuth")
-                if auth || user != nil {
-                    self.window?.rootViewController = TabBarController()
-                } else {
-                    let navVC = UINavigationController(rootViewController: LoginVC())
-                    self.window?.rootViewController = navVC
-                }
-
-                self.window?.makeKeyAndVisible()
+            if Auth.auth().currentUser != nil {
+                // Пользователь залогинен (включая Google или Email)
+                self.window?.rootViewController = TabBarController()
+            } else {
+                // Пользователь не залогинен
+                let navVC = UINavigationController(rootViewController: LoginVC())
+                self.window?.rootViewController = navVC
+            }
+            self.window?.makeKeyAndVisible()
             }
         
         if let theme = UserDefaults.standard.string(forKey: "AppTheme") {
