@@ -93,9 +93,8 @@
 
 
 ## Команда проекта
-![Static Badge](https://img.shields.io/badge/latronixo1-green?style=plastic&logo=Github&link=https%3A%2F%2Fgithub.com%2Flatronixo1)
-[![latronixo](https://img.shields.io/badge/latronixo1-181717?style=flat&logo=github&logoColor=white)](https://github.com/latronixo)
 
+[![latronixo](https://img.shields.io/badge/latronixo-181717?style=flat&logo=github&logoColor=white)](https://github.com/latronixo)
 <br>
 
 [![boytik](https://img.shields.io/badge/boytik-181717?style=flat&logo=github&logoColor=white)](https://github.com/boytik)
@@ -104,13 +103,12 @@
 [![AnnaMelekh](https://img.shields.io/badge/AnnaMelekh-181717?style=flat&logo=github&logoColor=white)](https://github.com/AnnaMelekh)
 <br>
 
-![Static Badge](https://img.shields.io/badge/elina--kanz-yellow?style=plastic&logo=Github&link=https%3A%2F%2Fgithub.com%2Felina-kanz%2Felina-kanz)
+[![elina-kanz](https://img.shields.io/badge/elina-kanz-181717?style=flat&logo=github&logoColor=white)](https://github.com/elina-kanz)
 <br>
 
 [![AlexCoder13](https://img.shields.io/badge/AlexCoder13-181717?style=flat&logo=github&logoColor=white)](https://github.com/AlexCoder13)
 <br>
 
-![Static Badge](https://img.shields.io/badge/Aleksandr--Slykhovskiy-white?style=plastic&logo=Github&link=https%3A%2F%2Fgithub.com%2FAleksandr-Slykhovskiy)
 [![Aleksandr-Slykhovskiy](https://img.shields.io/badge/Aleksandr-Slykhovskiy-181717?style=flat&logo=github&logoColor=white)](https://github.com/Aleksandr-Slykhovskiy)
 <br>
 
