@@ -1,7 +1,7 @@
 # MovieMax - Выбирай и смотри свои любимые фильмы!  
-<img width="375" alt="image" src="https://github.com/user-attachments/assets/ff7d5a27-6d3c-4d6f-b552-10583945e328" />
-<br>
-<br>
+
+![](https://github.com/latronixo/The-Movies/blob/fix/latronixo1/readme/Movies-3rd-Challenge/Support/animationForReadme.gif)
+
 
 ## Основные возможности:
 - Поиск фильмов и сериалов  
