@@ -2,6 +2,8 @@
 <img width="375" alt="image" src="https://github.com/user-attachments/assets/ff7d5a27-6d3c-4d6f-b552-10583945e328" />
 <br>
 <br>
+![](/Support/animationForReadme.gif)
+
 
 ## Основные возможности:
 - Поиск фильмов и сериалов  
