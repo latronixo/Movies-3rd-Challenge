@@ -1,7 +1,6 @@
-# MovieMax - Выбирай и смотри свои любимые фильмы!  
-
 ![](https://github.com/latronixo/The-Movies/blob/fix/latronixo1/readme/Movies-3rd-Challenge/Support/animationForReadme.gif)
 
+# MovieMax - Выбирай и смотри свои любимые фильмы!  
 
 ## Основные возможности:
 - Поиск фильмов и сериалов  
@@ -93,22 +92,23 @@
 
 
 ## Команда проекта
-![Static Badge](https://img.shields.io/badge/latronixo1-green?style=plastic&logo=Github&link=https%3A%2F%2Fgithub.com%2Flatronixo1)
+
+[![latronixo](https://img.shields.io/badge/latronixo-181717?style=flat&logo=github&logoColor=white)](https://github.com/latronixo)
 <br>
 
-![Static Badge](https://img.shields.io/badge/boytik-red?style=plastic&logo=Github&link=https%3A%2F%2Fgithub.com%2Fboytik)
+[![boytik](https://img.shields.io/badge/boytik-181717?style=flat&logo=github&logoColor=white)](https://github.com/boytik)
 <br>
 
-![Static Badge](https://img.shields.io/badge/AnnaMelekh-pink?style=plastic&logo=Github&link=https%3A%2F%2Fgithub.com%2FAnnaMelekh)
+[![AnnaMelekh](https://img.shields.io/badge/AnnaMelekh-181717?style=flat&logo=github&logoColor=white)](https://github.com/AnnaMelekh)
 <br>
 
-![Static Badge](https://img.shields.io/badge/elina--kanz-yellow?style=plastic&logo=Github&link=https%3A%2F%2Fgithub.com%2Felina-kanz%2Felina-kanz)
+[![elina-kanz](https://img.shields.io/badge/elina-kanz-181717?style=flat&logo=github&logoColor=white)](https://github.com/elina-kanz)
 <br>
 
-![Static Badge](https://img.shields.io/badge/AlexCoder13-blue?style=plastic&logo=Github&link=https%3A%2F%2Fgithub.com%2FAlexCoder13)
+[![AlexCoder13](https://img.shields.io/badge/AlexCoder13-181717?style=flat&logo=github&logoColor=white)](https://github.com/AlexCoder13)
 <br>
 
-![Static Badge](https://img.shields.io/badge/Aleksandr--Slykhovskiy-white?style=plastic&logo=Github&link=https%3A%2F%2Fgithub.com%2FAleksandr-Slykhovskiy)
+[![Aleksandr-Slykhovskiy](https://img.shields.io/badge/Aleksandr-Slykhovskiy-181717?style=flat&logo=github&logoColor=white)](https://github.com/Aleksandr-Slykhovskiy)
 <br>
 
 ## Стек  
