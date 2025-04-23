@@ -1,4 +1,5 @@
-![](https://github.com/latronixo/The-Movies/blob/fix/latronixo1/readme/Movies-3rd-Challenge/Support/animationForReadme.gif)
+![](https://github.com/latronixo/The-Movies/blob/main/Movies-3rd-Challenge/Support/animationForReadme.gif)
+
 
 # MovieMax - Выбирай и смотри свои любимые фильмы!  
 
