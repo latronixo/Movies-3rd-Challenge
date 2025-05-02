@@ -133,13 +133,13 @@
 - Скопируйте ссылку на проект [ссылка на проект в Github.com](https://github.com/latronixo/The-Movies.git].  
 - Откройте Xcode -> Clone Git Repository...  
 - Вставьте скопированную ссылку.  
-- Получите свой API key чат боте Кинопоиска [ссылка на чат бот Кинопоиска](https://t.me/kinopoiskdev_bot), и вставить его в файл Support/Secrets.swift внутрь проекта, вот его содержимое: 
+- Получите свой токен чат-боте Кинопоиска [ссылка на чат-бот Кинопоиска](https://t.me/kinopoiskdev_bot), и вставить его в файл Support/Secrets.swift внутрь проекта, вот его содержимое (внутри проекта его нет, прописан в .gitignore): 
 
 ```swift
 import Foundation
 
 enum Secrets {
-    static let apiKey = "вставь_свой_"
+    static let apiKey = "вставь_свой_токен"
 }
 ```
 
