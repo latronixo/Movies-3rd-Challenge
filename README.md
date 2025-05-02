@@ -130,7 +130,7 @@
 
 
 ## Установка и запуск приложения
-- Скопируйте ссылку на проект [ссылка на проект в Github.com](https://github.com/latronixo/The-Movies.git].  
+- Скопируйте [эту ссылку на проект](https://github.com/latronixo/The-Movies.git).  
 - Откройте Xcode -> Clone Git Repository...  
 - Вставьте скопированную ссылку.  
 - Получите свой токен чат-боте Кинопоиска [ссылка на чат-бот Кинопоиска](https://t.me/kinopoiskdev_bot), и вставить его в файл Support/Secrets.swift внутрь проекта, вот его содержимое (внутри проекта его нет, прописан в .gitignore): 
