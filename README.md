@@ -130,12 +130,18 @@
 
 
 ## Установка и запуск приложения
-Скопируйте ссылку на проект в Git hub (ветка Develop).  
-Откройте Xcode.  
-Выберите в меню Xcode -> Integrate -> Clone
-Вставьте скопированную ссылку.  
-Запустите приложение на симуляторе.
+- Скопируйте [эту ссылку на проект](https://github.com/latronixo/The-Movies.git).  
+- Откройте Xcode -> Clone Git Repository...  
+- Вставьте скопированную ссылку.  
+- Получите свой токен [в чат-боте Кинопоиска](https://t.me/kinopoiskdev_bot).
+- Внутри проекта создайте файл Support/Secrets.swift: 
 
+```swift
+import Foundation
 
+enum Secrets {
+    static let apiKey = "место_для_вашего_токена"
+}
+```
 
-
+- Запустите приложение на симуляторе
